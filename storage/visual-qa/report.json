@@ -1,0 +1,47 @@
+[
+    {
+        "name": "home",
+        "path": "/",
+        "width": 2235,
+        "status": 200,
+        "title": "Temukan Olahragamu, Temukan Tempatmu - Gelanggang Generasi Muda",
+        "errors": [],
+        "height": 6955
+    },
+    {
+        "name": "facility-detail",
+        "path": "/facilities/lapangan-serba-guna",
+        "width": 1708,
+        "status": 200,
+        "title": "Lapangan Serba Guna - Gelanggang Generasi Muda",
+        "errors": [],
+        "height": 3358
+    },
+    {
+        "name": "sport-basketball",
+        "path": "/sports/basketball",
+        "width": 1708,
+        "status": 200,
+        "title": "Bola Basket - Gelanggang Generasi Muda",
+        "errors": [],
+        "height": 2946
+    },
+    {
+        "name": "event-basketball",
+        "path": "/events/basketball-championship",
+        "width": 1280,
+        "status": 200,
+        "title": "Turnamen Bola Basket Majalengka - Gelanggang Generasi Muda",
+        "errors": [],
+        "height": 2560
+    },
+    {
+        "name": "home-mobile",
+        "path": "/",
+        "width": 390,
+        "status": 200,
+        "errors": [],
+        "height": 9259,
+        "overflow": false
+    }
+]

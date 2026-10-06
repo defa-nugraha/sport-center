@@ -1,4 +1,10 @@
 <?php
+
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
-class Inquiry extends Model { protected $guarded = []; }
+
+class Inquiry extends Model
+{
+    protected $guarded = [];
+}

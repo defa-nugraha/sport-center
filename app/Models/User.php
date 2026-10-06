@@ -13,6 +13,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property int $id
@@ -37,7 +38,10 @@ use Laravel\Fortify\PasskeyAuthenticatable;
 class User extends Authenticatable implements PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasTeams, Notifiable, PasskeyAuthenticatable;
+    use HasFactory, HasRoles, HasTeams, Notifiable, PasskeyAuthenticatable {
+        HasTeams::teams insteadof HasRoles;
+        HasRoles::teams as permissionTeams;
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -50,5 +54,10 @@ class User extends Authenticatable implements PasskeyUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function blogPosts()
+    {
+        return $this->hasMany(BlogPost::class);
     }
 }

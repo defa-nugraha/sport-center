@@ -1,0 +1,50 @@
+{
+    "errors": [],
+    "homeStatus": 200,
+    "stickyHeader": true,
+    "facilityCards": 4,
+    "facilityAccordion": true,
+    "newsSlides": 3,
+    "newsGeometry": [
+        {
+            "className": "news-slide active",
+            "top": 1754,
+            "column": "2",
+            "row": "1"
+        },
+        {
+            "className": "news-slide next",
+            "top": 1754,
+            "column": "3",
+            "row": "1"
+        },
+        {
+            "className": "news-slide previous",
+            "top": 1754,
+            "column": "1",
+            "row": "1"
+        }
+    ],
+    "newsSameRow": true,
+    "heroArrows": 0,
+    "newsArrows": 0,
+    "regionSection": 0,
+    "verticalFacilityTitles": 4,
+    "blogCards": 3,
+    "adminPreviews": 4,
+    "facilityEditButtons": 4,
+    "articleEditorPage": true,
+    "ckeditor": 1,
+    "articleModal": 0,
+    "viewWebsiteLinks": 0,
+    "galleryModal": true,
+    "galleryImages": 4,
+    "mobileOverflow": false,
+    "responsiveOverflow": {
+        "375": false,
+        "430": false,
+        "768": false,
+        "1024": false,
+        "1280": false
+    }
+}

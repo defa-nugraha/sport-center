@@ -11,6 +11,7 @@
         "types:check": "tsc --noEmit"
     },
     "dependencies": {
+        "@ckeditor/ckeditor5-react": "^11.2.0",
         "@inertiajs/react": "^3.0.0",
         "@inertiajs/vite": "^3.0.0",
         "@laravel/passkeys": "^0.2.0",
@@ -31,6 +32,7 @@
         "@types/react": "^19.2.0",
         "@types/react-dom": "^19.2.0",
         "@vitejs/plugin-react": "^6.1.1",
+        "ckeditor5": "^48.5.2",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "concurrently": "^10.0.3",
@@ -50,6 +52,7 @@
         "@rolldown/plugin-babel": "^0.2.3",
         "@types/node": "^22.13.5",
         "babel-plugin-react-compiler": "^1.0.0",
+        "playwright-core": "^1.63.0",
         "vite-plus": "0.3.0"
     },
     "optionalDependencies": {

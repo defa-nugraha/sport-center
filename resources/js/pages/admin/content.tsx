@@ -1,4 +1,788 @@
-import { Head, Link, router, useForm } from '@inertiajs/react'; import { ArrowLeft, Plus, Trash2, Upload } from 'lucide-react'; import { useState } from 'react';
-const initialSport = { name: '', description: '', surface: '', court_type: '', sport_category_id: '' }; const initialFacility = { name: '', subtitle: '', description: '', address: '', venue_type: 'Indoor Arena', capacity: '', operating_hours: '08:00 - 22:00', region_id: '', sports: [] as number[] }; const initialEvent = { title: '', description: '', sport_id: '', facility_id: '', starts_at: '', ends_at: '', status: 'upcoming' };
-function FormBlock({ title, children, onSubmit, processing }: any) { return <form className="cms-form" onSubmit={onSubmit}><div className="panel-head"><h3>{title}</h3><button className="button small" disabled={processing}><Plus size={14} /> Save</button></div>{children}</form> }
-export default function Content({ facilities, sports, events, regions, categories }: any) { const [tab, setTab] = useState('facilities'); const [editing, setEditing] = useState<any>(null); const sport = useForm(initialSport); const facility = useForm(initialFacility); const event = useForm(initialEvent); const del = (url: string) => { if (confirm('Delete this item?')) window.axios.delete(url).then(() => window.location.reload()); }; const submit = (form: any, url: string) => (e: any) => { e.preventDefault(); form.post(url, { forceFormData: true, onSuccess: () => form.reset() }); }; return <div className="admin-shell"><Head title="Content management" /><aside className="admin-side"><Link href="/admin" className="brand">Sport<span>Space</span></Link><p className="admin-label">Manage</p><button className={tab === 'facilities' ? 'admin-link active' : 'admin-link'} onClick={() => setTab('facilities')}>Facilities</button><button className={tab === 'sports' ? 'admin-link active' : 'admin-link'} onClick={() => setTab('sports')}>Sports</button><button className={tab === 'events' ? 'admin-link active' : 'admin-link'} onClick={() => setTab('events')}>Events</button><Link href="/" className="admin-link">View website</Link></aside><main className="admin-main"><div className="admin-top"><div><Link href="/admin" className="back-link"><ArrowLeft size={14} /> Dashboard</Link><h1>Content management</h1></div></div><div className="tabs"><button className={tab === 'facilities' ? 'active' : ''} onClick={() => setTab('facilities')}>Facilities ({facilities.length})</button><button className={tab === 'sports' ? 'active' : ''} onClick={() => setTab('sports')}>Sports ({sports.length})</button><button className={tab === 'events' ? 'active' : ''} onClick={() => setTab('events')}>Events ({events.length})</button></div>{tab === 'facilities' && <div className="cms-grid"><FormBlock title="Add facility" processing={facility.processing} onSubmit={submit(facility, '/admin/facilities')}><label>Name<input required value={facility.data.name} onChange={e => facility.setData('name', e.target.value)} /></label><label>Subtitle<input value={facility.data.subtitle} onChange={e => facility.setData('subtitle', e.target.value)} /></label><label>Description<textarea value={facility.data.description} onChange={e => facility.setData('description', e.target.value)} /></label><div className="two-col"><label>Region<select value={facility.data.region_id} onChange={e => facility.setData('region_id', e.target.value)}><option value="">Select region</option>{regions.map((r: any) => <option value={r.id} key={r.id}>{r.name}</option>)}</select></label><label>Venue type<input value={facility.data.venue_type} onChange={e => facility.setData('venue_type', e.target.value)} /></label></div><label>Sports<select multiple value={facility.data.sports.map(String)} onChange={e => facility.setData('sports', Array.from(e.target.selectedOptions, o => Number(o.value)))}>{sports.map((s: any) => <option value={s.id} key={s.id}>{s.name}</option>)}</select></label><label className="upload"><Upload size={15} /> Hero image<input type="file" accept="image/*" onChange={e => facility.setData('hero_image', e.target.files?.[0])} /></label></FormBlock><div className="admin-panel"><div className="panel-head"><h3>Published facilities</h3></div>{facilities.map((item: any) => <div className="admin-row" key={item.id}><div><strong>{item.name}</strong><small>{item.subtitle}</small></div><button className="icon-button" onClick={() => del(`/admin/facilities/${item.id}`)} aria-label="Delete facility"><Trash2 size={15} /></button></div>)}</div></div>}{tab === 'sports' && <div className="cms-grid"><FormBlock title="Add sport" processing={sport.processing} onSubmit={submit(sport, '/admin/sports')}><label>Name<input required value={sport.data.name} onChange={e => sport.setData('name', e.target.value)} /></label><label>Description<textarea value={sport.data.description} onChange={e => sport.setData('description', e.target.value)} /></label><div className="two-col"><label>Surface<input value={sport.data.surface} onChange={e => sport.setData('surface', e.target.value)} /></label><label>Court type<input value={sport.data.court_type} onChange={e => sport.setData('court_type', e.target.value)} /></label></div><label>Category<select value={sport.data.sport_category_id} onChange={e => sport.setData('sport_category_id', e.target.value)}><option value="">Select category</option>{categories.map((c: any) => <option value={c.id} key={c.id}>{c.name}</option>)}</select></label></FormBlock><div className="admin-panel"><div className="panel-head"><h3>Sports library</h3></div>{sports.map((item: any) => <div className="admin-row" key={item.id}><div><strong>{item.name}</strong><small>{item.court_type} · {item.surface}</small></div><button className="icon-button" onClick={() => del(`/admin/sports/${item.id}`)} aria-label="Delete sport"><Trash2 size={15} /></button></div>)}</div></div>}{tab === 'events' && <div className="cms-grid"><FormBlock title="Add event" processing={event.processing} onSubmit={submit(event, '/admin/events')}><label>Title<input required value={event.data.title} onChange={e => event.setData('title', e.target.value)} /></label><label>Description<textarea value={event.data.description} onChange={e => event.setData('description', e.target.value)} /></label><div className="two-col"><label>Sport<select value={event.data.sport_id} onChange={e => event.setData('sport_id', e.target.value)}><option value="">Select sport</option>{sports.map((s: any) => <option value={s.id} key={s.id}>{s.name}</option>)}</select></label><label>Facility<select value={event.data.facility_id} onChange={e => event.setData('facility_id', e.target.value)}><option value="">Select facility</option>{facilities.map((f: any) => <option value={f.id} key={f.id}>{f.name}</option>)}</select></label></div><div className="two-col"><label>Starts at<input type="datetime-local" required value={event.data.starts_at} onChange={e => event.setData('starts_at', e.target.value)} /></label><label>Status<select value={event.data.status} onChange={e => event.setData('status', e.target.value)}><option value="upcoming">Upcoming</option><option value="draft">Draft</option><option value="ongoing">Ongoing</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></label></div></FormBlock><div className="admin-panel"><div className="panel-head"><h3>Event calendar</h3></div>{events.map((item: any) => <div className="admin-row" key={item.id}><div><strong>{item.title}</strong><small>{item.sport?.name || 'General'} · {new Date(item.starts_at).toLocaleDateString()}</small></div><button className="icon-button" onClick={() => del(`/admin/events/${item.id}`)} aria-label="Delete event"><Trash2 size={15} /></button></div>)}</div></div>}</main></div> }
+import {
+    AdminSidebar,
+    AdminTopbar,
+} from '@/components/admin-layout';
+import {
+    CmsModal,
+    CmsMultiSelect,
+    CmsSelect,
+    ConfirmDialog,
+    StatusDialog,
+} from '@/components/admin-cms';
+import { MultiImageUpload } from '@/components/multi-image-upload';
+import { RichTextEditor } from '@/components/rich-text-editor';
+import { asset } from '@/components/public-site';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
+import { FileText, Pencil, Plus, Trash2 } from 'lucide-react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { AdminContentSkeleton, usePageLoading } from '@/components/page-skeletons';
+
+const initialSport = {
+    name: '',
+    description: '',
+    surface: '',
+    court_type: '',
+    sport_category_id: '',
+    images: [] as File[],
+    primary_image: 0,
+    published: true,
+};
+const initialEvent = {
+    title: '',
+    description: '',
+    sport_id: '',
+    facility_id: '',
+    starts_at: '',
+    ends_at: '',
+    status: 'upcoming',
+    reminder_enabled: true,
+    reminder_days_before: 1,
+    images: [] as File[],
+    primary_image: 0,
+    published: true,
+};
+type DeleteTarget = { url: string; name: string } | null;
+
+function Submit({
+    processing,
+    editing,
+}: {
+    processing: boolean;
+    editing: boolean;
+}) {
+    return (
+        <div className="cms-submit">
+            <button className="button" disabled={processing}>
+                {processing
+                    ? 'Menyimpan...'
+                    : editing
+                      ? 'Simpan perubahan'
+                      : 'Simpan data'}
+            </button>
+        </div>
+    );
+}
+function ContentRow({ image, title, meta, onEdit, onDelete }: any) {
+    return (
+        <div className="admin-row admin-row-media">
+            {image && <img src={asset(image)} alt="" />}
+            <div>
+                <strong>{title}</strong>
+                {meta && <small>{meta}</small>}
+            </div>
+            <span className="admin-row-actions">
+                <button
+                    className="icon-button"
+                    type="button"
+                    onClick={onEdit}
+                    aria-label={`Ubah ${title}`}
+                >
+                    <Pencil />
+                </button>
+                <button
+                    className="icon-button danger"
+                    type="button"
+                    onClick={onDelete}
+                    aria-label={`Hapus ${title}`}
+                >
+                    <Trash2 />
+                </button>
+            </span>
+        </div>
+    );
+}
+
+export default function Content({
+    facilities,
+    sports,
+    events,
+    regions,
+    categories,
+    blogPosts,
+    blogCategories,
+    blogTags,
+}: any) {
+    const loading = usePageLoading();
+    const page = usePage();
+    const { flash, auth } = page.props as any;
+    const permissions: string[] = auth?.permissions || [];
+    const allowedTabs = [
+        ['facilities', 'Fasilitas', 'kelola fasilitas'],
+        ['sports', 'Olahraga', 'kelola olahraga'],
+        ['events', 'Acara', 'kelola acara'],
+        ['blog', 'Kabar & Artikel', 'kelola artikel'],
+    ].filter(([, , permission]) => permissions.includes(permission));
+    const requestedTab = new URLSearchParams(
+        page.url.split('?')[1] || '',
+    ).get('tab');
+    const [tab, setTab] = useState(
+        allowedTabs.some(([key]) => key === requestedTab)
+            ? requestedTab!
+            : allowedTabs[0]?.[0] || 'blog',
+    );
+    const [modalOpen, setModalOpen] = useState(false);
+    const [editing, setEditing] = useState<any>(null);
+    const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
+    const [deleting, setDeleting] = useState(false);
+    const [status, setStatus] = useState<{
+        type: 'success' | 'error';
+        message: string;
+    } | null>(null);
+    const [taxonomy, setTaxonomy] = useState<'category' | 'tag' | null>(null);
+    const [editingTaxonomy, setEditingTaxonomy] = useState<any>(null);
+    const sport = useForm(initialSport);
+    const event = useForm(initialEvent);
+    const category = useForm({ name: '', description: '' });
+    const tag = useForm({ name: '' });
+    useEffect(() => {
+        if (flash?.success)
+            setStatus({ type: 'success', message: flash.success });
+    }, [flash?.success]);
+    const opts = useMemo(
+        () => ({
+            regions: regions.map((x: any) => ({
+                value: String(x.id),
+                label: x.name,
+            })),
+            sports: sports.map((x: any) => ({
+                value: String(x.id),
+                label: x.name,
+            })),
+            facilities: facilities.map((x: any) => ({
+                value: String(x.id),
+                label: x.name,
+            })),
+            categories: categories.map((x: any) => ({
+                value: String(x.id),
+                label: x.name,
+            })),
+        }),
+        [regions, sports, facilities, categories],
+    );
+    const fail = (errors: Record<string, string>) =>
+        setStatus({
+            type: 'error',
+            message:
+                Object.values(errors)[0] ||
+                'Periksa kembali data yang Anda masukkan.',
+        });
+    const currentForm: any = tab === 'sports' ? sport : event;
+    const openCreate = () => {
+        if (tab === 'facilities') {
+            router.visit('/admin/facilities/create');
+            return;
+        }
+        setEditing(null);
+        currentForm.transform((data: any) => data);
+        currentForm.reset();
+        setModalOpen(true);
+    };
+    const openEdit = (item: any) => {
+        if (tab === 'facilities') {
+            router.visit(`/admin/facilities/${item.id}/edit`);
+            return;
+        }
+        setEditing(item);
+        currentForm.transform((data: any) => data);
+        if (tab === 'sports')
+            sport.setData({
+                ...initialSport,
+                name: item.name || '',
+                description: item.description || '',
+                surface: item.surface || '',
+                court_type: item.court_type || '',
+                sport_category_id: item.sport_category_id
+                    ? String(item.sport_category_id)
+                    : '',
+                published: Boolean(item.published),
+            });
+        if (tab === 'events')
+            event.setData({
+                ...initialEvent,
+                title: item.title || '',
+                description: item.description || '',
+                sport_id: item.sport_id ? String(item.sport_id) : '',
+                facility_id: item.facility_id ? String(item.facility_id) : '',
+                starts_at: item.starts_at?.slice(0, 16) || '',
+                ends_at: item.ends_at?.slice(0, 16) || '',
+                status: item.status || 'upcoming',
+                reminder_enabled: Boolean(item.reminder_enabled),
+                reminder_days_before: Number(item.reminder_days_before ?? 1),
+                published: Boolean(item.published),
+            });
+        setModalOpen(true);
+    };
+    const submitEntity = (e: FormEvent) => {
+        e.preventDefault();
+        const segment = tab === 'sports' ? 'sports' : 'events';
+        const options = {
+            forceFormData: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                setModalOpen(false);
+                setEditing(null);
+                currentForm.reset();
+            },
+            onError: fail,
+        };
+        if (editing) {
+            currentForm.transform((data: any) => ({ ...data, _method: 'put' }));
+            currentForm.post(`/admin/${segment}/${editing.id}`, options);
+        } else currentForm.post(`/admin/${segment}`, options);
+    };
+    const remove = () => {
+        if (!deleteTarget) return;
+        setDeleting(true);
+        router.delete(deleteTarget.url, {
+            preserveScroll: true,
+            onSuccess: () => setDeleteTarget(null),
+            onError: fail,
+            onFinish: () => setDeleting(false),
+        });
+    };
+    const openTaxonomy = (kind: 'category' | 'tag', item?: any) => {
+        setTaxonomy(kind);
+        setEditingTaxonomy(item || null);
+        const form: any = kind === 'category' ? category : tag;
+        form.transform((data: any) => data);
+        form.setData(
+            kind === 'category'
+                ? {
+                      name: item?.name || '',
+                      description: item?.description || '',
+                  }
+                : { name: item?.name || '' },
+        );
+    };
+    const submitTaxonomy = (e: FormEvent) => {
+        e.preventDefault();
+        const form: any = taxonomy === 'category' ? category : tag;
+        const plural = taxonomy === 'category' ? 'categories' : 'tags';
+        const url = editingTaxonomy
+            ? `/admin/blog/${plural}/${editingTaxonomy.id}`
+            : `/admin/blog/${plural}`;
+        const options = {
+            preserveScroll: true,
+            onSuccess: () => {
+                setTaxonomy(null);
+                form.reset();
+            },
+            onError: fail,
+        };
+        if (editingTaxonomy) {
+            form.transform((data: any) => ({ ...data, _method: 'put' }));
+            form.post(url, options);
+        } else form.post(url, options);
+    };
+    const changeTab = (next: string) => {
+        setTab(next);
+        setModalOpen(false);
+        setEditing(null);
+    };
+    const requestImageDelete = (image: { id?: number }) => {
+        if (!editing || !image.id) return;
+        const segment = tab === 'sports' ? 'sports' : 'events';
+        setDeleteTarget({
+            url: `/admin/${segment}/${editing.id}/images/${image.id}`,
+            name: `Gambar ${editing.name || editing.title}`,
+        });
+    };
+
+    if (loading) return <AdminContentSkeleton />;
+    return (
+        <div className="admin-shell">
+            <Head title="Kelola konten" />
+            <AdminSidebar active="content" contentSection={tab} />
+            <main className="admin-main">
+                <AdminTopbar
+                    title="Kelola Konten"
+                    description="Atur informasi yang tampil di situs GGM Majalengka."
+                />
+                <div className="tabs">
+                    {allowedTabs.map(([key, label]) => (
+                        <button
+                            key={key}
+                            className={tab === key ? 'active' : ''}
+                            onClick={() => changeTab(key)}
+                        >
+                            {label}
+                        </button>
+                    ))}
+                </div>
+                {tab === 'facilities' && (
+                    <section className="admin-panel">
+                        <div className="panel-head">
+                            <div>
+                                <h2>Daftar fasilitas</h2>
+                                <p>
+                                    Tempat olahraga yang tersedia untuk
+                                    pengunjung.
+                                </p>
+                            </div>
+                            <Link className="button" href="/admin/facilities/create">
+                                <Plus /> Tambah fasilitas
+                            </Link>
+                        </div>
+                        {facilities.map((x: any) => (
+                            <ContentRow
+                                key={x.id}
+                                image={x.thumbnail || x.hero_image}
+                                title={x.name}
+                                meta={x.subtitle || x.venue_type}
+                                onEdit={() => router.visit(`/admin/facilities/${x.id}/edit`)}
+                                onDelete={() =>
+                                    setDeleteTarget({
+                                        url: `/admin/facilities/${x.id}`,
+                                        name: x.name,
+                                    })
+                                }
+                            />
+                        ))}
+                    </section>
+                )}
+                {tab === 'sports' && (
+                    <section className="admin-panel">
+                        <div className="panel-head">
+                            <div>
+                                <h2>Daftar olahraga</h2>
+                                <p>
+                                    Cabang olahraga dan jenis arena yang
+                                    tersedia.
+                                </p>
+                            </div>
+                            <button className="button" onClick={openCreate}>
+                                <Plus /> Tambah olahraga
+                            </button>
+                        </div>
+                        {sports.map((x: any) => (
+                            <ContentRow
+                                key={x.id}
+                                image={x.image}
+                                title={x.name}
+                                meta={[x.court_type, x.surface]
+                                    .filter(Boolean)
+                                    .join(' · ')}
+                                onEdit={() => openEdit(x)}
+                                onDelete={() =>
+                                    setDeleteTarget({
+                                        url: `/admin/sports/${x.id}`,
+                                        name: x.name,
+                                    })
+                                }
+                            />
+                        ))}
+                    </section>
+                )}
+                {tab === 'events' && (
+                    <section className="admin-panel">
+                        <div className="panel-head">
+                            <div>
+                                <h2>Kalender acara</h2>
+                                <p>
+                                    Turnamen dan kegiatan olahraga yang
+                                    dipublikasikan.
+                                </p>
+                            </div>
+                            <button className="button" onClick={openCreate}>
+                                <Plus /> Tambah acara
+                            </button>
+                        </div>
+                        {events.map((x: any) => (
+                            <ContentRow
+                                key={x.id}
+                                image={x.image}
+                                title={x.title}
+                                meta={`${x.sport?.name || 'Umum'} · ${new Date(x.starts_at).toLocaleDateString('id-ID')}`}
+                                onEdit={() => openEdit(x)}
+                                onDelete={() =>
+                                    setDeleteTarget({
+                                        url: `/admin/events/${x.id}`,
+                                        name: x.title,
+                                    })
+                                }
+                            />
+                        ))}
+                    </section>
+                )}
+                {tab === 'blog' && (
+                    <div className="blog-admin-grid">
+                        <section className="admin-panel blog-post-panel">
+                            <div className="panel-head">
+                                <div>
+                                    <h2>Kabar & artikel</h2>
+                                    <p>Publikasikan kabar terbaru dari GGM.</p>
+                                </div>
+                                <Link
+                                    className="button"
+                                    href="/admin/blog/posts/create"
+                                >
+                                    <Plus /> Tulis artikel
+                                </Link>
+                            </div>
+                            {blogPosts.length ? (
+                                blogPosts.map((x: any) => (
+                                    <ContentRow
+                                        key={x.id}
+                                        image={x.featured_image}
+                                        title={x.title}
+                                        meta={`${x.category?.name || 'Tanpa kategori'} · ${x.status === 'published' ? 'Terbit' : 'Draf'}`}
+                                        onEdit={() =>
+                                            router.visit(
+                                                `/admin/blog/posts/${x.id}/edit`,
+                                            )
+                                        }
+                                        onDelete={() =>
+                                            setDeleteTarget({
+                                                url: `/admin/blog/posts/${x.id}`,
+                                                name: x.title,
+                                            })
+                                        }
+                                    />
+                                ))
+                            ) : (
+                                <div className="admin-empty">
+                                    <FileText />
+                                    <strong>Belum ada artikel</strong>
+                                    <span>
+                                        Mulai bagikan kabar dari GGM Majalengka.
+                                    </span>
+                                </div>
+                            )}
+                        </section>
+                        {permissions.includes('kelola taksonomi artikel') && (
+                            <>
+                                <section className="admin-panel">
+                                    <div className="panel-head">
+                                        <h3>Kategori</h3>
+                                        <button
+                                            className="icon-button"
+                                            onClick={() =>
+                                                openTaxonomy('category')
+                                            }
+                                        >
+                                            <Plus />
+                                        </button>
+                                    </div>
+                                    {blogCategories.map((x: any) => (
+                                        <ContentRow
+                                            key={x.id}
+                                            title={x.name}
+                                            meta={`${x.posts_count} artikel`}
+                                            onEdit={() =>
+                                                openTaxonomy('category', x)
+                                            }
+                                            onDelete={() =>
+                                                setDeleteTarget({
+                                                    url: `/admin/blog/categories/${x.id}`,
+                                                    name: x.name,
+                                                })
+                                            }
+                                        />
+                                    ))}
+                                </section>
+                                <section className="admin-panel">
+                                    <div className="panel-head">
+                                        <h3>Tag</h3>
+                                        <button
+                                            className="icon-button"
+                                            onClick={() => openTaxonomy('tag')}
+                                        >
+                                            <Plus />
+                                        </button>
+                                    </div>
+                                    {blogTags.map((x: any) => (
+                                        <ContentRow
+                                            key={x.id}
+                                            title={x.name}
+                                            meta={`${x.posts_count} artikel`}
+                                            onEdit={() =>
+                                                openTaxonomy('tag', x)
+                                            }
+                                            onDelete={() =>
+                                                setDeleteTarget({
+                                                    url: `/admin/blog/tags/${x.id}`,
+                                                    name: x.name,
+                                                })
+                                            }
+                                        />
+                                    ))}
+                                </section>
+                            </>
+                        )}
+                    </div>
+                )}
+            </main>
+            <CmsModal
+                open={modalOpen && tab === 'sports'}
+                onOpenChange={setModalOpen}
+                title={editing ? 'Edit olahraga' : 'Tambah olahraga'}
+                description="Atur informasi olahraga dan galerinya."
+                size="lg"
+            >
+                <form className="cms-form modal-form" onSubmit={submitEntity}>
+                    <label>
+                        Nama *
+                        <input
+                            required
+                            value={sport.data.name}
+                            onChange={(e) =>
+                                sport.setData('name', e.target.value)
+                            }
+                        />
+                    </label>
+                    <label>
+                        Deskripsi
+                        <RichTextEditor
+                            label="Deskripsi olahraga"
+                            value={sport.data.description}
+                            onChange={(value) =>
+                                sport.setData('description', value)
+                            }
+                        />
+                    </label>
+                    <div className="two-col">
+                        <label>
+                            Permukaan
+                            <input
+                                value={sport.data.surface}
+                                onChange={(e) =>
+                                    sport.setData('surface', e.target.value)
+                                }
+                            />
+                        </label>
+                        <label>
+                            Jenis lapangan
+                            <input
+                                value={sport.data.court_type}
+                                onChange={(e) =>
+                                    sport.setData('court_type', e.target.value)
+                                }
+                            />
+                        </label>
+                    </div>
+                    <label>
+                        Kategori
+                        <CmsSelect
+                            value={sport.data.sport_category_id}
+                            onValueChange={(value) =>
+                                sport.setData('sport_category_id', value)
+                            }
+                            options={opts.categories}
+                            placeholder="Pilih kategori"
+                        />
+                    </label>
+                    <MultiImageUpload
+                        files={sport.data.images}
+                        onChange={(files) => sport.setData('images', files)}
+                        primary={sport.data.primary_image}
+                        onPrimaryChange={(index) =>
+                            sport.setData('primary_image', index)
+                        }
+                        existing={
+                            editing?.galleries ||
+                            (editing?.image ? [{ image: editing.image }] : [])
+                        }
+                        onDeleteExisting={requestImageDelete}
+                    />
+                    <Submit
+                        processing={sport.processing}
+                        editing={Boolean(editing)}
+                    />
+                </form>
+            </CmsModal>
+            <CmsModal
+                open={modalOpen && tab === 'events'}
+                onOpenChange={setModalOpen}
+                title={editing ? 'Edit acara' : 'Tambah acara'}
+                description="Atur jadwal, informasi, dan galeri acara."
+                size="lg"
+            >
+                <form className="cms-form modal-form" onSubmit={submitEntity}>
+                    <label>
+                        Judul *
+                        <input
+                            required
+                            value={event.data.title}
+                            onChange={(e) =>
+                                event.setData('title', e.target.value)
+                            }
+                        />
+                    </label>
+                    <label>
+                        Deskripsi
+                        <RichTextEditor
+                            label="Deskripsi acara"
+                            value={event.data.description}
+                            onChange={(value) =>
+                                event.setData('description', value)
+                            }
+                        />
+                    </label>
+                    <div className="two-col">
+                        <label>
+                            Olahraga
+                            <CmsSelect
+                                value={event.data.sport_id}
+                                onValueChange={(value) =>
+                                    event.setData('sport_id', value)
+                                }
+                                options={opts.sports}
+                                placeholder="Pilih olahraga"
+                            />
+                        </label>
+                        <label>
+                            Fasilitas
+                            <CmsSelect
+                                value={event.data.facility_id}
+                                onValueChange={(value) =>
+                                    event.setData('facility_id', value)
+                                }
+                                options={opts.facilities}
+                                placeholder="Pilih fasilitas"
+                            />
+                        </label>
+                    </div>
+                    <div className="two-col">
+                        <label>
+                            Mulai *
+                            <input
+                                type="datetime-local"
+                                required
+                                value={event.data.starts_at}
+                                onChange={(e) =>
+                                    event.setData('starts_at', e.target.value)
+                                }
+                            />
+                        </label>
+                        <label>
+                            Selesai
+                            <input
+                                type="datetime-local"
+                                value={event.data.ends_at}
+                                onChange={(e) =>
+                                    event.setData('ends_at', e.target.value)
+                                }
+                            />
+                        </label>
+                    </div>
+                    <label>
+                        Status
+                        <CmsSelect
+                            value={event.data.status}
+                            onValueChange={(value) =>
+                                event.setData('status', value)
+                            }
+                            options={[
+                                { value: 'upcoming', label: 'Akan datang' },
+                                { value: 'draft', label: 'Draf' },
+                                { value: 'ongoing', label: 'Berlangsung' },
+                                { value: 'completed', label: 'Selesai' },
+                                { value: 'cancelled', label: 'Dibatalkan' },
+                            ]}
+                        />
+                    </label>
+                    <fieldset className="reminder-settings">
+                        <legend>Pengingat kalender</legend>
+                        <label className="toggle-label">
+                            <input
+                                type="checkbox"
+                                checked={event.data.reminder_enabled}
+                                onChange={(e) => event.setData('reminder_enabled', e.target.checked)}
+                            />
+                            <span>Aktifkan pengingat untuk acara ini</span>
+                        </label>
+                        {event.data.reminder_enabled && (
+                            <label>
+                                Ingatkan berapa hari sebelumnya?
+                                <input
+                                    type="number"
+                                    min="0"
+                                    max="365"
+                                    required
+                                    value={event.data.reminder_days_before}
+                                    onChange={(e) => event.setData('reminder_days_before', Number(e.target.value))}
+                                />
+                                <small>Gunakan 0 untuk pengingat pada hari acara, atau masukkan H-1, H-2, H-3, dan seterusnya.</small>
+                            </label>
+                        )}
+                    </fieldset>
+                    <MultiImageUpload
+                        files={event.data.images}
+                        onChange={(files) => event.setData('images', files)}
+                        primary={event.data.primary_image}
+                        onPrimaryChange={(index) =>
+                            event.setData('primary_image', index)
+                        }
+                        existing={
+                            editing?.galleries ||
+                            (editing?.image ? [{ image: editing.image }] : [])
+                        }
+                        onDeleteExisting={requestImageDelete}
+                    />
+                    <Submit
+                        processing={event.processing}
+                        editing={Boolean(editing)}
+                    />
+                </form>
+            </CmsModal>
+            <CmsModal
+                open={taxonomy !== null}
+                onOpenChange={(open) => !open && setTaxonomy(null)}
+                title={`${editingTaxonomy ? 'Edit' : 'Tambah'} ${taxonomy === 'category' ? 'kategori' : 'tag'}`}
+                size="sm"
+            >
+                <form className="cms-form modal-form" onSubmit={submitTaxonomy}>
+                    <label>
+                        Nama *
+                        <input
+                            required
+                            value={
+                                taxonomy === 'category'
+                                    ? category.data.name
+                                    : tag.data.name
+                            }
+                            onChange={(e) =>
+                                taxonomy === 'category'
+                                    ? category.setData('name', e.target.value)
+                                    : tag.setData('name', e.target.value)
+                            }
+                        />
+                    </label>
+                    {taxonomy === 'category' && (
+                        <label>
+                            Deskripsi
+                            <RichTextEditor
+                                label="Deskripsi kategori"
+                                value={category.data.description}
+                                onChange={(value) =>
+                                    category.setData('description', value)
+                                }
+                            />
+                        </label>
+                    )}
+                    <Submit
+                        processing={
+                            taxonomy === 'category'
+                                ? category.processing
+                                : tag.processing
+                        }
+                        editing={Boolean(editingTaxonomy)}
+                    />
+                </form>
+            </CmsModal>
+            <ConfirmDialog
+                open={Boolean(deleteTarget)}
+                onOpenChange={(open) => !open && setDeleteTarget(null)}
+                itemName={deleteTarget?.name}
+                onConfirm={remove}
+                processing={deleting}
+            />
+            <StatusDialog
+                open={Boolean(status)}
+                onOpenChange={(open) => !open && setStatus(null)}
+                type={status?.type || 'success'}
+                message={status?.message || ''}
+            />
+        </div>
+    );
+}

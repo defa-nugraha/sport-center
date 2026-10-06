@@ -1,3 +1,5 @@
+import { usePage } from '@inertiajs/react';
+import AuthLoginLayout from '@/layouts/auth/auth-login-layout';
 import AuthLayoutTemplate from '@/layouts/auth/auth-simple-layout';
 
 export default function AuthLayout({
@@ -9,6 +11,16 @@ export default function AuthLayout({
     description?: string;
     children: React.ReactNode;
 }) {
+    const { url } = usePage();
+
+    if (url.startsWith('/login')) {
+        return (
+            <AuthLoginLayout title={title} description={description}>
+                {children}
+            </AuthLoginLayout>
+        );
+    }
+
     return (
         <AuthLayoutTemplate title={title} description={description}>
             {children}
