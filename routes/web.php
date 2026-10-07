@@ -4,6 +4,10 @@ use App\Http\Controllers\AdminBlogController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminTestimonialController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\AdminBookingController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\Teams\TeamInvitationController;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +26,12 @@ Route::middleware('track.public.visit')->group(function () {
 });
 Route::post('/inquiries', [PublicController::class, 'inquiry'])->name('inquiries.store');
 Route::post('/testimonials', [PublicController::class, 'testimonial'])->name('testimonials.store');
+Route::get('/booking/{facility:slug}', [BookingController::class, 'create'])->name('booking.create');
+Route::get('/booking/{facility:slug}/availability', [BookingController::class, 'availability'])->name('booking.availability');
+Route::post('/booking/{facility:slug}', [BookingController::class, 'store'])->middleware('auth')->name('booking.store');
+Route::get('/booking/{booking}/status', [BookingController::class, 'show'])->middleware('auth')->name('booking.show');
+Route::post('/payments/midtrans/notification', [PaymentController::class, 'notification'])->name('payments.midtrans.notification');
+Route::get('/invoices/{invoice}/pdf', [InvoiceController::class, 'show'])->middleware('signed')->name('invoices.public');
 
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
@@ -34,6 +44,11 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/account', [AdminController::class, 'account'])->name('account');
     Route::patch('/account', [AdminController::class, 'updateAccount'])->name('account.update');
     Route::put('/account/password', [AdminController::class, 'updateAccountPassword'])->middleware('throttle:6,1')->name('account.password.update');
+    Route::middleware('permission:kelola booking')->group(function () {
+        Route::get('/bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
+        Route::get('/bookings/{booking}', [AdminBookingController::class, 'show'])->name('bookings.show');
+        Route::put('/bookings/facilities/{facility}', [AdminBookingController::class, 'updateFacility'])->name('bookings.facilities.update');
+    });
     Route::middleware('permission:kelola fasilitas')->group(function () {
         Route::get('/facilities/create', [AdminController::class, 'createFacility'])->name('facilities.create');
         Route::get('/facilities/{facility}/edit', [AdminController::class, 'editFacility'])->name('facilities.edit');
