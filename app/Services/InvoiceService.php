@@ -1,0 +1,3 @@
+<?php
+namespace App\Services;use App\Models\Booking;use App\Models\Invoice;use Illuminate\Support\Facades\DB;
+class InvoiceService{public function create(Booking $booking):Invoice{return DB::transaction(function()use($booking){$existing=Invoice::where('booking_id',$booking->id)->first();if($existing)return $existing;$payment=$booking->payment()->firstOrFail();$invoice=Invoice::create(['booking_id'=>$booking->id,'payment_id'=>$payment->id,'issued_at'=>now(),'pdf_path'=>'']);$invoice->update(['pdf_path'=>app(InvoicePdfService::class)->generate($invoice)]);return $invoice->fresh(['booking.facility','payment']);});}}
