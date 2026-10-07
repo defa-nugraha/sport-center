@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { ChevronRight, MapPin } from 'lucide-react';
 import { RichText } from '@/components/rich-text-editor';
 import {
@@ -53,10 +53,17 @@ export default function Facility({ facility, sections = {} }: any) {
                         <h1>{facility.name}</h1>
                         <p>{facility.subtitle}</p>
                         <RichText html={facility.description} />
-                        <BookingLink className="button lime">
-                            Reservasi fasilitas ini{' '}
-                            <ChevronRight size={15} aria-hidden="true" />
-                        </BookingLink>
+                        {facility.booking_enabled ? (
+                            <Link className="button lime" href={'/booking/' + facility.slug}>
+                                Pesan fasilitas ini{' '}
+                                <ChevronRight size={15} aria-hidden="true" />
+                            </Link>
+                        ) : (
+                            <BookingLink className="button lime">
+                                Reservasi fasilitas ini{' '}
+                                <ChevronRight size={15} aria-hidden="true" />
+                            </BookingLink>
+                        )}
                     </div>
                 </div>
             </section>
@@ -170,7 +177,17 @@ export default function Facility({ facility, sections = {} }: any) {
             </section>}
             {sections.booking?.enabled !== false && (
                 <section className="page-section facility-booking-section">
-                    <CTA title={sections.booking?.title || 'Siap menggunakan GGM?'} copy={sections.booking?.description} buttonLabel={sections.booking?.button_label} />
+                    <div className="cta">
+                            <div>
+                                <div>
+                                    <h2>{sections.booking?.title || 'Pesan venue sekarang'}</h2>
+                                    <RichText html={sections.booking?.description || 'Pilih tanggal dan jam yang Anda inginkan, lalu lanjutkan pembayaran.'} />
+                                </div>
+                                <Link className="button lime" href={'/booking/' + facility.slug}>
+                                    Mulai booking <ChevronRight size={16} aria-hidden="true" />
+                                </Link>
+                            </div>
+                        </div>
                 </section>
             )}
         </Shell>
