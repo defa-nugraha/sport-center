@@ -12,7 +12,7 @@ export default function Register({ redirect }: { redirect?: string }) {
     return (
         <>
             <Head title="Daftar akun" />
-            <Form action="/register" method="post" className="login-form">
+            <Form action="/register" method="post" className="login-form" options={{ preserveScroll: true }}>
                 {({ processing, errors }) => (
                     <>
                         <input type="hidden" name="redirect" value={redirect || ''} />
@@ -40,6 +40,7 @@ export default function Register({ redirect }: { redirect?: string }) {
                             <PasswordInput id="password_confirmation" name="password_confirmation" required autoComplete="new-password" placeholder="Ulangi kata sandi" aria-invalid={Boolean(errors.password_confirmation)} />
                             <InputError message={errors.password_confirmation} />
                         </div>
+                        <p className="auth-password-hint">Gunakan kata sandi yang aman dan mudah kamu ingat.</p>
                         <Button type="submit" className="login-submit" disabled={processing}>
                             {processing ? <Spinner /> : <>Buat Akun <ChevronRight aria-hidden="true" /></>}
                         </Button>
