@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { CalendarDays, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
 
 const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 const shortMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
@@ -118,9 +118,8 @@ export function DateRangePicker({
                 aria-expanded={open}
                 aria-haspopup="dialog"
             >
-                <CalendarDays aria-hidden="true" />
                 <span>{formatRange(start, end)}</span>
-                <ChevronRight className={`date-range-trigger-chevron ${open ? 'rotated' : ''}`} aria-hidden="true" />
+                <ChevronDown className={`date-range-trigger-chevron ${open ? 'rotated' : ''}`} aria-hidden="true" />
             </button>
 
             {open && (
@@ -128,7 +127,7 @@ export function DateRangePicker({
                     <div className="date-range-presets">
                         <button type="button" onClick={() => choosePreset('today')}>Hari ini</button>
                         <button type="button" onClick={() => choosePreset('tomorrow')}>Besok</button>
-                        <button type="button" onClick={() => choosePreset('week')}>7 hari</button>
+                        <button type="button" onClick={() => choosePreset('week')}>Minggu ini</button>
                         <button type="button" onClick={() => choosePreset('month')}>Bulan ini</button>
                         <button type="button" className="reset" onClick={reset}><RotateCcw aria-hidden="true" /> Reset</button>
                     </div>
