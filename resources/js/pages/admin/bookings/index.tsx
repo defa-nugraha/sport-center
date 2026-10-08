@@ -108,17 +108,23 @@ export default function Index({
                                                 <td>{booking.facility?.name || '-'}</td>
                                                 <td>
                                                     <strong>
-                                                        {new Date(
-                                                            `${booking.booking_date}T${booking.start_time || '00:00'}`,
-                                                        ).toLocaleDateString('id-ID', {
+                                                        {new Date(booking.booking_date).toLocaleDateString('id-ID', {
                                                             day: '2-digit',
                                                             month: 'short',
                                                             year: 'numeric',
                                                         })}
+                                                        {booking.booking_mode === 'daily' && booking.booking_end_date && (
+                                                            <> – {new Date(booking.booking_end_date).toLocaleDateString('id-ID', {
+                                                                day: '2-digit',
+                                                                month: 'short',
+                                                                year: 'numeric',
+                                                            })}</>
+                                                        )}
                                                     </strong>
                                                     <small>
-                                                        {booking.start_time?.slice(0, 5)} -{' '}
-                                                        {booking.end_time?.slice(0, 5)}
+                                                        {booking.booking_mode === 'daily'
+                                                            ? 'Per hari'
+                                                            : `${booking.start_time?.slice(0, 5)} - ${booking.end_time?.slice(0, 5)}`}
                                                     </small>
                                                 </td>
                                                 <td>
