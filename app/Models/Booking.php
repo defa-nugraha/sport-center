@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Concerns\HasEncryptedRouteKey;
 use App\Enums\BookingStatus;
-use App\Enums\BookingStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
