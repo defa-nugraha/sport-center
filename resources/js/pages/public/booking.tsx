@@ -48,7 +48,7 @@ export default function Booking({ facility, user }: { facility: any; user?: { na
                     </div>
                     <button type="button" className="rounded border px-5 py-3" onClick={check}>Cek Ketersediaan</button>
                     {available !== null && <p className={available ? 'text-green-700' : 'text-red-700'}>{available ? 'Slot tersedia.' : 'Slot sudah terisi. Silakan pilih waktu lain.'}</p>}
-                    {form.errors.booking && <p className="text-red-700">{form.errors.booking}</p>}
+                    {(form.errors as Record<string, string | undefined>).booking && <p className="text-red-700">{(form.errors as Record<string, string | undefined>).booking}</p>}
                     <button disabled={form.processing || available !== true || !user} className="rounded bg-black px-5 py-3 text-white disabled:opacity-40">Buat Booking & Lanjutkan Pembayaran</button>
                 </form>
             </main>
