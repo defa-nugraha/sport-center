@@ -7658,12 +7658,38 @@ select {
     display: inline-flex;
     align-items: center;
     min-height: 27px;
+    gap: 6px;
     padding: 5px 9px;
-    border-radius: 5px;
-    background: #fff4d8;
-    color: #9a6200;
+    border-radius: var(--radius-sm);
+    background: var(--warning-surface);
+    color: var(--warning);
     font-size: 10px;
     font-weight: 800;
+}
+.booking-status-dot {
+    width: 6px;
+    height: 6px;
+    flex: 0 0 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+.booking-status.confirmed,
+.booking-status.completed {
+    background: var(--success-surface);
+    color: var(--success);
+}
+.booking-status.failed,
+.booking-status.cancelled {
+    background: var(--danger-surface);
+    color: var(--danger);
+}
+.booking-status.expired,
+.booking-status.unknown {
+    background: #edf0f3;
+    color: #687789;
+}
+.booking-status-hero-badge {
+    margin-top: 8px;
 }
 .booking-status.confirmed,
 .booking-status.completed {
