@@ -17,11 +17,6 @@ trait HasEncryptedRouteKey
         return rawurlencode(Crypt::encryptString((string) $this->getKey()));
     }
 
-    public function getRouteKey(): mixed
-    {
-        return $this->getEncryptedIdAttribute();
-    }
-
     public function resolveRouteBinding($value, $field = null)
     {
         if ($field !== null) {
