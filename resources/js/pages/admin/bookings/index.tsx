@@ -3,24 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import { CalendarDays } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
-const statusLabels: Record<string, string> = {
-    PENDING_PAYMENT: 'Menunggu pembayaran',
-    CONFIRMED: 'Dikonfirmasi',
-    FAILED: 'Gagal',
-    EXPIRED: 'Kedaluwarsa',
-    CANCELLED: 'Dibatalkan',
-    COMPLETED: 'Selesai',
-};
-
-const statusClasses: Record<string, string> = {
-    PENDING_PAYMENT: 'pending',
-    CONFIRMED: 'confirmed',
-    FAILED: 'failed',
-    EXPIRED: 'expired',
-    CANCELLED: 'cancelled',
-    COMPLETED: 'completed',
-};
+import { BookingStatusBadge, bookingStatusLabels } from '@/components/booking-status-badge';
 
 function formatCurrency(value: number | string) {
     return `Rp ${Number(value || 0).toLocaleString('id-ID')}`;
@@ -72,7 +55,7 @@ export default function Index({
                                     <SelectItem value="all">Semua status</SelectItem>
                                     {statuses.map((statusOption) => (
                                         <SelectItem key={statusOption} value={statusOption}>
-                                            {statusLabels[statusOption] || statusOption}
+                                            {bookingStatusLabels[statusOption] || statusOption}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
@@ -139,12 +122,7 @@ export default function Index({
                                                     </small>
                                                 </td>
                                                 <td>
-                                                    <span
-                                                        className={`booking-status ${statusClasses[booking.status] || ''}`}
-                                                    >
-                                                        {statusLabels[booking.status] ||
-                                                            booking.status}
-                                                    </span>
+                                                    <BookingStatusBadge status={booking.status} />
                                                 </td>
                                                 <td>
                                                     <strong>{formatCurrency(booking.total)}</strong>
