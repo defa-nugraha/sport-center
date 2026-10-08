@@ -98,7 +98,7 @@ class BookingService
         $startDate = Carbon::parse($data['booking_date'])->startOfDay();
         $endDate = Carbon::parse($data['booking_end_date'] ?? $data['booking_date'])->startOfDay();
 
-        if ($startDate->isPast()) {
+        if ($startDate->lt(Carbon::today())) {
             throw new RuntimeException('Tanggal booking harus berada di masa depan.');
         }
 
