@@ -55,6 +55,7 @@ export function AdminSidebar({
 }) {
     const [contentOpen, setContentOpen] = useState(active === 'content');
     const [pagesOpen, setPagesOpen] = useState(active === 'pages');
+    const [bookingOpen, setBookingOpen] = useState(active === 'bookings');
     const [mobileOpen, setMobileOpen] = useState(false);
     const { auth } = usePage().props as any;
     const permissions: string[] = auth?.permissions || [];
@@ -109,14 +110,29 @@ export function AdminSidebar({
                         </Link>
                     );
                 })}
-                {permissions.includes('kelola booking') && <Link
-                    href="/admin/bookings"
-                    className={`admin-link ${active === 'bookings' ? 'active' : ''}`}
-                    onClick={() => setMobileOpen(false)}
+                {permissions.includes('kelola booking') && <button
+                    type="button"
+                    className={`admin-link admin-content-toggle ${active === 'bookings' ? 'active' : ''}`}
+                    onClick={() => setBookingOpen((current) => !current)}
+                    aria-expanded={bookingOpen}
+                    aria-controls="admin-booking-submenu"
                 >
                     <CalendarCheck aria-hidden="true" />
                     <span>Kelola Booking</span>
-                </Link>}
+                    <ChevronDown className="collapse-chevron" aria-hidden="true" />
+                </button>}
+                {permissions.includes('kelola booking') && bookingOpen && (
+                    <div className="admin-content-submenu" id="admin-booking-submenu">
+                        <Link href="/admin/bookings#settings" className="active-submenu-link" onClick={() => setMobileOpen(false)}>
+                            <Settings aria-hidden="true" />
+                            <span>Pengaturan venue</span>
+                        </Link>
+                        <Link href="/admin/bookings#list" className="active-submenu-link" onClick={() => setMobileOpen(false)}>
+                            <CalendarDays aria-hidden="true" />
+                            <span>Daftar booking</span>
+                        </Link>
+                    </div>
+                )}
                 {visibleContentItems.length > 0 && <button
                     type="button"
                     className={`admin-link admin-content-toggle ${active === 'content' ? 'active' : ''}`}
