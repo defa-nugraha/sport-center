@@ -618,7 +618,7 @@ main {
 .home-hero h1 em,
 .listing-hero h1 em {
     font-style: normal;
-    color: #176c59;
+    color: var(--lime);
 }
 .home-hero p,
 .listing-hero p {
@@ -636,7 +636,7 @@ main {
 .pill {
     display: inline-block;
     padding: 5px 9px;
-    background: #eef3d9;
+    background: #ffe5e9;
     border-radius: 20px;
     margin-bottom: 15px;
 }
@@ -8013,7 +8013,7 @@ select {
 }
 .user-main-nav a:hover,
 .user-main-nav a.active {
-    background: #eef3d9;
+    background: #ffe5e9;
     color: #14243f;
 }
 .user-header-account {
@@ -8091,7 +8091,7 @@ select {
     grid-row: span 2;
     width: 28px;
     height: 28px;
-    color: #176c59;
+    color: var(--lime);
 }
 .user-stat-grid span {
     color: #718092;
@@ -8134,8 +8134,8 @@ select {
     white-space: nowrap;
 }
 .user-quick-panel {
-    background: #f1f5e5;
-    border-color: #dfe7c8;
+    background: #fff0f2;
+    border-color: #f3c7cf;
 }
 .user-booking-list {
     display: grid;
@@ -8152,7 +8152,7 @@ select {
     border-bottom: 0;
 }
 .user-booking-row:hover strong {
-    color: #176c59;
+    color: var(--lime);
 }
 .user-booking-row > div:nth-child(2) {
     display: grid;
@@ -8172,8 +8172,8 @@ select {
     height: 42px;
     place-items: center;
     border-radius: 7px;
-    background: #eef3d9;
-    color: #176c59;
+    background: #ffe5e9;
+    color: var(--lime);
 }
 .user-booking-icon svg {
     width: 18px;
@@ -8298,7 +8298,7 @@ select {
 }
 .user-facility-content > strong,
 .booking-flow-summary strong {
-    color: #176c59;
+    color: var(--lime);
     font-size: 17px;
 }
 .user-facility-content > strong small,
@@ -8456,8 +8456,8 @@ select {
     height: 48px;
     place-items: center;
     border-radius: 8px;
-    background: #eef3d9;
-    color: #176c59;
+    background: #ffe5e9;
+    color: var(--lime);
 }
 .booking-status-icon svg {
     width: 24px;
