@@ -10,13 +10,15 @@ function formatRupiah(value: number | string) {
 function FacilityBookingSettings({ facility }: { facility: any }) {
     const form = useForm({
         booking_enabled: Boolean(facility.booking_enabled),
+        booking_mode: facility.booking_mode || 'hourly',
         booking_price_per_hour: formatRupiah(facility.booking_price_per_hour),
+        booking_price_per_day: formatRupiah(facility.booking_price_per_day),
         booking_min_hours: String(facility.booking_min_hours ?? 1),
     });
 
-    const updatePrice = (value: string) => {
+    const updatePrice = (field: 'booking_price_per_hour' | 'booking_price_per_day', value: string) => {
         const digits = value.replace(/\D/g, '');
-        form.setData('booking_price_per_hour', digits ? formatRupiah(digits) : '');
+        form.setData(field, digits ? formatRupiah(digits) : '');
     };
 
     return (
@@ -36,7 +38,7 @@ function FacilityBookingSettings({ facility }: { facility: any }) {
                 <div>
                     <span className="booking-settings-kicker">Venue</span>
                     <h2>{facility.name}</h2>
-                    <p>Atur harga, durasi minimum, dan status ketersediaan venue.</p>
+                    <p>Atur mode, harga, durasi minimum, dan status ketersediaan venue.</p>
                 </div>
                 <span className={form.data.booking_enabled ? 'booking-enabled-badge' : 'booking-disabled-badge'}>
                     {form.data.booking_enabled ? 'Booking aktif' : 'Booking nonaktif'}
@@ -45,41 +47,68 @@ function FacilityBookingSettings({ facility }: { facility: any }) {
 
             <div className="booking-settings-fields">
                 <label>
+                    Mode booking
+                    <select
+                        value={form.data.booking_mode}
+                        onChange={(event) => form.setData('booking_mode', event.target.value as 'hourly' | 'daily')}
+                    >
+                        <option value="hourly">Per jam</option>
+                        <option value="daily">Per hari</option>
+                    </select>
+                    <small>Pilih apakah pelanggan memesan berdasarkan jam atau rentang hari.</small>
+                    {form.errors.booking_mode && <span className="booking-field-error">{form.errors.booking_mode}</span>}
+                </label>
+
+                <label>
                     Harga per jam
                     <div className="booking-rupiah-input">
                         <input
                             type="text"
                             inputMode="numeric"
                             value={form.data.booking_price_per_hour}
-                            onChange={(event) => updatePrice(event.target.value)}
+                            onChange={(event) => updatePrice('booking_price_per_hour', event.target.value)}
                             placeholder="Rp 0"
-                            aria-describedby={`price-help-${facility.encrypted_id}`}
+                            aria-describedby={`price-hour-help-${facility.encrypted_id}`}
                         />
                     </div>
-                    <small id={`price-help-${facility.encrypted_id}`}>Contoh: Rp 75.000</small>
-                    {form.errors.booking_price_per_hour && (
-                        <span className="booking-field-error">{form.errors.booking_price_per_hour}</span>
-                    )}
+                    <small id={`price-hour-help-${facility.encrypted_id}`}>Dipakai saat mode per jam.</small>
+                    {form.errors.booking_price_per_hour && <span className="booking-field-error">{form.errors.booking_price_per_hour}</span>}
                 </label>
 
                 <label>
-                    Minimal durasi booking
-                    <div className="booking-unit-input">
+                    Harga per hari
+                    <div className="booking-rupiah-input">
                         <input
-                            type="number"
-                            min="1"
-                            max="12"
-                            step="1"
-                            value={form.data.booking_min_hours}
-                            onChange={(event) => form.setData('booking_min_hours', event.target.value)}
+                            type="text"
+                            inputMode="numeric"
+                            value={form.data.booking_price_per_day}
+                            onChange={(event) => updatePrice('booking_price_per_day', event.target.value)}
+                            placeholder="Rp 0"
+                            aria-describedby={`price-day-help-${facility.encrypted_id}`}
                         />
-                        <span>jam</span>
                     </div>
-                    <small>Minimal waktu yang dapat dipesan pelanggan.</small>
-                    {form.errors.booking_min_hours && (
-                        <span className="booking-field-error">{form.errors.booking_min_hours}</span>
-                    )}
+                    <small id={`price-day-help-${facility.encrypted_id}`}>Dipakai untuk setiap hari dalam rentang booking.</small>
+                    {form.errors.booking_price_per_day && <span className="booking-field-error">{form.errors.booking_price_per_day}</span>}
                 </label>
+
+                {form.data.booking_mode === 'hourly' && (
+                    <label>
+                        Minimal durasi booking
+                        <div className="booking-unit-input">
+                            <input
+                                type="number"
+                                min="1"
+                                max="12"
+                                step="1"
+                                value={form.data.booking_min_hours}
+                                onChange={(event) => form.setData('booking_min_hours', event.target.value)}
+                            />
+                            <span>jam</span>
+                        </div>
+                        <small>Minimal waktu yang dapat dipesan pelanggan.</small>
+                        {form.errors.booking_min_hours && <span className="booking-field-error">{form.errors.booking_min_hours}</span>}
+                    </label>
+                )}
 
                 <label className="booking-enabled-control">
                     <span className="booking-toggle-copy">
@@ -114,7 +143,7 @@ export default function Settings({ facilities }: { facilities: any[] }) {
                 <AdminTopbar
                     eyebrow="Kelola booking"
                     title="Pengaturan venue"
-                    description="Atur harga, durasi minimum, dan ketersediaan booking setiap venue."
+                    description="Atur mode booking, harga per jam/per hari, durasi minimum, dan ketersediaan setiap venue."
                 />
 
                 <div className="booking-admin-page-actions">
@@ -126,7 +155,7 @@ export default function Settings({ facilities }: { facilities: any[] }) {
                         <div>
                             <span className="booking-settings-kicker">Konfigurasi</span>
                             <h2>Venue yang dapat dipesan</h2>
-                            <p>Setiap venue memiliki pengaturan sendiri agar harga dan aturan booking tetap mudah dikelola.</p>
+                            <p>Pilih mode per jam untuk jadwal berbasis waktu atau mode per hari untuk rentang tanggal.</p>
                         </div>
                         <Clock3 aria-hidden="true" />
                     </div>
@@ -142,9 +171,7 @@ export default function Settings({ facilities }: { facilities: any[] }) {
                             <Settings2 aria-hidden="true" />
                             <strong>Belum ada fasilitas</strong>
                             <p>Tambahkan fasilitas terlebih dahulu agar dapat digunakan untuk booking.</p>
-                            <Link className="text-link" href="/admin/content?tab=facilities">
-                                Kelola fasilitas
-                            </Link>
+                            <Link className="text-link" href="/admin/content?tab=facilities">Kelola fasilitas</Link>
                         </div>
                     )}
                 </section>
