@@ -23,7 +23,13 @@ class BookingController extends Controller
         return Inertia::render('user/booking', [
             'facilities' => Facility::where('published', true)
                 ->where('booking_enabled', true)
-                ->whereNotNull('booking_price_per_hour')
+                ->where(function ($query) {
+                    $query->where(function ($q) {
+                        $q->where('booking_mode', 'hourly')->whereNotNull('booking_price_per_hour');
+                    })->orWhere(function ($q) {
+                        $q->where('booking_mode', 'daily')->whereNotNull('booking_price_per_day');
+                    });
+                })
                 ->orderBy('name')
                 ->get([
                     'id',
@@ -34,7 +40,9 @@ class BookingController extends Controller
                     'address',
                     'hero_image',
                     'thumbnail',
+                    'booking_mode',
                     'booking_price_per_hour',
+                    'booking_price_per_day',
                     'booking_min_hours',
                 ]),
         ]);
@@ -58,6 +66,40 @@ class BookingController extends Controller
     {
         abort_unless($facility->published && $facility->booking_enabled, 404);
 
+        if (($facility->booking_mode ?: 'hourly') === 'daily') {
+            $data = $request->validate([
+                'booking_date' => ['required', 'date_format:Y-m-d'],
+                'booking_end_date' => ['required', 'date_format:Y-m-d', 'after_or_equal:booking_date'],
+            ]);
+
+            $startDate = Carbon::parse($data['booking_date'])->startOfDay();
+            $endDate = Carbon::parse($data['booking_end_date'])->startOfDay();
+
+            if ($startDate->isBefore(today())) {
+                return response()->json(['message' => 'Tanggal booking harus berada di masa depan.'], 422);
+            }
+
+            $service->expireStale($facility->id);
+
+            $conflict = Booking::where('facility_id', $facility->id)
+                ->where('booking_mode', 'daily')
+                ->whereIn('status', ['PENDING_PAYMENT', 'CONFIRMED'])
+                ->whereDate('booking_date', '<=', $endDate->toDateString())
+                ->whereDate('booking_end_date', '>=', $startDate->toDateString())
+                ->where(fn ($q) => $q->where('status', 'CONFIRMED')
+                    ->orWhere(fn ($q) => $q->where('status', 'PENDING_PAYMENT')->where('expires_at', '>', now())))
+                ->exists();
+
+            $days = $startDate->diffInDays($endDate) + 1;
+
+            return response()->json([
+                'available' => ! $conflict,
+                'days' => $days,
+                'price_per_day' => $facility->booking_price_per_day,
+                'total' => $facility->booking_price_per_day ? (int) $facility->booking_price_per_day * $days : null,
+            ]);
+        }
+
         $minimumMinutes = max(30, (int) $facility->booking_min_hours * 60);
 
         $data = $request->validate([
@@ -72,6 +114,7 @@ class BookingController extends Controller
         $service->expireStale($facility->id);
 
         $conflict = Booking::where('facility_id', $facility->id)
+            ->where('booking_mode', 'hourly')
             ->whereDate('booking_date', $data['booking_date'])
             ->whereIn('status', ['PENDING_PAYMENT', 'CONFIRMED'])
             ->where('start_time', '<', $end)
@@ -94,14 +137,24 @@ class BookingController extends Controller
     {
         abort_unless($facility->published && $facility->booking_enabled, 404);
 
-        $minimumMinutes = max(30, (int) $facility->booking_min_hours * 60);
+        $mode = $facility->booking_mode ?: 'hourly';
 
-        $data = $request->validate([
-            'customer_phone' => ['required', 'string', 'max:40'],
-            'booking_date' => ['required', 'date_format:Y-m-d'],
-            'start_time' => ['required', 'date_format:H:i'],
-            'duration_minutes' => ['required', 'integer', 'min:30', 'max:720', 'multiple_of:30', 'min:' . $minimumMinutes],
-        ]);
+        if ($mode === 'daily') {
+            $data = $request->validate([
+                'customer_phone' => ['required', 'string', 'max:40'],
+                'booking_date' => ['required', 'date_format:Y-m-d'],
+                'booking_end_date' => ['required', 'date_format:Y-m-d', 'after_or_equal:booking_date'],
+            ]);
+        } else {
+            $minimumMinutes = max(30, (int) $facility->booking_min_hours * 60);
+
+            $data = $request->validate([
+                'customer_phone' => ['required', 'string', 'max:40'],
+                'booking_date' => ['required', 'date_format:Y-m-d'],
+                'start_time' => ['required', 'date_format:H:i'],
+                'duration_minutes' => ['required', 'integer', 'min:30', 'max:720', 'multiple_of:30', 'min:' . $minimumMinutes],
+            ]);
+        }
 
         $user = $request->user();
         $data['customer_name'] = $user->name;
@@ -121,7 +174,7 @@ class BookingController extends Controller
                     'id' => 'FAC-' . $facility->id,
                     'price' => $booking->total,
                     'quantity' => 1,
-                    'name' => Str::limit($facility->name . ' ' . $booking->duration_minutes . ' menit', 50),
+                    'name' => Str::limit($facility->name . ' ' . ($booking->booking_mode === 'daily' ? 'booking harian' : $booking->duration_minutes . ' menit'), 50),
                 ]],
                 'customer_details' => [
                     'first_name' => $booking->customer_name,
