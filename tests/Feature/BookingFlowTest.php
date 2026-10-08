@@ -107,3 +107,78 @@ test('daily booking calculates inclusive days and rejects overlapping ranges', f
         'booking_end_date' => now()->addDays(5)->format('Y-m-d'),
     ]))->toThrow(RuntimeException::class);
 });
+
+test('both mode requires an explicit hourly or daily selection', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+    $facility = bookingFacility();
+    $facility->update([
+        'booking_mode' => 'both',
+        'booking_price_per_day' => 350000,
+    ]);
+
+    expect(fn () => app(BookingService::class)->create($facility, [
+        'customer_name' => 'User',
+        'customer_email' => 'user@test.test',
+        'customer_phone' => '62820',
+        'booking_date' => now()->addDays(2)->format('Y-m-d'),
+        'booking_end_date' => now()->addDays(3)->format('Y-m-d'),
+    ]))->toThrow(RuntimeException::class, 'Pilih mode booking per jam atau per hari.');
+});
+
+test('daily booking blocks hourly booking on every covered date', function () {
+    $user = User::factory()->create();
+    $facility = bookingFacility();
+    $facility->update([
+        'booking_mode' => 'both',
+        'booking_price_per_day' => 350000,
+    ]);
+
+    app(BookingService::class)->create($facility, [
+        'booking_mode' => 'daily',
+        'customer_name' => 'Daily User',
+        'customer_email' => 'daily@test.test',
+        'customer_phone' => '62821',
+        'booking_date' => now()->addDays(2)->format('Y-m-d'),
+        'booking_end_date' => now()->addDays(4)->format('Y-m-d'),
+    ]);
+
+    expect(fn () => app(BookingService::class)->create($facility, [
+        'booking_mode' => 'hourly',
+        'customer_name' => 'Hourly User',
+        'customer_email' => 'hourly@test.test',
+        'customer_phone' => '62822',
+        'booking_date' => now()->addDays(3)->format('Y-m-d'),
+        'start_time' => '10:00',
+        'duration_minutes' => 60,
+    ]))->toThrow(RuntimeException::class);
+});
+
+test('hourly booking blocks daily booking on the same date', function () {
+    $user = User::factory()->create();
+    $facility = bookingFacility();
+    $facility->update([
+        'booking_mode' => 'both',
+        'booking_price_per_day' => 350000,
+    ]);
+
+    app(BookingService::class)->create($facility, [
+        'booking_mode' => 'hourly',
+        'customer_name' => 'Hourly User',
+        'customer_email' => 'hourly2@test.test',
+        'customer_phone' => '62823',
+        'booking_date' => now()->addDays(2)->format('Y-m-d'),
+        'start_time' => '10:00',
+        'duration_minutes' => 60,
+    ]);
+
+    expect(fn () => app(BookingService::class)->create($facility, [
+        'booking_mode' => 'daily',
+        'customer_name' => 'Daily User',
+        'customer_email' => 'daily2@test.test',
+        'customer_phone' => '62824',
+        'booking_date' => now()->addDays(2)->format('Y-m-d'),
+        'booking_end_date' => now()->addDays(3)->format('Y-m-d'),
+    ]))->toThrow(RuntimeException::class);
+});
+
