@@ -26,7 +26,6 @@ import {
 } from '@/components/ui/tooltip';
 import { useInitials } from '@/hooks/use-initials';
 import { edit, index, update } from '@/routes/teams';
-import { update as updateMember } from '@/routes/teams/members';
 import type {
     RoleOption,
     Team,
@@ -72,8 +71,9 @@ export default function TeamEdit({
     );
 
     const updateMemberRole = (member: TeamMember, newRole: string) => {
-        router.visit(updateMember([team.slug, member.encrypted_id]), {
-            data: { role: newRole },
+        router.patch(`/settings/teams/${team.slug}/members/${member.encrypted_id}`, {
+            role: newRole,
+        }, {
             preserveScroll: true,
         });
     };
