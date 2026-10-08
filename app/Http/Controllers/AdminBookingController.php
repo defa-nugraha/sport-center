@@ -56,9 +56,9 @@ class AdminBookingController extends Controller
 
         $data = $request->validate([
             'booking_enabled' => ['required', 'boolean'],
-            'booking_mode' => ['required', 'in:hourly,daily'],
-            'booking_price_per_hour' => ['nullable', 'integer', 'min:1', 'required_if:booking_mode,hourly'],
-            'booking_price_per_day' => ['nullable', 'integer', 'min:1', 'required_if:booking_mode,daily'],
+            'booking_mode' => ['required', 'in:hourly,daily,both'],
+            'booking_price_per_hour' => ['nullable', 'integer', 'min:1', 'required_if:booking_mode,hourly', 'required_if:booking_mode,both'],
+            'booking_price_per_day' => ['nullable', 'integer', 'min:1', 'required_if:booking_mode,daily', 'required_if:booking_mode,both'],
             'booking_min_hours' => ['required', 'integer', 'min:1', 'max:12'],
         ]);
 

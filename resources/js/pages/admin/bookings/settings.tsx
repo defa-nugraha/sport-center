@@ -16,6 +16,8 @@ function FacilityBookingSettings({ facility }: { facility: any }) {
         booking_min_hours: String(facility.booking_min_hours ?? 1),
     });
     const daily = form.data.booking_mode === 'daily';
+    const hourly = form.data.booking_mode === 'hourly';
+    const both = form.data.booking_mode === 'both';
 
     const updatePrice = (field: 'booking_price_per_hour' | 'booking_price_per_day', value: string) => {
         const digits = value.replace(/\D/g, '');
@@ -45,19 +47,13 @@ function FacilityBookingSettings({ facility }: { facility: any }) {
                     <select value={form.data.booking_mode} onChange={(event) => form.setData('booking_mode', event.target.value)}>
                         <option value="hourly">Per jam</option>
                         <option value="daily">Per hari</option>
+                        <option value="both">Per jam &amp; per hari</option>
                     </select>
-                    <small>{daily ? 'Pelanggan memilih rentang tanggal.' : 'Pelanggan memilih tanggal, jam mulai, dan durasi.'}</small>
+                    <small>{daily ? 'Pelanggan memilih rentang tanggal.' : hourly ? 'Pelanggan memilih tanggal, jam mulai, dan durasi.' : 'Pelanggan wajib memilih booking per jam atau per hari.'}</small>
                     {form.errors.booking_mode && <span className="booking-field-error">{form.errors.booking_mode}</span>}
                 </label>
 
-                {daily ? (
-                    <label>
-                        Harga per hari
-                        <input type="text" inputMode="numeric" value={form.data.booking_price_per_day} onChange={(event) => updatePrice('booking_price_per_day', event.target.value)} placeholder="Rp 0" />
-                        <small>Harga untuk setiap hari dalam rentang booking.</small>
-                        {form.errors.booking_price_per_day && <span className="booking-field-error">{form.errors.booking_price_per_day}</span>}
-                    </label>
-                ) : (
+                {(hourly || both) && (
                     <>
                         <label>
                             Harga per jam
@@ -72,6 +68,14 @@ function FacilityBookingSettings({ facility }: { facility: any }) {
                             {form.errors.booking_min_hours && <span className="booking-field-error">{form.errors.booking_min_hours}</span>}
                         </label>
                     </>
+                )}
+                {(daily || both) && (
+                    <label>
+                        Harga per hari
+                        <input type="text" inputMode="numeric" value={form.data.booking_price_per_day} onChange={(event) => updatePrice('booking_price_per_day', event.target.value)} placeholder="Rp 0" />
+                        <small>Harga untuk setiap hari dalam rentang booking.</small>
+                        {form.errors.booking_price_per_day && <span className="booking-field-error">{form.errors.booking_price_per_day}</span>}
+                    </label>
                 )}
 
                 <label className="booking-enabled-control">

@@ -21,7 +21,7 @@ class BookingController extends Controller
         return Inertia::render('user/booking', [
             'facilities' => Facility::where('published', true)
                 ->where('booking_enabled', true)
-                ->where(fn ($q) => $q->where('booking_mode', 'daily')->whereNotNull('booking_price_per_day')->orWhere('booking_mode', 'hourly')->whereNotNull('booking_price_per_hour'))
+                ->where(fn ($q) => $q->whereIn('booking_mode', ['hourly', 'daily', 'both']))
                 ->orderBy('name')
                 ->get(['id','name','slug','subtitle','venue_type','address','hero_image','thumbnail','booking_mode','booking_price_per_hour','booking_price_per_day','booking_min_hours']),
         ]);
@@ -43,7 +43,12 @@ class BookingController extends Controller
         abort_unless($facility->published && $facility->booking_enabled, 404);
         $service->expireStale($facility->id);
 
-        if (($facility->booking_mode ?: 'hourly') === 'daily') {
+        $configuredMode = $facility->booking_mode ?: 'hourly';
+        $mode = $configuredMode === 'both'
+            ? $request->validate(['booking_mode' => ['required', 'in:hourly,daily']])['booking_mode']
+            : $configuredMode;
+
+        if ($mode === 'daily') {
             $data = $request->validate([
                 'booking_date' => ['required', 'date_format:Y-m-d'],
                 'booking_end_date' => ['required', 'date_format:Y-m-d', 'after_or_equal:booking_date'],
@@ -57,10 +62,18 @@ class BookingController extends Controller
             }
 
             $conflict = Booking::where('facility_id', $facility->id)
-                ->where('booking_mode', 'daily')
                 ->whereIn('status', ['PENDING_PAYMENT', 'CONFIRMED'])
-                ->whereDate('booking_date', '<=', $end->toDateString())
-                ->whereDate('booking_end_date', '>=', $start->toDateString())
+                ->where(function ($q) use ($start, $end) {
+                    $q->where(function ($q) use ($start, $end) {
+                        $q->where('booking_mode', 'daily')
+                            ->whereDate('booking_date', '<=', $end->toDateString())
+                            ->whereDate('booking_end_date', '>=', $start->toDateString());
+                    })->orWhere(function ($q) use ($start, $end) {
+                        $q->where('booking_mode', 'hourly')
+                            ->whereDate('booking_date', '>=', $start->toDateString())
+                            ->whereDate('booking_date', '<=', $end->toDateString());
+                    });
+                })
                 ->where(fn ($q) => $q->where('status', 'CONFIRMED')->orWhere(fn ($q) => $q->where('status', 'PENDING_PAYMENT')->where('expires_at', '>', now())))
                 ->exists();
 
@@ -85,11 +98,19 @@ class BookingController extends Controller
         $end = $start->copy()->addMinutes((int) $data['duration_minutes'])->format('H:i:s');
 
         $conflict = Booking::where('facility_id', $facility->id)
-            ->where('booking_mode', 'hourly')
-            ->whereDate('booking_date', $data['booking_date'])
             ->whereIn('status', ['PENDING_PAYMENT', 'CONFIRMED'])
-            ->where('start_time', '<', $end)
-            ->where('end_time', '>', $data['start_time'])
+            ->where(function ($q) use ($data, $end) {
+                $q->where(function ($q) use ($data) {
+                    $q->where('booking_mode', 'daily')
+                        ->whereDate('booking_date', '<=', $data['booking_date'])
+                        ->whereDate('booking_end_date', '>=', $data['booking_date']);
+                })->orWhere(function ($q) use ($data, $end) {
+                    $q->where('booking_mode', 'hourly')
+                        ->whereDate('booking_date', $data['booking_date'])
+                        ->where('start_time', '<', $end)
+                        ->where('end_time', '>', $data['start_time']);
+                });
+            })
             ->where(fn ($q) => $q->where('status', 'CONFIRMED')->orWhere(fn ($q) => $q->where('status', 'PENDING_PAYMENT')->where('expires_at', '>', now())))
             ->exists();
 
@@ -106,8 +127,15 @@ class BookingController extends Controller
     {
         abort_unless($facility->published && $facility->booking_enabled, 404);
 
-        $mode = $facility->booking_mode ?: 'hourly';
+        $configuredMode = $facility->booking_mode ?: 'hourly';
+        $mode = $configuredMode;
+        if ($configuredMode === 'both') {
+            $mode = $request->validate(['booking_mode' => ['required', 'in:hourly,daily']])['booking_mode'];
+        }
         $rules = ['customer_phone' => ['required', 'string', 'max:40'], 'booking_date' => ['required', 'date_format:Y-m-d']];
+        if ($configuredMode === 'both') {
+            $rules['booking_mode'] = ['required', 'in:hourly,daily'];
+        }
 
         if ($mode === 'daily') {
             $rules['booking_end_date'] = ['required', 'date_format:Y-m-d', 'after_or_equal:booking_date'];
@@ -125,6 +153,7 @@ class BookingController extends Controller
         $booking = null;
 
         try {
+            $data['booking_mode'] = $mode;
             $booking = $service->create($facility, $data)['booking'];
             $orderId = 'BOOKING-' . $booking->id . '-' . strtoupper(Str::random(8));
             $response = $midtrans->createSnapTransaction([
@@ -133,7 +162,7 @@ class BookingController extends Controller
                     'id' => 'FAC-' . $facility->id,
                     'price' => $booking->total,
                     'quantity' => 1,
-                    'name' => Str::limit($facility->name . ($mode === 'daily' ? ' ' . $booking->booking_date->format('d/m/Y') . '-' . $booking->booking_end_date->format('d/m/Y') : ' ' . $booking->duration_minutes . ' menit'), 50),
+                    'name' => Str::limit($facility->name . ($booking->booking_mode === 'daily' ? ' ' . $booking->booking_date->format('d/m/Y') . '-' . $booking->booking_end_date->format('d/m/Y') : ' ' . $booking->duration_minutes . ' menit'), 50),
                 ]],
                 'customer_details' => ['first_name' => $booking->customer_name, 'email' => $booking->customer_email, 'phone' => $booking->customer_phone],
                 'expiry' => ['unit' => 'minute', 'duration' => (int) config('booking.payment_expiry_minutes')],

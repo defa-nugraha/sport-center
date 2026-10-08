@@ -9869,3 +9869,49 @@ textarea {
     .booking-daily-grid { grid-template-columns: 1fr; }
     .booking-date-range-field { grid-column: auto; }
 }
+
+/* Booking mode selector for venues that support both hourly and daily booking. */
+.booking-mode-choice {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+.booking-mode-choice-label {
+    font-weight: 700;
+    color: var(--text, #1f2937);
+}
+.booking-mode-choice-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+.booking-mode-choice-options button {
+    appearance: none;
+    border: 1px solid #d8dee8;
+    background: #fff;
+    border-radius: 14px;
+    padding: 14px 16px;
+    text-align: left;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+.booking-mode-choice-options button:hover {
+    transform: translateY(-1px);
+}
+.booking-mode-choice-options button.selected {
+    border-color: #111827;
+    box-shadow: 0 0 0 2px rgba(17, 24, 39, .08);
+}
+.booking-mode-choice-options button small {
+    display: block;
+    margin-top: 4px;
+    font-weight: 500;
+    opacity: .7;
+}
+@media (max-width: 640px) {
+    .booking-mode-choice-options {
+        grid-template-columns: 1fr;
+    }
+}
