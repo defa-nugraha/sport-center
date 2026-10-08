@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Concerns\HasEncryptedRouteKey;
 use App\Enums\BookingStatus;
+use App\Enums\BookingStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -16,6 +17,7 @@ class Booking extends Model
     protected $casts = [
         'booking_date' => 'date',
         'booking_end_date' => 'date',
+        'status' => BookingStatus::class,
         'expires_at' => 'datetime',
         'paid_at' => 'datetime',
         'completed_at' => 'datetime',
