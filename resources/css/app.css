@@ -9209,3 +9209,109 @@ select {
         justify-content: center;
     }
 }
+
+
+/* Phase 4: booking UX refinements */
+.booking-progress {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0 0 20px;
+    padding: 0;
+    list-style: none;
+}
+.booking-progress li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 7px;
+    min-height: 36px;
+    padding: 7px 9px;
+    border-bottom: 2px solid var(--line);
+    color: var(--text-muted);
+    font-size: 10px;
+}
+.booking-progress li span {
+    display: grid;
+    width: 22px;
+    height: 22px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--surface-subtle);
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 800;
+}
+.booking-progress li.active {
+    border-color: var(--blue);
+    color: var(--text-primary);
+}
+.booking-progress li.active span {
+    background: var(--blue);
+    color: var(--white);
+}
+.booking-progress strong {
+    font-size: 10px;
+}
+.booking-form-panel input:focus-visible,
+.booking-form-panel [data-radix-select-trigger]:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: var(--focus-ring-offset);
+}
+.booking-section-helper {
+    margin: 4px 0 0;
+    color: var(--text-muted);
+    font-size: 10px;
+}
+.booking-status-hero .button {
+    min-height: 44px;
+    white-space: nowrap;
+}
+.booking-status-hero p {
+    line-height: 1.55;
+}
+.booking-ready {
+    line-height: 1.5;
+}
+@media (max-width: 780px) {
+    .booking-flow {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .booking-flow-summary {
+        display: grid;
+        grid-template-columns: 110px minmax(0, 1fr);
+    }
+    .booking-flow-image {
+        height: 100%;
+        min-height: 130px;
+    }
+    .booking-flow-summary > div:last-child {
+        padding: 14px;
+    }
+    .booking-flow-summary h2 {
+        font-size: 20px;
+    }
+    .booking-step-grid,
+    .booking-status-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .booking-progress {
+        gap: 4px;
+    }
+    .booking-progress li {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+    }
+    .booking-status-hero {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+    .booking-status-hero .button {
+        grid-column: 1 / -1;
+        width: 100%;
+        justify-content: center;
+    }
+    .booking-detail-info > div {
+        align-items: flex-start;
+    }
+}
