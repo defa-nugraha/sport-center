@@ -82,7 +82,6 @@ class BookingController extends Controller
             $service->expireStale($facility->id);
 
             $conflict = Booking::where('facility_id', $facility->id)
-                ->where('booking_mode', 'daily')
                 ->whereIn('status', ['PENDING_PAYMENT', 'CONFIRMED'])
                 ->whereDate('booking_date', '<=', $endDate->toDateString())
                 ->whereDate('booking_end_date', '>=', $startDate->toDateString())
@@ -114,7 +113,6 @@ class BookingController extends Controller
         $service->expireStale($facility->id);
 
         $conflict = Booking::where('facility_id', $facility->id)
-            ->where('booking_mode', 'hourly')
             ->whereDate('booking_date', $data['booking_date'])
             ->whereIn('status', ['PENDING_PAYMENT', 'CONFIRMED'])
             ->where('start_time', '<', $end)
