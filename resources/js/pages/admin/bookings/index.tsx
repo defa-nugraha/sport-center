@@ -129,6 +129,8 @@ export default function Index({
     statuses?: string[];
     filters?: { status?: string };
 }) {
+    const [status, setStatus] = useState(filters.status || 'all');
+
     return (
         <div className="admin-shell">
             <Head title="Kelola booking" />
