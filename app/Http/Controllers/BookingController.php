@@ -48,8 +48,6 @@ class BookingController extends Controller
             ? $request->validate(['booking_mode' => ['required', 'in:hourly,daily']])['booking_mode']
             : $configuredMode;
 
-        if ($configuredMode === 'both') $rules['booking_mode'] = ['required', 'in:hourly,daily'];
-
         if ($mode === 'daily') {
             $data = $request->validate([
                 'booking_date' => ['required', 'date_format:Y-m-d'],
@@ -134,6 +132,9 @@ class BookingController extends Controller
             ? $request->input('booking_mode')
             : $configuredMode;
         $rules = ['customer_phone' => ['required', 'string', 'max:40'], 'booking_date' => ['required', 'date_format:Y-m-d']];
+        if ($configuredMode === 'both') {
+            $rules['booking_mode'] = ['required', 'in:hourly,daily'];
+        }
 
         if ($mode === 'daily') {
             $rules['booking_end_date'] = ['required', 'date_format:Y-m-d', 'after_or_equal:booking_date'];
