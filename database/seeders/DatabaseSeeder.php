@@ -36,12 +36,12 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@ggm.test',
             'password' => 'password',
         ]);
-        $permissions = collect(['kelola fasilitas', 'kelola olahraga', 'kelola acara', 'kelola artikel', 'kelola taksonomi artikel', 'kelola pengaturan', 'kelola halaman', 'kelola ulasan'])
+        $permissions = collect(['kelola fasilitas', 'kelola booking', 'kelola olahraga', 'kelola acara', 'kelola artikel', 'kelola taksonomi artikel', 'kelola pengaturan', 'kelola halaman', 'kelola ulasan'])
             ->map(fn ($name) => Permission::firstOrCreate(['name' => $name, 'guard_name' => 'web']));
         $adminRole = Role::firstOrCreate(['name' => 'administrator', 'guard_name' => 'web']);
         $adminRole->syncPermissions($permissions);
         $administrator->assignRole($adminRole);
-        foreach (['pengelola-fasilitas' => 'kelola fasilitas', 'pengelola-olahraga' => 'kelola olahraga', 'pengelola-acara' => 'kelola acara', 'editor-artikel' => 'kelola artikel', 'pengelola-taksonomi' => 'kelola taksonomi artikel', 'pengelola-pengaturan' => 'kelola pengaturan', 'editor-halaman' => 'kelola halaman', 'pengelola-ulasan' => 'kelola ulasan'] as $roleName => $permissionName) {
+        foreach (['pengelola-fasilitas' => 'kelola fasilitas', 'pengelola-booking' => 'kelola booking', 'pengelola-olahraga' => 'kelola olahraga', 'pengelola-acara' => 'kelola acara', 'editor-artikel' => 'kelola artikel', 'pengelola-taksonomi' => 'kelola taksonomi artikel', 'pengelola-pengaturan' => 'kelola pengaturan', 'editor-halaman' => 'kelola halaman', 'pengelola-ulasan' => 'kelola ulasan'] as $roleName => $permissionName) {
             Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web'])->syncPermissions([$permissionName]);
         }
         $region = Region::create(['name' => 'Majalengka', 'slug' => 'majalengka', 'description' => 'Pusat aktivitas olahraga masyarakat Majalengka.', 'image' => '/assets/ggm/Peresmian 1.png']);
