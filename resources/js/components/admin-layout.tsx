@@ -57,7 +57,8 @@ export function AdminSidebar({
     const [pagesOpen, setPagesOpen] = useState(active === 'pages');
     const [bookingOpen, setBookingOpen] = useState(active === 'bookings');
     const [mobileOpen, setMobileOpen] = useState(false);
-    const { auth, url } = usePage().props as any;
+    const { auth } = usePage().props as any;
+    const { url } = usePage();
     const permissions: string[] = auth?.permissions || [];
     const visibleContentItems = contentItems.filter((item) => permissions.includes(item.permission));
 
