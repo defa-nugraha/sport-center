@@ -102,7 +102,10 @@ function DateRangePicker({ start, end, onChange }: { start: string; end: string;
 }
 
 export default function Booking({ facility, user }: { facility: any; user: { name: string; email: string } }) {
-    const daily = (facility.booking_mode || 'hourly') === 'daily';
+    const supportsBothModes = facility.booking_mode === 'both';
+    const [selectedMode, setSelectedMode] = useState<'hourly' | 'daily' | ''>(supportsBothModes ? '' : ((facility.booking_mode || 'hourly') as 'hourly' | 'daily'));
+    const daily = selectedMode === 'daily';
+    const hourly = selectedMode === 'hourly';
     const minimumHours = Math.max(1, Number(facility.booking_min_hours || 1));
     const [available, setAvailable] = useState<boolean | null>(null);
     const [checking, setChecking] = useState(false);
@@ -113,6 +116,7 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
         booking_end_date: '',
         start_time: '',
         duration_minutes: minimumHours * 60,
+        booking_mode: selectedMode,
     });
 
     const durationOptions = useMemo(() => {
@@ -122,6 +126,11 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
     }, [minimumHours]);
 
     const check = async () => {
+        if (!selectedMode) {
+            setAvailabilityMessage('Pilih mode booking per jam atau per hari terlebih dahulu.');
+            setAvailable(false);
+            return;
+        }
         if (daily && (!form.data.booking_date || !form.data.booking_end_date)) {
             setAvailabilityMessage('Pilih tanggal mulai dan tanggal akhir terlebih dahulu.');
             setAvailable(false);
@@ -136,7 +145,7 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
         setChecking(true);
         setAvailabilityMessage('');
         try {
-            const params = new URLSearchParams({ booking_date: form.data.booking_date });
+            const params = new URLSearchParams({ booking_date: form.data.booking_date, booking_mode: selectedMode });
             if (daily) params.set('booking_end_date', form.data.booking_end_date);
             else {
                 params.set('start_time', form.data.start_time);
@@ -159,6 +168,7 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
 
     const submit = (event: FormEvent) => {
         event.preventDefault();
+        if (!selectedMode) return;
         form.post('/booking/' + facility.slug);
     };
 
@@ -168,7 +178,7 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
     };
 
     return (
-        <UserShell active="booking" title={'Booking ' + facility.name} description="Pilih jadwal yang sesuai, cek ketersediaan, lalu lanjutkan pembayaran.">
+        <UserShell active="booking" title={'Booking ' + facility.name} description={supportsBothModes && !selectedMode ? "Pilih mode booking terlebih dahulu, lalu tentukan jadwal yang sesuai." : "Pilih jadwal yang sesuai, cek ketersediaan, lalu lanjutkan pembayaran."}>
             <section className="booking-flow">
                 <div className="booking-flow-summary">
                     <div className="booking-flow-image"><img src={facility.hero_image || facility.thumbnail || '/assets/ggm/Lapang Serba Guna (Basket)2 1.png'} alt={facility.name} /></div>
@@ -179,6 +189,16 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
                     <ol className="booking-progress" aria-label="Tahapan booking"><li className="active"><span>1</span><strong>Jadwal</strong></li><li className={available === true ? 'active' : ''}><span>2</span><strong>Ketersediaan</strong></li><li><span>3</span><strong>Pembayaran</strong></li></ol>
                     <div className="user-panel-head"><div><span className="eyebrow"><i /> Detail pemesanan</span><h2>{daily ? 'Pilih rentang tanggal' : 'Pilih jadwal'}</h2><p>{daily ? 'Pilih satu atau beberapa hari. Jam tidak diperlukan untuk booking per hari.' : `Booking minimum ${minimumHours} jam. Harga dihitung berdasarkan durasi.`}</p></div><CalendarDays /></div>
 
+                    {supportsBothModes && (
+                        <div className="booking-mode-choice" role="group" aria-label="Pilih mode booking">
+                            <span className="booking-mode-choice-label">Mode booking</span>
+                            <div className="booking-mode-choice-options">
+                                <button type="button" className={selectedMode === 'hourly' ? 'selected' : ''} onClick={() => { setSelectedMode('hourly'); form.setData('booking_mode', 'hourly'); resetAvailability(); }}>Per jam <small>Pilih jam &amp; durasi</small></button>
+                                <button type="button" className={selectedMode === 'daily' ? 'selected' : ''} onClick={() => { setSelectedMode('daily'); form.setData('booking_mode', 'daily'); resetAvailability(); }}>Per hari <small>Pilih rentang tanggal</small></button>
+                            </div>
+                        </div>
+                    )}
+
                     <div className={daily ? 'booking-step-grid booking-daily-grid' : 'booking-step-grid'}>
                         <label className={daily ? 'booking-date-range-field' : ''}>
                             {daily ? 'Rentang tanggal' : 'Tanggal'}
@@ -186,8 +206,8 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
                             {daily && <small>Pilih tanggal mulai lalu tanggal selesai.</small>}
                         </label>
 
-                        {!daily && <label htmlFor="booking-start-time">Jam mulai<input id="booking-start-time" required type="time" value={form.data.start_time} onChange={(e) => { form.setData('start_time', e.target.value); resetAvailability(); }} /></label>}
-                        {!daily && <label htmlFor="booking-duration">Durasi<Select value={String(form.data.duration_minutes)} onValueChange={(value) => { form.setData('duration_minutes', Number(value)); resetAvailability(); }}><SelectTrigger id="booking-duration" className="user-select-trigger" aria-label="Durasi booking"><SelectValue placeholder="Pilih durasi" /></SelectTrigger><SelectContent>{durationOptions.map((minutes) => <SelectItem key={minutes} value={String(minutes)}>{minutes / 60} jam</SelectItem>)}</SelectContent></Select></label>}
+                        {hourly && <label htmlFor="booking-start-time">Jam mulai<input id="booking-start-time" required type="time" value={form.data.start_time} onChange={(e) => { form.setData('start_time', e.target.value); resetAvailability(); }} /></label>}
+                        {hourly && <label htmlFor="booking-duration">Durasi<Select value={String(form.data.duration_minutes)} onValueChange={(value) => { form.setData('duration_minutes', Number(value)); resetAvailability(); }}><SelectTrigger id="booking-duration" className="user-select-trigger" aria-label="Durasi booking"><SelectValue placeholder="Pilih durasi" /></SelectTrigger><SelectContent>{durationOptions.map((minutes) => <SelectItem key={minutes} value={String(minutes)}>{minutes / 60} jam</SelectItem>)}</SelectContent></Select></label>}
                         <label htmlFor="customer-phone">Nomor WhatsApp<input id="customer-phone" required placeholder="08xxxxxxxxxx" value={form.data.customer_phone} onChange={(e) => form.setData('customer_phone', e.target.value)} /><small>Digunakan untuk notifikasi booking.</small></label>
                     </div>
 
@@ -195,7 +215,7 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
                     <div className="booking-check-row"><button type="button" className="button" onClick={check} disabled={checking || form.processing}>{checking ? 'Memeriksa...' : 'Cek ketersediaan'}</button>{available === true && <span role="status" className="booking-availability success"><CheckCircle2 /> {availabilityMessage}</span>}{available === false && availabilityMessage && <span role="alert" className="booking-availability error">{availabilityMessage}</span>}</div>
                     {available === true && <div className="booking-ready" role="status"><Info /><span>{daily ? `Rp ${Number(facility.booking_price_per_day || 0).toLocaleString('id-ID')} × ${Math.max(1, Math.round((parseDate(form.data.booking_end_date).getTime() - parseDate(form.data.booking_date).getTime()) / 86400000) + 1)} hari` : availabilityMessage}</span></div>}
                     {bookingError && <p className="form-error">{bookingError}</p>}
-                    <button type="submit" disabled={form.processing || available !== true} className="button booking-submit"><CalendarCheck /> {form.processing ? 'Membuat booking...' : 'Buat booking & lanjutkan pembayaran'}</button>
+                    <button type="submit" disabled={form.processing || available !== true || !selectedMode} className="button booking-submit"><CalendarCheck /> {form.processing ? 'Membuat booking...' : 'Buat booking & lanjutkan pembayaran'}</button>
                 </form>
             </section>
         </UserShell>
