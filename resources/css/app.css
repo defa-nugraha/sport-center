@@ -3,6 +3,7 @@
 @import 'tw-animate-css';
 @source '../views';
 :root {
+    /* Brand / semantic colors */
     --ink: #14243f;
     --deep: #101c33;
     --lime: #e43d4e;
@@ -12,6 +13,53 @@
     --line: #dce5ef;
     --muted: #66758a;
     --white: #fff;
+
+    /* UI semantic tokens */
+    --text-primary: var(--ink);
+    --text-secondary: #4c5a53;
+    --text-muted: var(--muted);
+    --surface: var(--white);
+    --surface-subtle: #f8fafc;
+    --surface-interactive: #eaf4ff;
+    --border-default: var(--line);
+    --border-strong: #cfdbe7;
+    --focus-ring: var(--blue);
+    --focus-ring-offset: 3px;
+    --success: #168653;
+    --success-surface: #eaf7ef;
+    --warning: #9a6200;
+    --warning-surface: #fff4d8;
+    --danger: #b4233b;
+    --danger-surface: #fee8eb;
+
+    /* Layout / spacing scale */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+    --space-12: 48px;
+    --space-16: 64px;
+    --space-20: 80px;
+
+    /* Radius scale */
+    --radius-sm: 5px;
+    --radius-md: 7px;
+    --radius-lg: 10px;
+    --radius-pill: 999px;
+
+    /* Typography */
+    --font-family-base: Arial, Helvetica, sans-serif;
+    --text-xs: 10px;
+    --text-sm: 12px;
+    --text-base: 14px;
+    --text-lg: 16px;
+    --text-xl: 20px;
+    --text-2xl: 28px;
+    --text-display: clamp(42px, 6vw, 82px);
 }
 
 /* Review moderation */
@@ -404,8 +452,8 @@ body {
     margin: 0;
     background: var(--paper);
     color: var(--ink);
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 14px;
+    font-family: var(--font-family-base);
+    font-size: var(--text-base);
 }
 a {
     color: inherit;
@@ -419,6 +467,33 @@ select {
 }
 button {
     cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: var(--focus-ring-offset);
+}
+
+input:disabled,
+textarea:disabled,
+select:disabled,
+button:disabled {
+    cursor: not-allowed;
+}
+
+input[aria-invalid='true'],
+textarea[aria-invalid='true'],
+select[aria-invalid='true'] {
+    border-color: var(--danger);
+}
+
+::selection {
+    background: var(--blue);
+    color: var(--white);
 }
 h1,
 h2,
