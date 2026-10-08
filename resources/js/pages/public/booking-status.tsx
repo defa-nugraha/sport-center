@@ -1,7 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import { CalendarCheck, CalendarDays, CheckCircle2, CreditCard, FileText } from 'lucide-react';
 import { UserShell } from '@/components/user-layout';
-import { BookingStatusBadge } from '@/components/booking-status-badge';
+import { BookingStatusBadge, bookingStatusLabels } from '@/components/booking-status-badge';
 
 export default function BookingStatus({ booking }: { booking: any }) {
     const flash = (usePage().props as any).flash ?? {};
@@ -11,7 +11,7 @@ export default function BookingStatus({ booking }: { booking: any }) {
         <UserShell active="bookings" title="Detail Booking" description="Pantau status pemesanan dan pembayaran venue kamu.">
             <section className="booking-status-hero">
                 <div className="booking-status-icon">{booking.status === 'CONFIRMED' ? <CheckCircle2 /> : <CalendarCheck />}</div>
-                <div><span className="eyebrow"><i /> {booking.booking_number}</span><BookingStatusBadge status={booking.status} className="booking-status-hero-badge" /><p>{booking.status === 'PENDING_PAYMENT' ? 'Selesaikan pembayaran sebelum batas waktu agar slot tetap tersimpan.' : booking.status === 'CONFIRMED' ? 'Pembayaran berhasil dan booking kamu sudah dikonfirmasi.' : 'Status booking ini perlu diperhatikan sebelum melanjutkan.'}</p></div>
+                <div><span className="eyebrow"><i /> {booking.booking_number}</span><BookingStatusBadge status={booking.status} className="booking-status-hero-badge" /><h2>{bookingStatusLabels[booking.status] || booking.status}</h2><p>{booking.status === 'PENDING_PAYMENT' ? 'Selesaikan pembayaran sebelum batas waktu agar slot tetap tersimpan.' : booking.status === 'CONFIRMED' ? 'Pembayaran berhasil dan booking kamu sudah dikonfirmasi.' : 'Status booking ini perlu diperhatikan sebelum melanjutkan.'}</p></div>
                 {booking.status === 'PENDING_PAYMENT' && paymentUrl && <a className="button" href={paymentUrl}>Lanjutkan pembayaran</a>}
             </section>
             <div className="booking-status-grid">
