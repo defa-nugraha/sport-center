@@ -92,8 +92,6 @@ export function UserShell({
                         </div>
                     </main>
                     <footer className="footer user-footer">
-                        <div className="footer-about"><Link href="/" className="footer-logo"><img src={asset('/assets/ilustrasi/logo-ggm.png')} alt="GGM Majalengka" /></Link><p>Temukan olahraga favoritmu dan ruang terbaik untuk bergerak.</p></div>
-                        <div className="footer-links"><strong>Area pelanggan</strong><Link href="/dashboard">Dashboard</Link><Link href="/booking">Booking</Link><Link href="/bookings">Riwayat</Link><Link href="/profile">Profil</Link></div>
                         <small>&copy; 2026 GGM Majalengka. Seluruh hak cipta dilindungi.</small>
                     </footer>
                 </div>
