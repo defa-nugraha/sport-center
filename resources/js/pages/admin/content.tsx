@@ -278,7 +278,7 @@ export default function Content({
         setModalOpen(false);
         setEditing(null);
     };
-    const requestImageDelete = (image: { id?: number }) => {
+    const requestImageDelete = (image: { id?: number; encrypted_id?: string }) => {
         if (!editing || !image.id) return;
         const segment = tab === 'sports' ? 'sports' : 'events';
         setDeleteTarget({
