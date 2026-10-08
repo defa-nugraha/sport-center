@@ -9315,3 +9315,43 @@ select {
         align-items: flex-start;
     }
 }
+
+
+/* Final UI/UX polish */
+button,
+a,
+input,
+select,
+textarea {
+    -webkit-tap-highlight-color: transparent;
+}
+button,
+a {
+    touch-action: manipulation;
+}
+input,
+select,
+textarea {
+    max-width: 100%;
+}
+:focus-visible {
+    scroll-margin: 120px;
+}
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}
+@media (max-width: 700px) {
+    .button,
+    .text-button,
+    .header-login,
+    .header-contact {
+        min-height: 44px;
+    }
+}
