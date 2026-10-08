@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Concerns\HasEncryptedRouteKey;
+
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BlogPost extends Model
 {
+    use HasEncryptedRouteKey;
     use SoftDeletes;
 
     protected $guarded = [];

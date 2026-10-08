@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Concerns\HasEncryptedRouteKey;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 class Event extends Model
 {
+    use HasEncryptedRouteKey;
     protected $guarded = [];
 
     protected $appends = ['computed_status'];

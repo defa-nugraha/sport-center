@@ -16,7 +16,7 @@ export default function Dashboard({ user, stats, bookings }: any) {
             </section>
             <section className="user-panel">
                 <div className="user-panel-head"><div><span className="eyebrow"><i /> Aktivitas terbaru</span><h2>Booking terakhir</h2></div><Link href="/bookings" className="text-link">Lihat semua <ChevronRight /></Link></div>
-                {bookings.length ? <div className="user-booking-list">{bookings.map((booking: any) => <Link href={'/booking/' + booking.id + '/status'} className="user-booking-row" key={booking.id}><div className="user-booking-icon"><CalendarDays /></div><div><strong>{booking.facility?.name}</strong><span>{booking.booking_date} · {booking.start_time?.slice(0, 5)} - {booking.end_time?.slice(0, 5)}</span></div><BookingStatusBadge status={booking.status} /></Link>)}</div> : <div className="user-empty"><UserRound /><strong>Belum ada booking</strong><p>Booking pertama kamu akan muncul di sini.</p></div>}
+                {bookings.length ? <div className="user-booking-list">{bookings.map((booking: any) => <Link href={'/booking/' + booking.encrypted_id + '/status'} className="user-booking-row" key={booking.id}><div className="user-booking-icon"><CalendarDays /></div><div><strong>{booking.facility?.name}</strong><span>{booking.booking_date} · {booking.start_time?.slice(0, 5)} - {booking.end_time?.slice(0, 5)}</span></div><BookingStatusBadge status={booking.status} /></Link>)}</div> : <div className="user-empty"><UserRound /><strong>Belum ada booking</strong><p>Booking pertama kamu akan muncul di sini.</p></div>}
             </section>
         </UserShell>
     );

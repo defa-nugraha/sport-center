@@ -87,11 +87,11 @@ export default function Index({
                                     </thead>
                                     <tbody>
                                         {bookings.data.map((booking: any) => (
-                                            <tr key={booking.id}>
+                                            <tr key={booking.encrypted_id}>
                                                 <td>
                                                     <Link
                                                         className="booking-number"
-                                                        href={`/admin/bookings/${booking.id}`}
+                                                        href={`/admin/bookings/${booking.encrypted_id}`}
                                                     >
                                                         {booking.booking_number}
                                                     </Link>

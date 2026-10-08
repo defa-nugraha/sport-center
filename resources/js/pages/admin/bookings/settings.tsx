@@ -24,7 +24,7 @@ function FacilityBookingSettings({ facility }: { facility: any }) {
             className="booking-settings-card"
             onSubmit={(event) => {
                 event.preventDefault();
-                form.put(`/admin/bookings/facilities/${facility.id}`, {
+                form.put(`/admin/bookings/facilities/${facility.encrypted_id}`, {
                     preserveScroll: true,
                 });
             }}
@@ -53,10 +53,10 @@ function FacilityBookingSettings({ facility }: { facility: any }) {
                             value={form.data.booking_price_per_hour}
                             onChange={(event) => updatePrice(event.target.value)}
                             placeholder="Rp 0"
-                            aria-describedby={`price-help-${facility.id}`}
+                            aria-describedby={`price-help-${facility.encrypted_id}`}
                         />
                     </div>
-                    <small id={`price-help-${facility.id}`}>Contoh: Rp 75.000</small>
+                    <small id={`price-help-${facility.encrypted_id}`}>Contoh: Rp 75.000</small>
                     {form.errors.booking_price_per_hour && (
                         <span className="booking-field-error">{form.errors.booking_price_per_hour}</span>
                     )}
@@ -134,7 +134,7 @@ export default function Settings({ facilities }: { facilities: any[] }) {
                     {facilities.length > 0 ? (
                         <div className="booking-settings-list">
                             {facilities.map((facility) => (
-                                <FacilityBookingSettings key={facility.id} facility={facility} />
+                                <FacilityBookingSettings key={facility.encrypted_id} facility={facility} />
                             ))}
                         </div>
                     ) : (

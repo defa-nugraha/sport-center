@@ -87,12 +87,12 @@ export default function FacilityEditor({ facility, regions, sports, sectionDefau
         };
         if (facility) {
             form.transform((data) => ({ ...data, _method: 'put' }));
-            form.post(`/admin/facilities/${facility.id}`, options);
+            form.post(`/admin/facilities/${facility.encrypted_id}`, options);
         } else form.post('/admin/facilities', options);
     };
     const removeGalleryImage = () => {
         if (!imageDelete || !facility) return;
-        router.delete(`/admin/facilities/${facility.id}/images/${imageDelete.id}`, {
+        router.delete(`/admin/facilities/${facility.encrypted_id}/images/${imageDelete.encrypted_id}`, {
             preserveScroll: true,
             onSuccess: () => setImageDelete(null),
             onError: (errors) => setStatus({ type: 'error', message: Object.values(errors)[0] || 'Gambar tidak dapat dihapus.' }),

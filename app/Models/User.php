@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Concerns\HasEncryptedRouteKey;
+
 use App\Concerns\HasTeams;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -37,6 +39,7 @@ use Spatie\Permission\Traits\HasRoles;
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser
 {
+    use HasEncryptedRouteKey;
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, HasTeams, Notifiable, PasskeyAuthenticatable {
         HasTeams::teams insteadof HasRoles;

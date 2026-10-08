@@ -53,7 +53,7 @@ class AdminTestimonialController extends Controller
         $data['approved'] = $data['status'] === 'approved';
         $testimonial = Testimonial::create($data);
 
-        return redirect()->route('admin.reviews.edit', $testimonial)->with('success', 'Ulasan berhasil ditambahkan.');
+        return redirect()->route('admin.reviews.edit', ['testimonial' => $testimonial->encrypted_id])->with('success', 'Ulasan berhasil ditambahkan.');
     }
 
     public function update(Request $request, Testimonial $testimonial)

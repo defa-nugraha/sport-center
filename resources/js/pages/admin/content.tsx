@@ -178,7 +178,7 @@ export default function Content({
     };
     const openEdit = (item: any) => {
         if (tab === 'facilities') {
-            router.visit(`/admin/facilities/${item.id}/edit`);
+            router.visit(`/admin/facilities/${item.encrypted_id}/edit`);
             return;
         }
         setEditing(item);
@@ -226,7 +226,7 @@ export default function Content({
         };
         if (editing) {
             currentForm.transform((data: any) => ({ ...data, _method: 'put' }));
-            currentForm.post(`/admin/${segment}/${editing.id}`, options);
+            currentForm.post(`/admin/${segment}/${editing.encrypted_id}`, options);
         } else currentForm.post(`/admin/${segment}`, options);
     };
     const remove = () => {
@@ -258,7 +258,7 @@ export default function Content({
         const form: any = taxonomy === 'category' ? category : tag;
         const plural = taxonomy === 'category' ? 'categories' : 'tags';
         const url = editingTaxonomy
-            ? `/admin/blog/${plural}/${editingTaxonomy.id}`
+            ? `/admin/blog/${plural}/${editingTaxonomy.encrypted_id}`
             : `/admin/blog/${plural}`;
         const options = {
             preserveScroll: true,
@@ -278,11 +278,11 @@ export default function Content({
         setModalOpen(false);
         setEditing(null);
     };
-    const requestImageDelete = (image: { id?: number }) => {
+    const requestImageDelete = (image: { id?: number; encrypted_id?: string }) => {
         if (!editing || !image.id) return;
         const segment = tab === 'sports' ? 'sports' : 'events';
         setDeleteTarget({
-            url: `/admin/${segment}/${editing.id}/images/${image.id}`,
+            url: `/admin/${segment}/${editing.encrypted_id}/images/${image.encrypted_id}`,
             name: `Gambar ${editing.name || editing.title}`,
         });
     };
@@ -328,10 +328,10 @@ export default function Content({
                                 image={x.thumbnail || x.hero_image}
                                 title={x.name}
                                 meta={x.subtitle || x.venue_type}
-                                onEdit={() => router.visit(`/admin/facilities/${x.id}/edit`)}
+                                onEdit={() => router.visit(`/admin/facilities/${x.encrypted_id}/edit`)}
                                 onDelete={() =>
                                     setDeleteTarget({
-                                        url: `/admin/facilities/${x.id}`,
+                                        url: `/admin/facilities/${x.encrypted_id}`,
                                         name: x.name,
                                     })
                                 }
@@ -364,7 +364,7 @@ export default function Content({
                                 onEdit={() => openEdit(x)}
                                 onDelete={() =>
                                     setDeleteTarget({
-                                        url: `/admin/sports/${x.id}`,
+                                        url: `/admin/sports/${x.encrypted_id}`,
                                         name: x.name,
                                     })
                                 }
@@ -395,7 +395,7 @@ export default function Content({
                                 onEdit={() => openEdit(x)}
                                 onDelete={() =>
                                     setDeleteTarget({
-                                        url: `/admin/events/${x.id}`,
+                                        url: `/admin/events/${x.encrypted_id}`,
                                         name: x.title,
                                     })
                                 }
@@ -427,12 +427,12 @@ export default function Content({
                                         meta={`${x.category?.name || 'Tanpa kategori'} · ${x.status === 'published' ? 'Terbit' : 'Draf'}`}
                                         onEdit={() =>
                                             router.visit(
-                                                `/admin/blog/posts/${x.id}/edit`,
+                                                `/admin/blog/posts/${x.encrypted_id}/edit`,
                                             )
                                         }
                                         onDelete={() =>
                                             setDeleteTarget({
-                                                url: `/admin/blog/posts/${x.id}`,
+                                                url: `/admin/blog/posts/${x.encrypted_id}`,
                                                 name: x.title,
                                             })
                                         }
@@ -472,7 +472,7 @@ export default function Content({
                                             }
                                             onDelete={() =>
                                                 setDeleteTarget({
-                                                    url: `/admin/blog/categories/${x.id}`,
+                                                    url: `/admin/blog/categories/${x.encrypted_id}`,
                                                     name: x.name,
                                                 })
                                             }
@@ -499,7 +499,7 @@ export default function Content({
                                             }
                                             onDelete={() =>
                                                 setDeleteTarget({
-                                                    url: `/admin/blog/tags/${x.id}`,
+                                                    url: `/admin/blog/tags/${x.encrypted_id}`,
                                                     name: x.name,
                                                 })
                                             }

@@ -87,7 +87,7 @@ export function UserShell({
                     </header>
                     <main className="user-main">
                         <div className="user-container">
-                            {description && <div className="user-page-intro"><span className="eyebrow"><i /> Area pelanggan</span><h1>{title}</h1><p>{description}</p></div>}
+                            {description && <div className="user-page-intro"><span className="eyebrow"><i /> Area pelanggan</span><p>{description}</p></div>}
                             {children}
                         </div>
                     </main>

@@ -9317,6 +9317,32 @@ select {
 }
 
 
+
+/* User area cleanup */
+.user-page-intro h1 {
+    display: none;
+}
+
+.booking-status-back {
+    display: flex;
+    margin-bottom: var(--space-4);
+}
+
+.booking-status-back .button {
+    min-height: 44px;
+}
+
+.user-footer {
+    display: flex;
+    justify-content: center;
+    padding-block: var(--space-5);
+}
+
+.user-footer small {
+    margin: 0;
+    text-align: center;
+}
+
 /* Final UI/UX polish */
 button,
 a,

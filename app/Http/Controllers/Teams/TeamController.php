@@ -63,6 +63,7 @@ class TeamController extends Controller
 
                 return [
                     'id' => $member->id,
+                    'encrypted_id' => $member->encrypted_id,
                     'name' => $member->name,
                     'email' => $member->email,
                     'avatar' => $member->avatar ?? null,
