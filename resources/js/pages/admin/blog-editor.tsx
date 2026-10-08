@@ -59,7 +59,7 @@ export default function BlogEditor({ post, categories, tags }: any) {
         };
         if (post) {
             form.transform((data) => ({ ...data, _method: 'put' }));
-            form.post(`/admin/blog/posts/${post.id}`, options);
+            form.post(`/admin/blog/posts/${post.encrypted_id}`, options);
         } else form.post('/admin/blog/posts', options);
     };
     const removeImage = () => {
@@ -144,9 +144,9 @@ export default function BlogEditor({ post, categories, tags }: any) {
                             }
                             existing={post?.images || []}
                             onDeleteExisting={(image) =>
-                                image.id &&
+                                image.encrypted_id &&
                                 setImageDelete({
-                                    url: `/admin/blog/posts/${post.id}/images/${image.id}`,
+                                    url: `/admin/blog/posts/${post.encrypted_id}/images/${image.encrypted_id}`,
                                     name: `Gambar ${post.title}`,
                                 })
                             }
