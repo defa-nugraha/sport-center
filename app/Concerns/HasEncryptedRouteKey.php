@@ -14,7 +14,9 @@ trait HasEncryptedRouteKey
 
     public function getEncryptedIdAttribute(): string
     {
-        return rawurlencode(Crypt::encryptString((string) $this->getKey()));
+        $encrypted = Crypt::encryptString((string) $this->getKey());
+
+        return rtrim(strtr(base64_encode($encrypted), '+/', '-_'), '=');
     }
 
     public function resolveRouteBinding($value, $field = null)
@@ -24,7 +26,9 @@ trait HasEncryptedRouteKey
         }
 
         try {
-            $id = Crypt::decryptString(rawurldecode((string) $value));
+            $encoded = strtr((string) $value, '-_', '+/');
+            $encoded .= str_repeat('=', (4 - strlen($encoded) % 4) % 4);
+            $id = Crypt::decryptString(base64_decode($encoded, true));
         } catch (Throwable) {
             return null;
         }
