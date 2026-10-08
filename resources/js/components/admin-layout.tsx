@@ -102,7 +102,7 @@ export function AdminSidebar({
                         <Link
                             key={item.key}
                             href={item.href}
-                            className={`admin-link ${active === item.key ? 'active' : ''}`}
+                            className={`admin-link ${active === item.key ? 'active' : ''}`} aria-current={active === item.key ? 'page' : undefined}
                             onClick={() => setMobileOpen(false)}
                         >
                             <Icon aria-hidden="true" />

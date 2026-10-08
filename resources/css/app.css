@@ -558,7 +558,7 @@ p {
     height: 100%;
     object-fit: contain;
 }
-.nav {
+ .nav {
     display: flex;
     align-items: center;
     gap: 26px;
@@ -1383,13 +1383,27 @@ select {
     margin-bottom: 8px;
 }
 .admin-link {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
     border: 0;
     background: transparent;
     text-align: left;
     color: #b9cbc4;
-    padding: 11px 12px;
-    border-radius: 5px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
     font-size: 13px;
+}
+.admin-link svg {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+}
+.admin-link:focus-visible {
+    background: #185647;
+    color: #fff;
 }
 .admin-link.active,
 .admin-link:hover {
@@ -1545,29 +1559,62 @@ select {
 }
 @media (max-width: 800px) {
     .site-header {
+        min-height: 64px;
         padding: 0 18px;
     }
+    .header-brand {
+        width: 150px;
+        height: 52px;
+    }
     .mobile-toggle {
-        display: block;
+        display: grid;
+        width: 44px;
+        height: 44px;
+        place-items: center;
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-md);
+        background: var(--surface);
+    }
+    .mobile-toggle svg {
+        width: 20px;
+        height: 20px;
     }
     .nav {
         display: none;
         position: absolute;
         top: 64px;
-        left: 0;
-        right: 0;
-        background: #fff;
-        padding: 14px 20px;
+        left: 12px;
+        right: 12px;
+        padding: 10px;
         flex-direction: column;
         align-items: stretch;
-        box-shadow: 0 10px 20px #0001;
+        gap: 2px;
+        border: 1px solid var(--border-default);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        box-shadow: 0 14px 36px rgb(8 22 40 / 14%);
     }
     .nav.open {
         display: flex;
     }
+    .nav a {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        border-radius: var(--radius-sm);
+    }
     .nav a.active {
-        padding: 10px 0;
+        padding: 0 12px;
         border: 0;
+        background: var(--surface-interactive);
+        color: var(--blue);
+    }
+    .nav .header-login,
+    .nav .header-contact {
+        width: 100%;
+        justify-content: center;
+        margin-top: 4px;
     }
     .home-hero,
     .detail-hero,

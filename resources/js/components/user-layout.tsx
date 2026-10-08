@@ -62,7 +62,7 @@ export function UserShell({
                         {menuItems.map((item) => {
                             const Icon = item.icon;
                             return (
-                                <Link key={item.key} href={item.href} className={'user-link ' + (active === item.key ? 'active' : '')} onClick={() => setMobileOpen(false)}>
+                                <Link key={item.key} href={item.href} className={'user-link ' + (active === item.key ? 'active' : '')} aria-current={active === item.key ? 'page' : undefined} onClick={() => setMobileOpen(false)}>
                                     <Icon aria-hidden="true" />
                                     <span>{item.label}</span>
                                 </Link>
