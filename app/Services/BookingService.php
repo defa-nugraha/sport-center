@@ -23,7 +23,17 @@ class BookingService
                 throw new RuntimeException('Fasilitas belum tersedia untuk booking.');
             }
 
-            $mode = $facility->booking_mode ?: 'hourly';
+            $configuredMode = $facility->booking_mode ?: 'hourly';
+            $mode = in_array($configuredMode, ['hourly', 'daily'], true)
+                ? $configuredMode
+                : ($data['booking_mode'] ?? null);
+
+            if ($configuredMode === 'both') {
+                $mode = $data['booking_mode'] ?? null;
+                if (! in_array($mode, ['hourly', 'daily'], true)) {
+                    throw new RuntimeException('Pilih mode booking per jam atau per hari.');
+                }
+            }
 
             if ($mode === 'daily') {
                 return $this->createDaily($facility, $data);
@@ -50,11 +60,28 @@ class BookingService
             $this->expireStale($facility->id);
 
             $conflict = Booking::where('facility_id', $facility->id)
-                ->where('booking_mode', 'hourly')
                 ->whereDate('booking_date', $start->toDateString())
                 ->whereIn('status', [BookingStatus::CONFIRMED->value, BookingStatus::PENDING_PAYMENT->value])
-                ->where('start_time', '<', $end->format('H:i:s'))
-                ->where('end_time', '>', $start->format('H:i:s'))
+                ->where(function ($q) use ($start, $end) {
+                    $q->where('booking_mode', 'daily')
+                        ->orWhere(function ($q) use ($start, $end) {
+                            $q->where('booking_mode', 'hourly')
+                                ->where('start_time', '<', $end->format('H:i:s'))
+                                ->where('end_time', '>', $start->format('H:i:s'));
+                        });
+                })
+                ->where(function ($q) use ($start) {
+                    $q->where('booking_mode', 'daily')
+                        ->orWhere('booking_mode', 'hourly');
+                })
+                ->whereDate('booking_date', '<=', $start->toDateString())
+                ->where(function ($q) use ($start) {
+                    $q->where('booking_mode', 'hourly')
+                        ->orWhere(function ($q) use ($start) {
+                            $q->where('booking_mode', 'daily')
+                                ->whereDate('booking_end_date', '>=', $start->toDateString());
+                        });
+                })
                 ->where(fn ($q) => $q->where('status', BookingStatus::CONFIRMED->value)
                     ->orWhere(fn ($q) => $q->where('status', BookingStatus::PENDING_PAYMENT->value)->where('expires_at', '>', now())))
                 ->exists();
@@ -110,7 +137,6 @@ class BookingService
         $this->expireStale($facility->id);
 
         $conflict = Booking::where('facility_id', $facility->id)
-            ->where('booking_mode', 'daily')
             ->whereIn('status', [BookingStatus::CONFIRMED->value, BookingStatus::PENDING_PAYMENT->value])
             ->whereDate('booking_date', '<=', $endDate->toDateString())
             ->whereDate('booking_end_date', '>=', $startDate->toDateString())
