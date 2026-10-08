@@ -19,7 +19,11 @@ export default function Booking({ facilities }: any) {
                                     <span>{isDaily ? <><CalendarDays /> Per hari</> : <><Clock3 /> Mulai {facility.booking_min_hours || 1} jam</>}</span>
                                     <span><MapPin /> {facility.address || 'GGM Majalengka'}</span>
                                 </div>
-                                <strong>Rp {Number(isDaily ? facility.booking_price_per_day || 0 : facility.booking_price_per_hour || 0).toLocaleString('id-ID')} <small>{isDaily ? '/ hari' : '/ jam'}</small></strong>
+                                <strong>
+                                    {facility.booking_mode === 'both'
+                                        ? <>Rp {Number(facility.booking_price_per_hour || 0).toLocaleString('id-ID')} <small>/ jam</small> · Rp {Number(facility.booking_price_per_day || 0).toLocaleString('id-ID')} <small>/ hari</small></>
+                                        : <>Rp {Number(isDaily ? facility.booking_price_per_day || 0 : facility.booking_price_per_hour || 0).toLocaleString('id-ID')} <small>{isDaily ? '/ hari' : '/ jam'}</small></>}
+                                </strong>
                                 <Link href={'/booking/' + facility.slug} className="button">Pilih venue <ChevronRight /></Link>
                             </div>
                         </article>
