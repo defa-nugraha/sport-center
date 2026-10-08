@@ -27,7 +27,7 @@ export default function ReviewEditor({ review }: any) {
         };
         if (review) {
             form.transform((data) => ({ ...data, _method: 'put' }));
-            form.post(`/admin/reviews/${review.id}`, options);
+            form.post(`/admin/reviews/${review.encrypted_id}`, options);
         } else form.post('/admin/reviews', options);
     };
 
