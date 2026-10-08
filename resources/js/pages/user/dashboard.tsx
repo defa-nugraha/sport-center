@@ -1,8 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { CalendarCheck, CalendarDays, ChevronRight, Clock3, UserRound } from 'lucide-react';
 import { UserShell } from '@/components/user-layout';
-
-const statusLabels: Record<string, string> = { PENDING_PAYMENT: 'Menunggu pembayaran', CONFIRMED: 'Dikonfirmasi', FAILED: 'Gagal', EXPIRED: 'Kedaluwarsa', CANCELLED: 'Dibatalkan', COMPLETED: 'Selesai' };
+import { BookingStatusBadge } from '@/components/booking-status-badge';
 
 export default function Dashboard({ user, stats, bookings }: any) {
     return (
@@ -17,7 +16,7 @@ export default function Dashboard({ user, stats, bookings }: any) {
             </section>
             <section className="user-panel">
                 <div className="user-panel-head"><div><span className="eyebrow"><i /> Aktivitas terbaru</span><h2>Booking terakhir</h2></div><Link href="/bookings" className="text-link">Lihat semua <ChevronRight /></Link></div>
-                {bookings.length ? <div className="user-booking-list">{bookings.map((booking: any) => <Link href={'/booking/' + booking.id + '/status'} className="user-booking-row" key={booking.id}><div className="user-booking-icon"><CalendarDays /></div><div><strong>{booking.facility?.name}</strong><span>{booking.booking_date} · {booking.start_time?.slice(0, 5)} - {booking.end_time?.slice(0, 5)}</span></div><span className={'booking-status ' + String(booking.status).toLowerCase()}>{statusLabels[booking.status] || booking.status}</span></Link>)}</div> : <div className="user-empty"><UserRound /><strong>Belum ada booking</strong><p>Booking pertama kamu akan muncul di sini.</p></div>}
+                {bookings.length ? <div className="user-booking-list">{bookings.map((booking: any) => <Link href={'/booking/' + booking.id + '/status'} className="user-booking-row" key={booking.id}><div className="user-booking-icon"><CalendarDays /></div><div><strong>{booking.facility?.name}</strong><span>{booking.booking_date} · {booking.start_time?.slice(0, 5)} - {booking.end_time?.slice(0, 5)}</span></div><BookingStatusBadge status={booking.status} /></Link>)}</div> : <div className="user-empty"><UserRound /><strong>Belum ada booking</strong><p>Booking pertama kamu akan muncul di sini.</p></div>}
             </section>
         </UserShell>
     );
