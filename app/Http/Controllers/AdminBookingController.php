@@ -21,6 +21,13 @@ class AdminBookingController extends Controller
         return Inertia::render('admin/bookings/index', [
             'bookings' => $query->paginate(20)->withQueryString(),
             'statuses' => array_column(BookingStatus::cases(), 'value'),
+            'filters' => $request->only('status'),
+        ]);
+    }
+
+    public function settings()
+    {
+        return Inertia::render('admin/bookings/settings', [
             'facilities' => Facility::orderBy('name')->get([
                 'id',
                 'name',
@@ -28,7 +35,6 @@ class AdminBookingController extends Controller
                 'booking_price_per_hour',
                 'booking_min_hours',
             ]),
-            'filters' => $request->only('status'),
         ]);
     }
 
@@ -41,6 +47,10 @@ class AdminBookingController extends Controller
 
     public function updateFacility(Request $request, Facility $facility)
     {
+        $request->merge([
+            'booking_price_per_hour' => preg_replace('/\\D+/', '', (string) $request->input('booking_price_per_hour', '')),
+        ]);
+
         $data = $request->validate([
             'booking_enabled' => ['required', 'boolean'],
             'booking_price_per_hour' => ['required', 'integer', 'min:1'],
