@@ -128,9 +128,10 @@ class BookingController extends Controller
         abort_unless($facility->published && $facility->booking_enabled, 404);
 
         $configuredMode = $facility->booking_mode ?: 'hourly';
-        $mode = $configuredMode === 'both'
-            ? $request->input('booking_mode')
-            : $configuredMode;
+        $mode = $configuredMode;
+        if ($configuredMode === 'both') {
+            $mode = $request->validate(['booking_mode' => ['required', 'in:hourly,daily']])['booking_mode'];
+        }
         $rules = ['customer_phone' => ['required', 'string', 'max:40'], 'booking_date' => ['required', 'date_format:Y-m-d']];
         if ($configuredMode === 'both') {
             $rules['booking_mode'] = ['required', 'in:hourly,daily'];
