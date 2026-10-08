@@ -1,35 +1,103 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { CalendarCheck, CalendarDays, LayoutDashboard, LogOut, UserRound } from 'lucide-react';
+import { CalendarCheck, CalendarDays, LayoutDashboard, LogOut, Menu, UserRound, X } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { asset } from '@/components/public-site';
 
-export function UserShell({ active, title, description, children }: { active: string; title?: string; description?: string; children: React.ReactNode }) {
+const menuItems = [
+    { key: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { key: 'booking', label: 'Booking', href: '/booking', icon: CalendarCheck },
+    { key: 'bookings', label: 'Riwayat', href: '/bookings', icon: CalendarDays },
+    { key: 'profile', label: 'Profil', href: '/profile', icon: UserRound },
+];
+
+export function UserShell({
+    active,
+    title,
+    description,
+    children,
+}: {
+    active: string;
+    title?: string;
+    description?: string;
+    children: ReactNode;
+}) {
     const { auth } = usePage().props as any;
     const user = auth?.user;
+    const [mobileOpen, setMobileOpen] = useState(false);
+
+    useEffect(() => {
+        if (!mobileOpen) return;
+        const previousOverflow = document.body.style.overflow;
+        const closeOnEscape = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') setMobileOpen(false);
+        };
+        document.body.style.overflow = 'hidden';
+        window.addEventListener('keydown', closeOnEscape);
+        return () => {
+            document.body.style.overflow = previousOverflow;
+            window.removeEventListener('keydown', closeOnEscape);
+        };
+    }, [mobileOpen]);
 
     return (
         <>
             {title && <Head title={title} />}
-            <header className="site-header user-site-header">
-                <Link href="/" className="header-brand" aria-label="GGM Majalengka home"><img src={asset('/assets/ilustrasi/logo-ggm.png')} alt="GGM Majalengka" /></Link>
-                <nav className="user-main-nav" aria-label="Menu akun">
-                    <Link href="/dashboard" className={active === 'dashboard' ? 'active' : ''}><LayoutDashboard /> Dashboard</Link>
-                    <Link href="/booking" className={active === 'booking' ? 'active' : ''}><CalendarCheck /> Booking</Link>
-                    <Link href="/bookings" className={active === 'bookings' ? 'active' : ''}><CalendarDays /> Riwayat</Link>
-                    <Link href="/profile" className={active === 'profile' ? 'active' : ''}><UserRound /> Profil</Link>
-                </nav>
-                <div className="user-header-account"><span>{user?.name || 'Pengguna'}</span><Link href="/logout" method="post" as="button" aria-label="Keluar"><LogOut /></Link></div>
+            <header className="user-mobile-bar">
+                <Link href="/dashboard" aria-label="Dashboard pelanggan">
+                    <img src={asset('/assets/ilustrasi/logo-ggm.png')} alt="GGM Majalengka" />
+                </Link>
+                <button type="button" onClick={() => setMobileOpen((open) => !open)} aria-label={mobileOpen ? 'Tutup menu pelanggan' : 'Buka menu pelanggan'} aria-expanded={mobileOpen} aria-controls="user-navigation">
+                    {mobileOpen ? <X /> : <Menu />}
+                </button>
             </header>
-            <main className="user-main">
-                <div className="user-container">
-                    {description && <div className="user-page-intro"><span className="eyebrow"><i /> Area pelanggan</span><h1>{title}</h1><p>{description}</p></div>}
-                    {children}
+            {mobileOpen && <button className="user-nav-overlay" type="button" aria-label="Tutup menu pelanggan" onClick={() => setMobileOpen(false)} />}
+            <div className="user-shell">
+                <aside id="user-navigation" className={'user-side ' + (mobileOpen ? 'open' : '')}>
+                    <Link href="/dashboard" className="user-brand" onClick={() => setMobileOpen(false)}>
+                        <img src={asset('/assets/ilustrasi/logo-ggm.png')} alt="GGM Majalengka" />
+                    </Link>
+                    <p className="user-label">Menu utama</p>
+                    <nav className="user-navigation" aria-label="Navigasi pelanggan">
+                        {menuItems.map((item) => {
+                            const Icon = item.icon;
+                            return (
+                                <Link key={item.key} href={item.href} className={'user-link ' + (active === item.key ? 'active' : '')} onClick={() => setMobileOpen(false)}>
+                                    <Icon aria-hidden="true" />
+                                    <span>{item.label}</span>
+                                </Link>
+                            );
+                        })}
+                    </nav>
+                    <div className="user-side-account">
+                        <div className="user-side-profile">
+                            <span className="user-side-avatar"><UserRound aria-hidden="true" /></span>
+                            <span><strong>{user?.name || 'Pengguna'}</strong><small>Akun pelanggan</small></span>
+                        </div>
+                        <Link href="/logout" method="post" as="button" className="user-link" onClick={() => setMobileOpen(false)}>
+                            <LogOut aria-hidden="true" />
+                            <span>Keluar</span>
+                        </Link>
+                    </div>
+                </aside>
+                <div className="user-workspace">
+                    <header className="user-topbar">
+                        <div><span>Area pelanggan</span><strong>{title || 'GGM Majalengka'}</strong></div>
+                        <div className="user-topbar-account"><span>{user?.name || 'Pengguna'}</span><UserRound aria-hidden="true" /></div>
+                    </header>
+                    <main className="user-main">
+                        <div className="user-container">
+                            {description && <div className="user-page-intro"><span className="eyebrow"><i /> Area pelanggan</span><h1>{title}</h1><p>{description}</p></div>}
+                            {children}
+                        </div>
+                    </main>
+                    <footer className="footer user-footer">
+                        <div className="footer-about"><Link href="/" className="footer-logo"><img src={asset('/assets/ilustrasi/logo-ggm.png')} alt="GGM Majalengka" /></Link><p>Temukan olahraga favoritmu dan ruang terbaik untuk bergerak.</p></div>
+                        <div className="footer-links"><strong>Area pelanggan</strong><Link href="/dashboard">Dashboard</Link><Link href="/booking">Booking</Link><Link href="/bookings">Riwayat</Link><Link href="/profile">Profil</Link></div>
+                        <small>&copy; 2026 GGM Majalengka. Seluruh hak cipta dilindungi.</small>
+                    </footer>
                 </div>
-            </main>
-            <footer className="footer user-footer">
-                <div className="footer-about"><Link href="/" className="footer-logo"><img src={asset('/assets/ilustrasi/logo-ggm.png')} alt="GGM Majalengka" /></Link><p>Temukan olahraga favoritmu dan ruang terbaik untuk bergerak.</p></div>
-                <div className="footer-links"><strong>Area pelanggan</strong><Link href="/dashboard">Dashboard</Link><Link href="/booking">Booking</Link><Link href="/bookings">Riwayat</Link><Link href="/profile">Profil</Link></div>
-                <small>&copy; 2026 GGM Majalengka. Seluruh hak cipta dilindungi.</small>
-            </footer>
+            </div>
         </>
     );
 }
