@@ -52,7 +52,7 @@ class BookingController extends Controller
             $start = Carbon::parse($data['booking_date'])->startOfDay();
             $end = Carbon::parse($data['booking_end_date'])->startOfDay();
 
-            if ($start->isPast()) {
+            if ($start->lt(Carbon::today())) {
                 return response()->json(['message' => 'Tanggal booking harus berada di masa depan.'], 422);
             }
 
