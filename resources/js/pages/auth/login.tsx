@@ -110,6 +110,10 @@ export default function Login({
                             )}
                         </div>
 
+                        <p className="auth-switch">
+                            Belum punya akun? <TextLink href="/register">Daftar sekarang</TextLink>
+                        </p>
+
                         <Button
                             type="submit"
                             className="login-submit"
