@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use App\Concerns\HasEncryptedRouteKey;
@@ -16,10 +15,10 @@ class Booking extends Model
     protected $casts = [
         'booking_date' => 'date',
         'booking_end_date' => 'date',
-        'status' => BookingStatus::class,
         'expires_at' => 'datetime',
         'paid_at' => 'datetime',
         'completed_at' => 'datetime',
+        'status' => BookingStatus::class,
     ];
 
     protected static function booted(): void
