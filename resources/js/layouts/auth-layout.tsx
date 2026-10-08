@@ -13,7 +13,7 @@ export default function AuthLayout({
 }) {
     const { url } = usePage();
 
-    if (url.startsWith('/login')) {
+    if (url.startsWith('/login') || url.startsWith('/register')) {
         return (
             <AuthLoginLayout title={title} description={description}>
                 {children}
