@@ -5,7 +5,6 @@ import {
     asset,
     BookingLink,
     Breadcrumb,
-    CTA,
     EmptyState,
     GalleryViewer,
     SectionTitle,
