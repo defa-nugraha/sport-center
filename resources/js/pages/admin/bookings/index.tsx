@@ -1,21 +1,295 @@
-import { Link, useForm } from '@inertiajs/react';
+import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { CalendarDays, Check, Clock3, Settings2 } from 'lucide-react';
 
-function FacilityBookingSettings({ facility }: { facility: any }) {
-    const form = useForm({ booking_enabled: Boolean(facility.booking_enabled), booking_price_per_hour: facility.booking_price_per_hour ?? '' });
-    return <form className="rounded border p-4" onSubmit={(event) => { event.preventDefault(); form.put('/admin/bookings/facilities/' + facility.id); }}>
-        <div className="font-medium">{facility.name}</div>
-        <div className="mt-3 flex flex-wrap items-end gap-3">
-            <label>Harga/jam<input type="number" min="1" className="ml-2 rounded border p-2" value={form.data.booking_price_per_hour} onChange={(e) => form.setData('booking_price_per_hour', Number(e.target.value))} /></label>
-            <label className="flex items-center gap-2"><input type="checkbox" checked={form.data.booking_enabled} onChange={(e) => form.setData('booking_enabled', e.target.checked)} /> Booking aktif</label>
-            <button disabled={form.processing} className="rounded bg-black px-4 py-2 text-white">Simpan</button>
-        </div>
-    </form>;
+const statusLabels: Record<string, string> = {
+    PENDING_PAYMENT: 'Menunggu pembayaran',
+    CONFIRMED: 'Dikonfirmasi',
+    FAILED: 'Gagal',
+    EXPIRED: 'Kedaluwarsa',
+    CANCELLED: 'Dibatalkan',
+    COMPLETED: 'Selesai',
+};
+
+const statusClasses: Record<string, string> = {
+    PENDING_PAYMENT: 'pending',
+    CONFIRMED: 'confirmed',
+    FAILED: 'failed',
+    EXPIRED: 'expired',
+    CANCELLED: 'cancelled',
+    COMPLETED: 'completed',
+};
+
+function formatCurrency(value: number | string) {
+    return `Rp ${Number(value || 0).toLocaleString('id-ID')}`;
 }
 
-export default function Index({ bookings, facilities }: { bookings: any; facilities: any[] }) {
-    return <main className="p-6">
-        <h1 className="text-2xl font-semibold">Booking</h1>
-        <section className="mt-6 space-y-3"><h2 className="text-lg font-semibold">Pengaturan harga & booking venue</h2>{facilities.map((facility) => <FacilityBookingSettings key={facility.id} facility={facility} />)}</section>
-        <div className="mt-8 overflow-auto"><table className="w-full text-left"><thead><tr><th>Booking</th><th>Customer</th><th>Facility</th><th>Jadwal</th><th>Status</th><th>Total</th></tr></thead><tbody>{bookings.data.map((booking: any) => <tr key={booking.id} className="border-t"><td><Link href={'/admin/bookings/' + booking.id}>{booking.booking_number}</Link></td><td>{booking.customer_name}</td><td>{booking.facility.name}</td><td>{booking.booking_date} {booking.start_time?.slice(0,5)}-{booking.end_time?.slice(0,5)}</td><td>{booking.status}</td><td>Rp {Number(booking.total).toLocaleString('id-ID')}</td></tr>)}</tbody></table></div>
-    </main>;
+function FacilityBookingSettings({ facility }: { facility: any }) {
+    const form = useForm({
+        booking_enabled: Boolean(facility.booking_enabled),
+        booking_price_per_hour: facility.booking_price_per_hour ?? '',
+    });
+
+    return (
+        <form
+            className="booking-facility-card"
+            onSubmit={(event) => {
+                event.preventDefault();
+                form.put(`/admin/bookings/facilities/${facility.id}`, {
+                    preserveScroll: true,
+                });
+            }}
+        >
+            <div className="booking-facility-heading">
+                <div className="booking-facility-icon">
+                    <Settings2 aria-hidden="true" />
+                </div>
+                <div>
+                    <h3>{facility.name}</h3>
+                    <p>Atur harga dan ketersediaan booking venue.</p>
+                </div>
+            </div>
+            <div className="booking-facility-fields">
+                <label>
+                    Harga per jam
+                    <div className="booking-price-input">
+                        <span>Rp</span>
+                        <input
+                            type="number"
+                            min="1"
+                            value={form.data.booking_price_per_hour}
+                            onChange={(event) =>
+                                form.setData(
+                                    'booking_price_per_hour',
+                                    Number(event.target.value),
+                                )
+                            }
+                        />
+                    </div>
+                </label>
+                <label className="booking-toggle">
+                    <input
+                        type="checkbox"
+                        checked={form.data.booking_enabled}
+                        onChange={(event) =>
+                            form.setData(
+                                'booking_enabled',
+                                event.target.checked,
+                            )
+                        }
+                    />
+                    <span>
+                        <strong>Booking aktif</strong>
+                        <small>Venue dapat dipesan pelanggan.</small>
+                    </span>
+                </label>
+                <button
+                    type="submit"
+                    className="button small"
+                    disabled={form.processing}
+                >
+                    <Check aria-hidden="true" />
+                    {form.processing ? 'Menyimpan...' : 'Simpan'}
+                </button>
+            </div>
+        </form>
+    );
+}
+
+export default function Index({
+    bookings,
+    facilities,
+    statuses = [],
+    filters = {},
+}: {
+    bookings: any;
+    facilities: any[];
+    statuses?: string[];
+    filters?: { status?: string };
+}) {
+    return (
+        <div className="admin-shell">
+            <Head title="Kelola booking" />
+            <AdminSidebar active="bookings" />
+            <main className="admin-main">
+                <AdminTopbar
+                    title="Kelola Booking"
+                    description="Kelola jadwal pemesanan, harga venue, dan status booking pelanggan."
+                />
+
+                <section className="admin-panel booking-settings-panel">
+                    <div className="panel-head">
+                        <div>
+                            <h2>Pengaturan venue</h2>
+                            <p>
+                                Atur harga per jam dan tentukan venue yang
+                                tersedia untuk booking online.
+                            </p>
+                        </div>
+                        <Clock3 aria-hidden="true" />
+                    </div>
+                    {facilities.length > 0 ? (
+                        <div className="booking-facility-grid">
+                            {facilities.map((facility) => (
+                                <FacilityBookingSettings
+                                    key={facility.id}
+                                    facility={facility}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="booking-empty-state">
+                            <Settings2 aria-hidden="true" />
+                            <strong>Belum ada fasilitas</strong>
+                            <p>
+                                Tambahkan fasilitas terlebih dahulu agar dapat
+                                digunakan untuk booking.
+                            </p>
+                            <Link className="text-link" href="/admin/content?tab=facilities">
+                                Kelola fasilitas
+                            </Link>
+                        </div>
+                    )}
+                </section>
+
+                <section className="admin-panel booking-list-panel">
+                    <div className="panel-head booking-list-head">
+                        <div>
+                            <h2>Daftar booking</h2>
+                            <p>
+                                {bookings.total
+                                    ? `${bookings.total.toLocaleString('id-ID')} booking tercatat.`
+                                    : 'Belum ada booking yang tercatat.'}
+                            </p>
+                        </div>
+                        <CalendarDays aria-hidden="true" />
+                    </div>
+
+                    <form className="booking-filter" method="get">
+                        <label>
+                            Status booking
+                            <select
+                                name="status"
+                                defaultValue={filters.status || ''}
+                            >
+                                <option value="">Semua status</option>
+                                {statuses.map((status) => (
+                                    <option key={status} value={status}>
+                                        {statusLabels[status] || status}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                        <button className="button small" type="submit">
+                            Terapkan filter
+                        </button>
+                        {filters.status && (
+                            <Link className="text-button" href="/admin/bookings">
+                                Reset
+                            </Link>
+                        )}
+                    </form>
+
+                    {bookings.data.length > 0 ? (
+                        <>
+                            <div className="booking-table-wrap">
+                                <table className="booking-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Booking</th>
+                                            <th>Customer</th>
+                                            <th>Venue</th>
+                                            <th>Jadwal</th>
+                                            <th>Status</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {bookings.data.map((booking: any) => (
+                                            <tr key={booking.id}>
+                                                <td>
+                                                    <Link
+                                                        className="booking-number"
+                                                        href={`/admin/bookings/${booking.id}`}
+                                                    >
+                                                        {booking.booking_number}
+                                                    </Link>
+                                                    <small>
+                                                        {booking.payment?.payment_status
+                                                            ? `Pembayaran: ${booking.payment.payment_status}`
+                                                            : 'Pembayaran belum tersedia'}
+                                                    </small>
+                                                </td>
+                                                <td>
+                                                    <strong>{booking.customer_name}</strong>
+                                                    <small>{booking.customer_phone || '-'}</small>
+                                                </td>
+                                                <td>{booking.facility?.name || '-'}</td>
+                                                <td>
+                                                    <strong>
+                                                        {new Date(
+                                                            `${booking.booking_date}T${booking.start_time || '00:00'}`,
+                                                        ).toLocaleDateString('id-ID', {
+                                                            day: '2-digit',
+                                                            month: 'short',
+                                                            year: 'numeric',
+                                                        })}
+                                                    </strong>
+                                                    <small>
+                                                        {booking.start_time?.slice(0, 5)} -{' '}
+                                                        {booking.end_time?.slice(0, 5)}
+                                                    </small>
+                                                </td>
+                                                <td>
+                                                    <span
+                                                        className={`booking-status ${statusClasses[booking.status] || ''}`}
+                                                    >
+                                                        {statusLabels[booking.status] ||
+                                                            booking.status}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <strong>{formatCurrency(booking.total)}</strong>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {bookings.links?.length > 3 && (
+                                <div className="booking-pagination">
+                                    {bookings.links.map((link: any, index: number) =>
+                                        link.url ? (
+                                            <Link
+                                                key={index}
+                                                href={link.url}
+                                                className={link.active ? 'active' : ''}
+                                                dangerouslySetInnerHTML={{ __html: link.label }}
+                                            />
+                                        ) : (
+                                            <span
+                                                key={index}
+                                                className="disabled"
+                                                dangerouslySetInnerHTML={{ __html: link.label }}
+                                            />
+                                        ),
+                                    )}
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <div className="booking-empty-state booking-empty-list">
+                            <CalendarDays aria-hidden="true" />
+                            <strong>Belum ada booking</strong>
+                            <p>
+                                Booking pelanggan akan muncul di sini setelah
+                                pemesanan dilakukan.
+                            </p>
+                        </div>
+                    )}
+                </section>
+            </main>
+        </div>
+    );
 }
