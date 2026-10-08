@@ -109,7 +109,7 @@ class PublicController extends Controller
             'SUMMARY:'.$escape($event->title),
             'DESCRIPTION:'.$escape(strip_tags($event->description)),
             'LOCATION:'.$escape($event->facility?->address ?? $event->facility?->name),
-            'URL:'.route('events.show', $event),
+            'URL:'.route('events.show', ['event' => $event->slug]),
         ];
         if ($event->reminder_enabled) {
             array_push($lines, 'BEGIN:VALARM', 'TRIGGER:-P'.$event->reminder_days_before.'D', 'ACTION:DISPLAY', 'DESCRIPTION:Pengingat '.$escape($event->title), 'END:VALARM');
