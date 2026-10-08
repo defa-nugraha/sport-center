@@ -1,7 +1,6 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { useState } from 'react';
-import { CalendarDays, Check, Clock3, Settings2 } from 'lucide-react';
+import { Head, Link } from '@inertiajs/react';
+import { CalendarDays } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const statusLabels: Record<string, string> = {
@@ -24,98 +23,6 @@ const statusClasses: Record<string, string> = {
 
 function formatCurrency(value: number | string) {
     return `Rp ${Number(value || 0).toLocaleString('id-ID')}`;
-}
-
-function FacilityBookingSettings({ facility }: { facility: any }) {
-    const form = useForm({
-        booking_enabled: Boolean(facility.booking_enabled),
-        booking_price_per_hour: facility.booking_price_per_hour ?? '',
-        booking_min_hours: facility.booking_min_hours ?? 1,
-    });
-
-    return (
-        <form
-            className="booking-facility-card"
-            onSubmit={(event) => {
-                event.preventDefault();
-                form.put(`/admin/bookings/facilities/${facility.id}`, {
-                    preserveScroll: true,
-                });
-            }}
-        >
-            <div className="booking-facility-heading">
-                <div className="booking-facility-icon">
-                    <Settings2 aria-hidden="true" />
-                </div>
-                <div>
-                    <h3>{facility.name}</h3>
-                    <p>Atur harga dan ketersediaan booking venue.</p>
-                </div>
-            </div>
-            <div className="booking-facility-fields">
-                <label>
-                    Harga per jam
-                    <div className="booking-price-input">
-                        <span>Rp</span>
-                        <input
-                            type="number"
-                            min="1"
-                            value={form.data.booking_price_per_hour}
-                            onChange={(event) =>
-                                form.setData(
-                                    'booking_price_per_hour',
-                                    Number(event.target.value),
-                                )
-                            }
-                        />
-                    </div>
-                </label>
-                <label>
-                    Minimal durasi
-                    <div className="booking-price-input">
-                        <input
-                            type="number"
-                            min="1"
-                            max="12"
-                            step="1"
-                            value={form.data.booking_min_hours}
-                            onChange={(event) =>
-                                form.setData(
-                                    'booking_min_hours',
-                                    Number(event.target.value),
-                                )
-                            }
-                        />
-                        <span>jam</span>
-                    </div>
-                </label>
-                <label className="booking-toggle">
-                    <input
-                        type="checkbox"
-                        checked={form.data.booking_enabled}
-                        onChange={(event) =>
-                            form.setData(
-                                'booking_enabled',
-                                event.target.checked,
-                            )
-                        }
-                    />
-                    <span>
-                        <strong>Booking aktif</strong>
-                        <small>Venue dapat dipesan pelanggan.</small>
-                    </span>
-                </label>
-                <button
-                    type="submit"
-                    className="button small"
-                    disabled={form.processing}
-                >
-                    <Check aria-hidden="true" />
-                    {form.processing ? 'Menyimpan...' : 'Simpan'}
-                </button>
-            </div>
-        </form>
-    );
 }
 
 export default function Index({
