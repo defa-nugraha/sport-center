@@ -55,7 +55,7 @@ test('booking status cannot be viewed by another user', function () {
     $other=User::factory()->create();
     $facility=bookingFacility();
     $booking=Booking::create(['user_id'=>$owner->id,'facility_id'=>$facility->id,'customer_name'=>'Owner','customer_email'=>'owner@test.test','customer_phone'=>'62816','booking_date'=>now()->addDay()->format('Y-m-d'),'start_time'=>'10:00:00','end_time'=>'11:00:00','duration_minutes'=>60,'price_per_hour'=>100000,'subtotal'=>100000,'total'=>100000,'status'=>BookingStatus::PENDING_PAYMENT,'expires_at'=>now()->addMinutes(15)]);
-    $this->actingAs($other)->get('/booking/'.$booking->id.'/status')->assertForbidden();
+    $this->actingAs($other)->get(route('booking.show', ['booking' => $booking->encrypted_id]))->assertForbidden();
 });
 
 test('midtrans status order mismatch cannot confirm booking', function () {
