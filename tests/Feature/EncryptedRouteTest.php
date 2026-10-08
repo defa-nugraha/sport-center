@@ -45,7 +45,7 @@ test('booking route identifiers are encrypted and resolve correctly', function (
 test('public facility slug routes remain readable', function () {
     $facility = encryptedRouteFacility();
 
-    expect(route('facilities.show', $facility))->toContain('/facilities/'.$facility->slug);
+    expect(route('facilities.show', ['facility' => $facility->slug]))->toContain('/facilities/'.$facility->slug);
 });
 
 test('admin facility route uses encrypted identifier', function () {
