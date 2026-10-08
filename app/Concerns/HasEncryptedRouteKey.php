@@ -25,6 +25,10 @@ trait HasEncryptedRouteKey
             return parent::resolveRouteBinding($value, $field);
         }
 
+        if (ctype_digit((string) $value)) {
+            return parent::resolveRouteBinding($value);
+        }
+
         try {
             $encoded = strtr((string) $value, '-_', '+/');
             $encoded .= str_repeat('=', (4 - strlen($encoded) % 4) % 4);
