@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
     CalendarDays,
+    CalendarCheck,
     ChevronDown,
     Dumbbell,
     FileText,
@@ -24,6 +25,7 @@ import { ProductTour } from '@/components/product-tour';
 
 const navItems = [
     { key: 'dashboard', label: 'Dasbor', href: '/admin', icon: LayoutDashboard },
+    { key: 'bookings', label: 'Kelola Booking', href: '/admin/bookings', icon: CalendarCheck, permission: 'kelola booking' },
     { key: 'account', label: 'Akun admin', href: '/admin/account', icon: UserCog },
 ];
 
