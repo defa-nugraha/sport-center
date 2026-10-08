@@ -9,7 +9,8 @@ export default function BookingStatus({ booking }: { booking: any }) {
 
     return (
         <UserShell active="bookings" title="Detail Booking" description="Pantau status pemesanan dan pembayaran venue kamu.">
-            <div className="booking-status-back"><Link className="button secondary" href="/bookings"><ArrowLeft aria-hidden="true" /> Kembali ke riwayat booking</Link></div>\n            <section className="booking-status-hero" aria-labelledby="booking-status-title">
+            <div className="booking-status-back"><Link className="button secondary" href="/bookings"><ArrowLeft aria-hidden="true" /> Kembali ke riwayat booking</Link></div>
+            <section className="booking-status-hero" aria-labelledby="booking-status-title">
                 <div className="booking-status-icon">{booking.status === 'CONFIRMED' ? <CheckCircle2 /> : <CalendarCheck />}</div>
                 <div><span className="eyebrow"><i /> {booking.booking_number}</span><BookingStatusBadge status={booking.status} className="booking-status-hero-badge" /><h2 id="booking-status-title">{bookingStatusLabels[booking.status] || booking.status}</h2><p>{booking.status === 'PENDING_PAYMENT' ? 'Selesaikan pembayaran sebelum batas waktu agar slot tetap tersimpan.' : booking.status === 'CONFIRMED' ? 'Pembayaran berhasil dan booking kamu sudah dikonfirmasi.' : 'Status booking ini perlu diperhatikan sebelum melanjutkan.'}</p></div>
                 {booking.status === 'PENDING_PAYMENT' && paymentUrl && <a className="button" href={paymentUrl}>Lanjutkan pembayaran</a>}
