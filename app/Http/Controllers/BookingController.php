@@ -133,7 +133,7 @@ class BookingController extends Controller
                     'duration' => (int) config('booking.payment_expiry_minutes'),
                 ],
                 'callbacks' => [
-                    'finish' => route('booking.show', $booking),
+                    'finish' => route('booking.show', ['booking' => $booking->encrypted_id]),
                 ],
             ]);
             $payment = $service->attachPayment($booking, $response, $orderId);
