@@ -9,6 +9,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\AdminBookingController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\Teams\TeamInvitationController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,10 +27,18 @@ Route::middleware('track.public.visit')->group(function () {
 });
 Route::post('/inquiries', [PublicController::class, 'inquiry'])->name('inquiries.store');
 Route::post('/testimonials', [PublicController::class, 'testimonial'])->name('testimonials.store');
+Route::get('/booking', [BookingController::class, 'index'])->middleware('auth')->name('booking.index');
 Route::get('/booking/{facility:slug}', [BookingController::class, 'create'])->name('booking.create');
-Route::get('/booking/{facility:slug}/availability', [BookingController::class, 'availability'])->name('booking.availability');
+Route::get('/booking/{facility:slug}/availability', [BookingController::class, 'availability'])->middleware('auth')->name('booking.availability');
 Route::post('/booking/{facility:slug}', [BookingController::class, 'store'])->middleware('auth')->name('booking.store');
 Route::get('/booking/{booking}/status', [BookingController::class, 'show'])->middleware('auth')->name('booking.show');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
+    Route::get('/bookings', [UserController::class, 'history'])->name('user.bookings');
+    Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
+    Route::patch('/profile', [UserController::class, 'updateProfile'])->name('user.profile.update');
+});
 Route::post('/payments/midtrans/notification', [PaymentController::class, 'notification'])->name('payments.midtrans.notification');
 Route::get('/invoices/{invoice:uuid}/pdf', [InvoiceController::class, 'show'])->middleware('signed')->name('invoices.public');
 
