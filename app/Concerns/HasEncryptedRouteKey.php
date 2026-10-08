@@ -2,7 +2,6 @@
 
 namespace App\Concerns;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Crypt;
 use Throwable;
 
