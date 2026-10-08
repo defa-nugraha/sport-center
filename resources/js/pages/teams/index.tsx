@@ -34,8 +34,8 @@ export default function TeamsIndex({ teams }: Props) {
 
             <h1 className="sr-only">Teams</h1>
 
-            <div className="flex flex-col space-y-6">
-                <div className="flex items-center justify-between">
+            <div className="account-list">
+                <div className="account-section-header">
                     <Heading
                         variant="small"
                         title="Teams"
@@ -49,7 +49,7 @@ export default function TeamsIndex({ teams }: Props) {
                     </CreateTeamModal>
                 </div>
 
-                <div className="space-y-3">
+                <div className="account-list-items">
                     {teams.map((team) => {
                         const canLeaveTeam =
                             !team.isPersonal && team.role !== 'owner';
@@ -58,12 +58,12 @@ export default function TeamsIndex({ teams }: Props) {
                             <div
                                 key={team.id}
                                 data-test="team-row"
-                                className="flex items-center justify-between gap-4 rounded-lg border p-4"
+                                className="account-card"
                             >
-                                <div className="flex items-center gap-4">
+                                <div className="account-card-main">
                                     <div>
                                         <div className="flex items-center gap-2">
-                                            <span className="font-medium">
+                                            <span className="account-card-title">
                                                 {team.name}
                                             </span>
                                             {team.isPersonal ? (
@@ -72,7 +72,7 @@ export default function TeamsIndex({ teams }: Props) {
                                                 </Badge>
                                             ) : null}
                                         </div>
-                                        <span className="text-muted-foreground text-sm">
+                                        <span className="account-meta">
                                             {team.roleLabel}
                                         </span>
                                     </div>
@@ -154,7 +154,7 @@ export default function TeamsIndex({ teams }: Props) {
                     })}
 
                     {teams.length === 0 ? (
-                        <p className="text-muted-foreground py-8 text-center">
+                        <p className="account-empty">
                             You don't belong to any teams yet.
                         </p>
                     ) : null}

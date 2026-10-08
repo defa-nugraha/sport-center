@@ -94,8 +94,8 @@ export default function TeamEdit({
 
             <h1 className="sr-only">{pageTitle}</h1>
 
-            <div className="flex flex-col space-y-10">
-                <div className="space-y-6">
+            <div className="account-list">
+                <div className="account-section-block">
                     {permissions.canUpdateTeam ? (
                         <>
                             <Heading
@@ -106,7 +106,7 @@ export default function TeamEdit({
 
                             <Form
                                 {...update.form(team.slug)}
-                                className="space-y-6"
+                                className="account-section-block"
                             >
                                 {({ errors, processing }) => (
                                     <>
@@ -124,7 +124,7 @@ export default function TeamEdit({
                                             <InputError message={errors.name} />
                                         </div>
 
-                                        <div className="flex items-center gap-4">
+                                        <div className="account-card-main">
                                             <Button
                                                 type="submit"
                                                 data-test="team-save-button"
@@ -144,8 +144,8 @@ export default function TeamEdit({
                     )}
                 </div>
 
-                <div className="space-y-6">
-                    <div className="flex items-center justify-between">
+                <div className="account-section-block">
+                    <div className="account-section-header">
                         <Heading
                             variant="small"
                             title="Team members"
@@ -166,14 +166,14 @@ export default function TeamEdit({
                         ) : null}
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="account-list-items">
                         {members.map((member) => (
                             <div
                                 key={member.id}
                                 data-test="member-row"
-                                className="flex items-center justify-between rounded-lg border p-4"
+                                className="account-card"
                             >
-                                <div className="flex items-center gap-4">
+                                <div className="account-card-main">
                                     <Avatar className="h-10 w-10">
                                         {member.avatar ? (
                                             <AvatarImage
@@ -186,10 +186,10 @@ export default function TeamEdit({
                                         </AvatarFallback>
                                     </Avatar>
                                     <div>
-                                        <div className="font-medium">
+                                        <div className="account-card-title">
                                             {member.name}
                                         </div>
-                                        <div className="text-muted-foreground text-sm">
+                                        <div className="account-meta">
                                             {member.email}
                                         </div>
                                     </div>
@@ -263,29 +263,29 @@ export default function TeamEdit({
                 </div>
 
                 {invitations.length > 0 ? (
-                    <div className="space-y-6">
+                    <div className="account-section-block">
                         <Heading
                             variant="small"
                             title="Pending invitations"
                             description="Invitations that haven't been accepted yet"
                         />
 
-                        <div className="space-y-3">
+                        <div className="account-list-items">
                             {invitations.map((invitation) => (
                                 <div
                                     key={invitation.code}
                                     data-test="invitation-row"
-                                    className="flex items-center justify-between rounded-lg border p-4"
+                                    className="account-card"
                                 >
-                                    <div className="flex items-center gap-4">
+                                    <div className="account-card-main">
                                         <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-full">
                                             <Mail className="text-muted-foreground h-5 w-5" />
                                         </div>
                                         <div>
-                                            <div className="font-medium">
+                                            <div className="account-card-title">
                                                 {invitation.email}
                                             </div>
-                                            <div className="text-muted-foreground text-sm">
+                                            <div className="account-meta">
                                                 {invitation.role_label}
                                             </div>
                                         </div>
@@ -321,15 +321,15 @@ export default function TeamEdit({
                 ) : null}
 
                 {permissions.canDeleteTeam && !team.isPersonal ? (
-                    <div className="space-y-6">
+                    <div className="account-section-block">
                         <Heading
                             variant="small"
                             title="Delete team"
                             description="Permanently delete your team"
                         />
-                        <div className="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10">
-                            <div className="relative space-y-0.5 text-red-600 dark:text-red-100">
-                                <p className="font-medium">Warning</p>
+                        <div className="account-danger">
+                            <div className="account-danger-copy">
+                                <p className="account-card-title">Warning</p>
                                 <p className="text-sm">
                                     Please proceed with caution, this cannot be
                                     undone.
