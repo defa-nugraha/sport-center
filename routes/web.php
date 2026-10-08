@@ -55,6 +55,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::put('/account/password', [AdminController::class, 'updateAccountPassword'])->middleware('throttle:6,1')->name('account.password.update');
     Route::middleware('permission:kelola booking')->group(function () {
         Route::get('/bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
+        Route::get('/bookings/settings', [AdminBookingController::class, 'settings'])->name('bookings.settings');
         Route::get('/bookings/{booking}', [AdminBookingController::class, 'show'])->name('bookings.show');
         Route::put('/bookings/facilities/{facility}', [AdminBookingController::class, 'updateFacility'])->name('bookings.facilities.update');
     });

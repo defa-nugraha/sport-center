@@ -57,7 +57,7 @@ export function AdminSidebar({
     const [pagesOpen, setPagesOpen] = useState(active === 'pages');
     const [bookingOpen, setBookingOpen] = useState(active === 'bookings');
     const [mobileOpen, setMobileOpen] = useState(false);
-    const { auth } = usePage().props as any;
+    const { auth, url } = usePage().props as any;
     const permissions: string[] = auth?.permissions || [];
     const visibleContentItems = contentItems.filter((item) => permissions.includes(item.permission));
 
@@ -123,11 +123,11 @@ export function AdminSidebar({
                 </button>}
                 {permissions.includes('kelola booking') && bookingOpen && (
                     <div className="admin-content-submenu" id="admin-booking-submenu">
-                        <Link href="/admin/bookings#settings" className="active-submenu-link" onClick={() => setMobileOpen(false)}>
+                        <Link href="/admin/bookings/settings" className={url === '/admin/bookings/settings' ? 'active-submenu-link active' : 'active-submenu-link'} onClick={() => setMobileOpen(false)}>
                             <Settings aria-hidden="true" />
                             <span>Pengaturan venue</span>
                         </Link>
-                        <Link href="/admin/bookings#list" className="active-submenu-link" onClick={() => setMobileOpen(false)}>
+                        <Link href="/admin/bookings" className={url.startsWith('/admin/bookings') && url !== '/admin/bookings/settings' ? 'active-submenu-link active' : 'active-submenu-link'} onClick={() => setMobileOpen(false)}>
                             <CalendarDays aria-hidden="true" />
                             <span>Daftar booking</span>
                         </Link>
