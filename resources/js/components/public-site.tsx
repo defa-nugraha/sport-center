@@ -193,6 +193,13 @@ export function SiteHeader({ active = '' }: { active?: string }) {
                         {label}
                     </Link>
                 ))}
+                <Link
+                    href="/login"
+                    className="header-login"
+                    onClick={() => setOpen(false)}
+                >
+                    Masuk
+                </Link>
                 <a
                     className="header-contact"
                     href={whatsappUrl(settings.whatsapp || settings.phone)}
