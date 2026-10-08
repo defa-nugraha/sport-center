@@ -44,7 +44,7 @@ export default function FacilityEditor({ facility, regions, sports, sectionDefau
         longitude: facility?.longitude || '',
         region_id: facility?.region_id ? String(facility.region_id) : '',
         sports: (facility?.sports || []).map((item: any) => item.id),
-        specifications: (facility?.specifications || []).map((item: any) => ({ label: item.label, value: item.value })),
+        specifications: (facility?.specifications || []).map((item: any) => ({ label: item.label, value: item.value })) as Array<{ label: string; value: string }>,
         features: (facility?.features || []).map((item: any) => ({
             id: item.id,
             name: item.name,
@@ -52,7 +52,7 @@ export default function FacilityEditor({ facility, regions, sports, sectionDefau
             image: null as File | null,
             existing_image: item.image || '',
             remove_image: false,
-        })),
+        })) as Array<{ id: number | null; name: string; description: string; image: File | null; existing_image: string; remove_image: boolean }>,
         sections: {
             overview: sectionValues('overview', sectionDefaults, ownSections),
             gallery: sectionValues('gallery', sectionDefaults, ownSections),
