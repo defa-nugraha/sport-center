@@ -182,7 +182,7 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
             <section className="booking-flow">
                 <div className="booking-flow-summary">
                     <div className="booking-flow-image"><img src={facility.hero_image || facility.thumbnail || '/assets/ggm/Lapang Serba Guna (Basket)2 1.png'} alt={facility.name} /></div>
-                    <div><span className="eyebrow"><i /> Venue pilihan</span><h2>{facility.name}</h2><p>{facility.subtitle || facility.venue_type}</p><div className="booking-flow-meta"><span><MapPin /> {facility.address || 'GGM Majalengka'}</span><span>{daily ? <><CalendarDays /> Per hari</> : <><Clock3 /> Minimal {minimumHours} jam</>}</span></div><strong>
+                    <div><span className="eyebrow"><i /> Venue pilihan</span><h2>{facility.name}</h2><p>{facility.subtitle || facility.venue_type}</p><div className="booking-flow-meta"><span><MapPin /> {facility.address || 'GGM Majalengka'}</span><span>{supportsBothModes && !selectedMode ? <><CalendarDays /> Pilih mode booking</> : daily ? <><CalendarDays /> Per hari</> : <><Clock3 /> Minimal {minimumHours} jam</>}</span></div><strong>
     {supportsBothModes && !selectedMode
         ? 'Pilih mode booking'
         : <>Rp {Number(daily ? facility.booking_price_per_day || 0 : facility.booking_price_per_hour || 0).toLocaleString('id-ID')} <small>{daily ? '/ hari' : '/ jam'}</small></>}
@@ -191,7 +191,7 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
 
                 <form onSubmit={submit} className="user-panel booking-form-panel" aria-busy={checking || form.processing}>
                     <ol className="booking-progress" aria-label="Tahapan booking"><li className="active"><span>1</span><strong>Jadwal</strong></li><li className={available === true ? 'active' : ''}><span>2</span><strong>Ketersediaan</strong></li><li><span>3</span><strong>Pembayaran</strong></li></ol>
-                    <div className="user-panel-head"><div><span className="eyebrow"><i /> Detail pemesanan</span><h2>{daily ? 'Pilih rentang tanggal' : 'Pilih jadwal'}</h2><p>{daily ? 'Pilih satu atau beberapa hari. Jam tidak diperlukan untuk booking per hari.' : `Booking minimum ${minimumHours} jam. Harga dihitung berdasarkan durasi.`}</p></div><CalendarDays /></div>
+                    <div className="user-panel-head"><div><span className="eyebrow"><i /> Detail pemesanan</span><h2>{supportsBothModes && !selectedMode ? 'Pilih mode booking' : daily ? 'Pilih rentang tanggal' : 'Pilih jadwal'}</h2><p>{supportsBothModes && !selectedMode ? 'Pilih per jam atau per hari untuk menampilkan field yang sesuai.' : daily ? 'Pilih satu atau beberapa hari. Jam tidak diperlukan untuk booking per hari.' : `Booking minimum ${minimumHours} jam. Harga dihitung berdasarkan durasi.`}</p></div><CalendarDays /></div>
 
                     {supportsBothModes && (
                         <div className="booking-mode-choice" role="group" aria-label="Pilih mode booking">
