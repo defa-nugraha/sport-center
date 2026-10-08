@@ -1,6 +1,8 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { useState } from 'react';
 import { CalendarDays, Check, Clock3, Settings2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const statusLabels: Record<string, string> = {
     PENDING_PAYMENT: 'Menunggu pembayaran',
@@ -188,17 +190,20 @@ export default function Index({
                     <form className="booking-filter" method="get">
                         <label>
                             Status booking
-                            <select
-                                name="status"
-                                defaultValue={filters.status || ''}
-                            >
-                                <option value="">Semua status</option>
-                                {statuses.map((status) => (
-                                    <option key={status} value={status}>
-                                        {statusLabels[status] || status}
-                                    </option>
-                                ))}
-                            </select>
+                            <input type="hidden" name="status" value={status === 'all' ? '' : status} />
+                            <Select value={status} onValueChange={setStatus}>
+                                <SelectTrigger className="admin-select-trigger">
+                                    <SelectValue placeholder="Semua status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">Semua status</SelectItem>
+                                    {statuses.map((statusOption) => (
+                                        <SelectItem key={statusOption} value={statusOption}>
+                                            {statusLabels[statusOption] || statusOption}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </label>
                         <button className="button small" type="submit">
                             Terapkan filter
