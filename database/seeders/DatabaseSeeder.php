@@ -40,6 +40,7 @@ class DatabaseSeeder extends Seeder
             ->map(fn ($name) => Permission::firstOrCreate(['name' => $name, 'guard_name' => 'web']));
         $adminRole = Role::firstOrCreate(['name' => 'administrator', 'guard_name' => 'web']);
         $adminRole->syncPermissions($permissions);
+        Role::firstOrCreate(['name' => 'user', 'guard_name' => 'web']);
         $administrator->assignRole($adminRole);
         foreach (['pengelola-fasilitas' => 'kelola fasilitas', 'pengelola-booking' => 'kelola booking', 'pengelola-olahraga' => 'kelola olahraga', 'pengelola-acara' => 'kelola acara', 'editor-artikel' => 'kelola artikel', 'pengelola-taksonomi' => 'kelola taksonomi artikel', 'pengelola-pengaturan' => 'kelola pengaturan', 'editor-halaman' => 'kelola halaman', 'pengelola-ulasan' => 'kelola ulasan'] as $roleName => $permissionName) {
             Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web'])->syncPermissions([$permissionName]);
