@@ -13,8 +13,8 @@ export function MultiImageUpload({
     onChange: (files: File[]) => void;
     primary: number;
     onPrimaryChange: (index: number) => void;
-    existing?: { id?: number; image: string }[];
-    onDeleteExisting?: (image: { id?: number; image: string }) => void;
+    existing?: { id?: number; encrypted_id?: string; image: string }[];
+    onDeleteExisting?: (image: { id?: number; encrypted_id?: string; image: string }) => void;
 }) {
     return (
         <div className="multi-upload">
