@@ -107,4 +107,3 @@ test('daily booking calculates inclusive days and rejects overlapping ranges', f
         'booking_end_date' => now()->addDays(5)->format('Y-m-d'),
     ]))->toThrow(RuntimeException::class);
 });
-\n
