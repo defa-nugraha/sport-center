@@ -1,6 +1,7 @@
 import { FormEvent, useMemo, useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { CalendarCheck, CalendarDays, CheckCircle2, Clock3, Info, MapPin } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UserShell } from '@/components/user-layout';
 
 export default function Booking({ facility, user }: { facility: any; user: { name: string; email: string } }) {
@@ -70,7 +71,7 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
                     <div className="booking-step-grid">
                         <label>Tanggal<input required type="date" min={new Date().toISOString().slice(0, 10)} value={form.data.booking_date} onChange={(e) => { form.setData('booking_date', e.target.value); setAvailable(null); setAvailabilityMessage(''); }} /></label>
                         <label>Jam mulai<input required type="time" value={form.data.start_time} onChange={(e) => { form.setData('start_time', e.target.value); setAvailable(null); setAvailabilityMessage(''); }} /></label>
-                        <label>Durasi<select value={form.data.duration_minutes} onChange={(e) => { form.setData('duration_minutes', Number(e.target.value)); setAvailable(null); setAvailabilityMessage(''); }}>{durationOptions.map((minutes) => <option key={minutes} value={minutes}>{minutes / 60} jam</option>)}</select></label>
+                        <label>Durasi<Select value={String(form.data.duration_minutes)} onValueChange={(value) => { form.setData('duration_minutes', Number(value)); setAvailable(null); setAvailabilityMessage(''); }}><SelectTrigger className="user-select-trigger"><SelectValue placeholder="Pilih durasi" /></SelectTrigger><SelectContent>{durationOptions.map((minutes) => <SelectItem key={minutes} value={String(minutes)}>{minutes / 60} jam</SelectItem>)}</SelectContent></Select></label>
                         <label>Nomor WhatsApp<input required placeholder="08xxxxxxxxxx" value={form.data.customer_phone} onChange={(e) => form.setData('customer_phone', e.target.value)} /><small>Digunakan untuk notifikasi booking.</small></label>
                     </div>
                     <div className="booking-account-note"><CheckCircle2 /><div><strong>{user.name}</strong><span>{user.email}</span></div><small>Akun yang digunakan untuk booking</small></div>

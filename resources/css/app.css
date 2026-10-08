@@ -8528,3 +8528,303 @@ select {
         grid-template-columns: minmax(0, 1fr);
     }
 }
+
+
+/* Customer workspace — aligned with the admin navigation language */
+.user-shell {
+    display: flex;
+    min-height: 100vh;
+    background: #f5f8fc;
+    color: #111827;
+}
+.user-side {
+    position: sticky;
+    top: 0;
+    width: 250px;
+    height: 100vh;
+    flex: 0 0 250px;
+    display: flex;
+    flex-direction: column;
+    padding: 22px 16px;
+    border-right: 1px solid #e1e8f0;
+    background: #fff;
+    color: #20364f;
+}
+.user-brand {
+    display: block;
+    height: 72px;
+    margin: 0 5px 30px;
+    padding: 4px 10px;
+}
+.user-brand img {
+    width: 100%;
+    height: 64px;
+    object-position: left center;
+    object-fit: contain;
+}
+.user-label {
+    margin: 0 10px 8px;
+    color: #8a9aae;
+    font-size: 10px;
+    font-weight: 800;
+}
+.user-navigation {
+    display: grid;
+    gap: 5px;
+}
+.user-link {
+    display: flex;
+    width: 100%;
+    min-height: 44px;
+    align-items: center;
+    gap: 12px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #425b74;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: left;
+    text-decoration: none;
+}
+.user-link svg {
+    width: 18px;
+    height: 18px;
+    flex: none;
+    color: #688198;
+}
+.user-link.active,
+.user-link:hover,
+.user-link:focus-visible {
+    background: #eaf4ff;
+    color: #087ff5;
+}
+.user-link.active svg,
+.user-link:hover svg,
+.user-link:focus-visible svg {
+    color: #087ff5;
+}
+.user-side-account {
+    display: grid;
+    gap: 7px;
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid #edf1f5;
+}
+.user-side-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 46px;
+    padding: 0 8px;
+}
+.user-side-profile > span:last-child {
+    display: grid;
+    min-width: 0;
+    gap: 2px;
+}
+.user-side-profile strong {
+    overflow: hidden;
+    color: #20364f;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.user-side-profile small {
+    color: #8a9aae;
+    font-size: 10px;
+}
+.user-side-avatar {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    place-items: center;
+    border-radius: 50%;
+    background: #eef4f9;
+    color: #5d7890;
+}
+.user-side-avatar svg {
+    width: 16px;
+    height: 16px;
+}
+.user-workspace {
+    width: calc(100% - 250px);
+    min-width: 0;
+}
+.user-topbar {
+    display: flex;
+    min-height: 82px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 12px 32px;
+    border-bottom: 1px solid #dfe7ef;
+    background: #fff;
+}
+.user-topbar > div:first-child {
+    display: grid;
+    gap: 3px;
+}
+.user-topbar > div:first-child span {
+    color: #8a9aae;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+.user-topbar > div:first-child strong {
+    color: #20364f;
+    font-size: 15px;
+}
+.user-topbar-account {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: #425b74;
+    font-size: 12px;
+    font-weight: 700;
+}
+.user-topbar-account svg {
+    width: 18px;
+    height: 18px;
+    color: #688198;
+}
+.user-main {
+    min-height: 72vh;
+    background: #f5f8fc;
+}
+.user-container {
+    width: min(1180px, calc(100% - 64px));
+    margin: 0 auto;
+    padding: 45px 0 68px;
+}
+.user-footer {
+    margin-top: 0;
+}
+.user-mobile-bar {
+    display: none;
+}
+.user-nav-overlay {
+    display: none;
+}
+
+/* Radix Select controls */
+.user-select-trigger,
+.admin-select-trigger {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid #d7e0e8;
+    border-radius: 7px;
+    background: #fff;
+    color: #334960;
+    box-shadow: none;
+}
+.user-select-trigger:hover,
+.admin-select-trigger:hover {
+    border-color: #b9cbd9;
+    background: #fff;
+}
+.user-select-trigger:focus-visible,
+.admin-select-trigger:focus-visible {
+    border-color: #087ff5;
+    box-shadow: 0 0 0 3px rgb(8 127 245 / 10%);
+}
+[data-slot="select-content"] {
+    border-color: #d7e0e8;
+    border-radius: 8px;
+    background: #fff;
+    color: #334960;
+    box-shadow: 0 12px 30px rgb(31 54 79 / 12%);
+}
+[data-slot="select-item"]:focus,
+[data-slot="select-item"][data-highlighted] {
+    background: #eaf4ff;
+    color: #087ff5;
+}
+[data-slot="select-item"][data-state="checked"] {
+    color: #087ff5;
+    font-weight: 700;
+}
+@media (max-width: 700px) {
+    .user-mobile-bar {
+        position: sticky;
+        z-index: 70;
+        top: 0;
+        display: flex;
+        height: 64px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 16px;
+        border-bottom: 1px solid #e1e7ee;
+        background: #fff;
+    }
+    .user-mobile-bar img {
+        width: 122px;
+        height: 46px;
+        object-fit: contain;
+    }
+    .user-mobile-bar button {
+        display: grid;
+        width: 44px;
+        height: 44px;
+        place-items: center;
+        border: 1px solid #dce4ed;
+        border-radius: 6px;
+        background: #fff;
+        color: #10233e;
+    }
+    .user-mobile-bar button svg {
+        width: 20px;
+        height: 20px;
+    }
+    .user-nav-overlay {
+        position: fixed;
+        z-index: 75;
+        inset: 64px 0 0;
+        display: block;
+        border: 0;
+        background: rgb(8 22 40 / 58%);
+    }
+    .user-shell {
+        display: block;
+    }
+    .user-side {
+        position: fixed;
+        z-index: 80;
+        top: 64px;
+        bottom: 0;
+        left: 0;
+        width: min(310px, 88vw);
+        height: auto;
+        transform: translateX(-105%);
+        transition: transform .22s ease;
+        overflow-y: auto;
+    }
+    .user-side.open {
+        transform: translateX(0);
+    }
+    .user-brand {
+        display: none;
+    }
+    .user-workspace {
+        width: 100%;
+    }
+    .user-topbar {
+        min-height: 68px;
+        padding: 10px 18px;
+    }
+    .user-topbar-account span {
+        display: none;
+    }
+    .user-container {
+        width: min(100% - 28px, 1180px);
+        padding: 38px 0 55px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .user-side {
+        transition: none;
+    }
+}
