@@ -201,7 +201,7 @@ class AdminController extends Controller
         $this->syncFacilitySections($facility, $sections);
         $this->storeGallery($request, $facility, 'hero_image', 'thumbnail');
 
-        return redirect()->route('admin.facilities.edit', $facility)->with('success', 'Fasilitas berhasil ditambahkan.');
+        return redirect()->route('admin.facilities.edit', ['facility' => $facility->encrypted_id])->with('success', 'Fasilitas berhasil ditambahkan.');
     }
 
     public function updateFacility(Request $request, Facility $facility)
