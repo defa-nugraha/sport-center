@@ -1,5 +1,6 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
 import { Head, Link } from '@inertiajs/react';
+import { useState } from 'react';
 import { CalendarDays } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -27,12 +28,10 @@ function formatCurrency(value: number | string) {
 
 export default function Index({
     bookings,
-    facilities,
     statuses = [],
     filters = {},
 }: {
     bookings: any;
-    facilities: any[];
     statuses?: string[];
     filters?: { status?: string };
 }) {
@@ -40,48 +39,13 @@ export default function Index({
 
     return (
         <div className="admin-shell">
-            <Head title="Kelola booking" />
+            <Head title="Daftar booking" />
             <AdminSidebar active="bookings" />
             <main className="admin-main">
                 <AdminTopbar
-                    title="Kelola Booking"
-                    description="Kelola jadwal pemesanan, harga venue, dan status booking pelanggan."
+                    title="Daftar Booking"
+                    description="Lihat, filter, dan kelola seluruh pemesanan venue pelanggan."
                 />
-
-                <section className="admin-panel booking-settings-panel" id="settings">
-                    <div className="panel-head">
-                        <div>
-                            <h2>Pengaturan venue</h2>
-                            <p>
-                                Atur harga per jam dan tentukan venue yang
-                                tersedia untuk booking online.
-                            </p>
-                        </div>
-                        <Clock3 aria-hidden="true" />
-                    </div>
-                    {facilities.length > 0 ? (
-                        <div className="booking-facility-grid">
-                            {facilities.map((facility) => (
-                                <FacilityBookingSettings
-                                    key={facility.id}
-                                    facility={facility}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="booking-empty-state">
-                            <Settings2 aria-hidden="true" />
-                            <strong>Belum ada fasilitas</strong>
-                            <p>
-                                Tambahkan fasilitas terlebih dahulu agar dapat
-                                digunakan untuk booking.
-                            </p>
-                            <Link className="text-link" href="/admin/content?tab=facilities">
-                                Kelola fasilitas
-                            </Link>
-                        </div>
-                    )}
-                </section>
 
                 <section className="admin-panel booking-list-panel" id="list">
                     <div className="panel-head booking-list-head">
