@@ -26,6 +26,7 @@ class AdminBookingController extends Controller
                 'name',
                 'booking_enabled',
                 'booking_price_per_hour',
+                'booking_min_hours',
             ]),
             'filters' => $request->only('status'),
         ]);
@@ -43,6 +44,7 @@ class AdminBookingController extends Controller
         $data = $request->validate([
             'booking_enabled' => ['required', 'boolean'],
             'booking_price_per_hour' => ['required', 'integer', 'min:1'],
+            'booking_min_hours' => ['required', 'integer', 'min:1', 'max:12'],
         ]);
 
         $facility->update($data);
