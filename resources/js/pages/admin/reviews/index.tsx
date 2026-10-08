@@ -28,14 +28,14 @@ export default function ReviewIndex({ reviews, filters, counts }: any) {
         router.get('/admin/reviews', { q: query, status: statusFilter }, { preserveState: true, replace: true });
     };
     const moderate = (review: any, nextStatus: string) => {
-        router.patch(`/admin/reviews/${review.id}/status`, { status: nextStatus }, {
+        router.patch(`/admin/reviews/${review.encrypted_id}/status`, { status: nextStatus }, {
             preserveScroll: true,
             onError: (errors) => setStatus({ type: 'error', message: Object.values(errors)[0] || 'Status ulasan tidak dapat diperbarui.' }),
         });
     };
     const remove = () => {
         if (!deleteTarget) return;
-        router.delete(`/admin/reviews/${deleteTarget.id}`, {
+        router.delete(`/admin/reviews/${deleteTarget.encrypted_id}`, {
             preserveScroll: true,
             onSuccess: () => setDeleteTarget(null),
             onError: (errors) => setStatus({ type: 'error', message: Object.values(errors)[0] || 'Ulasan tidak dapat dihapus.' }),
@@ -74,7 +74,7 @@ export default function ReviewIndex({ reviews, filters, counts }: any) {
                 </section>
                 <section className="review-admin-list" aria-label="Daftar ulasan">
                     {reviews.data.length ? reviews.data.map((review: any) => (
-                        <article className="admin-panel review-admin-card" key={review.id}>
+                        <article className="admin-panel review-admin-card" key={review.encrypted_id}>
                             <div className="review-admin-card-head">
                                 <div><strong>{review.name}</strong><small>{review.organization || 'Pengunjung GGM'} · {new Date(review.created_at).toLocaleDateString('id-ID')}</small></div>
                                 <span className={`review-status ${review.status}`}>{statusLabels[review.status]}</span>
@@ -85,7 +85,7 @@ export default function ReviewIndex({ reviews, filters, counts }: any) {
                                 {review.status !== 'approved' && <button className="button success" type="button" onClick={() => moderate(review, 'approved')}><Check aria-hidden="true" /> Setujui</button>}
                                 {review.status !== 'rejected' && <button className="button secondary" type="button" onClick={() => moderate(review, 'rejected')}><X aria-hidden="true" /> Tolak</button>}
                                 {review.status !== 'pending' && <button className="text-button" type="button" onClick={() => moderate(review, 'pending')}><RotateCcw aria-hidden="true" /> Kembalikan ke antrean</button>}
-                                <Link className="icon-button" href={`/admin/reviews/${review.id}/edit`} aria-label={`Edit ulasan ${review.name}`}><Pencil aria-hidden="true" /></Link>
+                                <Link className="icon-button" href={`/admin/reviews/${review.encrypted_id}/edit`} aria-label={`Edit ulasan ${review.name}`}><Pencil aria-hidden="true" /></Link>
                                 <button className="icon-button danger" type="button" onClick={() => setDeleteTarget(review)} aria-label={`Hapus ulasan ${review.name}`}><Trash2 aria-hidden="true" /></button>
                             </div>
                         </article>
