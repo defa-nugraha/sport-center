@@ -50,6 +50,8 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
         }
     };
 
+    const bookingError = (form.errors as Record<string, string | undefined>).booking;
+
     const submit = (event: FormEvent) => {
         event.preventDefault();
         form.post('/booking/' + facility.slug);
@@ -74,7 +76,7 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
                     <div className="booking-account-note"><CheckCircle2 /><div><strong>{user.name}</strong><span>{user.email}</span></div><small>Akun yang digunakan untuk booking</small></div>
                     <div className="booking-check-row"><button type="button" className="button" onClick={check} disabled={checking}>{checking ? 'Memeriksa...' : 'Cek ketersediaan'}</button>{available === true && <span className="booking-availability success"><CheckCircle2 /> Slot tersedia</span>}{available === false && availabilityMessage && <span className="booking-availability error">{availabilityMessage}</span>}</div>
                     {available === true && <div className="booking-ready"><Info /><span>{availabilityMessage}</span></div>}
-                    {form.errors.booking && <p className="form-error">{form.errors.booking}</p>}
+                    {bookingError && <p className="form-error">{bookingError}</p>}
                     <button type="submit" disabled={form.processing || available !== true} className="button booking-submit"><CalendarCheck /> {form.processing ? 'Membuat booking...' : 'Buat booking & lanjutkan pembayaran'}</button>
                 </form>
             </section>
