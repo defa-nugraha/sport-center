@@ -12,6 +12,11 @@ trait HasEncryptedRouteKey
         $this->append('encrypted_id');
     }
 
+    public function getRouteKey(): string
+    {
+        return $this->encrypted_id;
+    }
+
     public function getEncryptedIdAttribute(): string
     {
         $encrypted = Crypt::encryptString((string) $this->getKey());
