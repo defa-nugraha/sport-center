@@ -16,7 +16,7 @@ export default function Booking({ facilities }: any) {
                                 <h2>{facility.name}</h2>
                                 <p>{facility.subtitle || facility.venue_type || 'Fasilitas olahraga GGM'}</p>
                                 <div className="user-facility-meta">
-                                    <span>{isDaily ? <><CalendarDays /> Per hari</> : <><Clock3 /> Mulai {facility.booking_min_hours || 1} jam</>}</span>
+                                    <span>{facility.booking_mode === 'both' ? <><CalendarDays /> Per jam &amp; per hari</> : isDaily ? <><CalendarDays /> Per hari</> : <><Clock3 /> Mulai {facility.booking_min_hours || 1} jam</>}</span>
                                     <span><MapPin /> {facility.address || 'GGM Majalengka'}</span>
                                 </div>
                                 <strong>
