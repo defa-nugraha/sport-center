@@ -32,7 +32,9 @@ class AdminBookingController extends Controller
                 'id',
                 'name',
                 'booking_enabled',
+                'booking_mode',
                 'booking_price_per_hour',
+                'booking_price_per_day',
                 'booking_min_hours',
             ]),
         ]);
@@ -48,12 +50,15 @@ class AdminBookingController extends Controller
     public function updateFacility(Request $request, Facility $facility)
     {
         $request->merge([
-            'booking_price_per_hour' => preg_replace('/\\D+/', '', (string) $request->input('booking_price_per_hour', '')),
+            'booking_price_per_hour' => preg_replace('/\D+/', '', (string) $request->input('booking_price_per_hour', '')),
+            'booking_price_per_day' => preg_replace('/\D+/', '', (string) $request->input('booking_price_per_day', '')),
         ]);
 
         $data = $request->validate([
             'booking_enabled' => ['required', 'boolean'],
-            'booking_price_per_hour' => ['required', 'integer', 'min:1'],
+            'booking_mode' => ['required', 'in:hourly,daily'],
+            'booking_price_per_hour' => ['nullable', 'integer', 'min:1', 'required_if:booking_mode,hourly'],
+            'booking_price_per_day' => ['nullable', 'integer', 'min:1', 'required_if:booking_mode,daily'],
             'booking_min_hours' => ['required', 'integer', 'min:1', 'max:12'],
         ]);
 

@@ -76,3 +76,34 @@ test('invalid midtrans signature is rejected', function () {
     $payload=['status_code'=>'200','gross_amount'=>'100000.00','order_id'=>'UNKNOWN','signature_key'=>'invalid'];
     $this->postJson('/payments/midtrans/notification',$payload)->assertStatus(400);
 });
+
+test('daily booking calculates inclusive days and rejects overlapping ranges', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+    $facility = bookingFacility();
+    $facility->update([
+        'booking_mode' => 'daily',
+        'booking_price_per_day' => 350000,
+    ]);
+
+    $result = app(BookingService::class)->create($facility, [
+        'customer_name' => 'Daily User',
+        'customer_email' => 'daily@test.test',
+        'customer_phone' => '62818',
+        'booking_date' => now()->addDays(2)->format('Y-m-d'),
+        'booking_end_date' => now()->addDays(4)->format('Y-m-d'),
+    ]);
+
+    expect($result['booking']->booking_mode)->toBe('daily')
+        ->and($result['booking']->booking_end_date->format('Y-m-d'))->toBe(now()->addDays(4)->format('Y-m-d'))
+        ->and($result['booking']->duration_minutes)->toBe(4320)
+        ->and($result['booking']->total)->toBe(1050000);
+
+    expect(fn () => app(BookingService::class)->create($facility, [
+        'customer_name' => 'Another User',
+        'customer_email' => 'another@test.test',
+        'customer_phone' => '62819',
+        'booking_date' => now()->addDays(3)->format('Y-m-d'),
+        'booking_end_date' => now()->addDays(5)->format('Y-m-d'),
+    ]))->toThrow(RuntimeException::class);
+});

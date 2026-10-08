@@ -67,25 +67,33 @@ export default function Show({ booking }: { booking: any }) {
                                 <strong>{booking.facility?.name || '-'}</strong>
                             </div>
                             <div>
-                                <span>Tanggal</span>
+                                <span>Mode booking</span>
+                                <strong>{booking.booking_mode === 'daily' ? 'Per hari' : 'Per jam'}</strong>
+                            </div>
+                            <div>
+                                <span>{booking.booking_mode === 'daily' ? 'Rentang tanggal' : 'Tanggal'}</span>
                                 <strong>
-                                    {new Date(
-                                        `${booking.booking_date}T00:00:00`,
-                                    ).toLocaleDateString('id-ID', {
+                                    {new Date(`${booking.booking_date}T00:00:00`).toLocaleDateString('id-ID', {
                                         weekday: 'long',
                                         day: '2-digit',
                                         month: 'long',
                                         year: 'numeric',
                                     })}
+                                    {booking.booking_mode === 'daily' && booking.booking_end_date && (
+                                        <> – {new Date(`${booking.booking_end_date}T00:00:00`).toLocaleDateString('id-ID', {
+                                            day: '2-digit',
+                                            month: 'long',
+                                            year: 'numeric',
+                                        })}</>
+                                    )}
                                 </strong>
                             </div>
-                            <div>
-                                <span>Waktu</span>
-                                <strong>
-                                    {booking.start_time?.slice(0, 5)} -{' '}
-                                    {booking.end_time?.slice(0, 5)}
-                                </strong>
-                            </div>
+                            {booking.booking_mode !== 'daily' && (
+                                <div>
+                                    <span>Waktu</span>
+                                    <strong>{booking.start_time?.slice(0, 5)} - {booking.end_time?.slice(0, 5)}</strong>
+                                </div>
+                            )}
                             <div>
                                 <span>Total</span>
                                 <strong className="booking-detail-total">

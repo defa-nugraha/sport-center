@@ -9561,3 +9561,311 @@ textarea {
 }
 
 /* UI/UX consolidation CI verification */
+
+
+/* Daily booking date range picker */
+.booking-daily-grid {
+    grid-template-columns: minmax(0, 1.45fr) minmax(220px, .8fr);
+}
+.booking-date-range-field {
+    position: relative;
+}
+.date-range-picker {
+    position: relative;
+    width: 100%;
+}
+.date-range-trigger {
+    display: flex;
+    width: 100%;
+    min-height: 48px;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    border: 2px solid #9acbfa;
+    border-radius: 10px;
+    background: #fff;
+    color: #273556;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+    box-shadow: 0 2px 8px rgb(40 75 120 / 5%);
+}
+.date-range-trigger:hover,
+.date-range-trigger.open {
+    border-color: #78b9f5;
+}
+.date-range-trigger:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 3px;
+}
+.date-range-trigger svg:first-child {
+    width: 19px;
+    height: 19px;
+    flex: none;
+    color: var(--blue);
+}
+.date-range-trigger span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.date-range-trigger-chevron {
+    width: 18px;
+    height: 18px;
+    margin-left: auto;
+    flex: none;
+    transform: rotate(90deg);
+    transition: transform .16s ease;
+}
+.date-range-trigger-chevron.rotated {
+    transform: rotate(-90deg);
+}
+.date-range-popover {
+    position: absolute;
+    z-index: 100;
+    top: calc(100% + 8px);
+    left: 0;
+    display: grid;
+    grid-template-columns: 180px minmax(300px, 1fr);
+    width: min(650px, calc(100vw - 32px));
+    overflow: hidden;
+    border: 1px solid #e3e9f0;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 20px 50px rgb(24 44 74 / 15%);
+}
+.date-range-presets {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 18px 12px;
+    background: #fbfcfe;
+    border-right: 1px solid #edf1f5;
+}
+.date-range-presets button {
+    min-height: 42px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #2b3a5b;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
+}
+.date-range-presets button:hover,
+.date-range-presets button:focus-visible {
+    background: #eaf4ff;
+    color: #087ff5;
+}
+.date-range-presets button.reset {
+    display: inline-flex;
+    margin-top: auto;
+    align-items: center;
+    gap: 7px;
+    color: #087ff5;
+}
+.date-range-presets .reset svg {
+    width: 15px;
+    height: 15px;
+}
+.date-range-calendar {
+    padding: 20px 22px 14px;
+}
+.date-range-calendar-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+.date-range-calendar-head strong {
+    color: #2b3859;
+    font-size: 17px;
+}
+.date-range-calendar-head > div {
+    display: flex;
+    gap: 4px;
+}
+.date-range-calendar-head button {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #2b3859;
+}
+.date-range-calendar-head button:hover:not(:disabled),
+.date-range-calendar-head button:focus-visible:not(:disabled) {
+    background: #eaf4ff;
+    color: #087ff5;
+}
+.date-range-calendar-head button:disabled {
+    opacity: .3;
+    cursor: not-allowed;
+}
+.date-range-calendar-head button svg {
+    width: 19px;
+    height: 19px;
+}
+.date-range-weekdays,
+.date-range-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.date-range-weekdays {
+    margin-bottom: 6px;
+}
+.date-range-weekdays span {
+    color: #7b879f;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+}
+.date-range-grid {
+    row-gap: 2px;
+}
+.date-range-day,
+.date-range-empty {
+    min-width: 0;
+    height: 42px;
+}
+.date-range-day {
+    position: relative;
+    border: 0;
+    background: transparent;
+    color: #2b3859;
+    font-size: 13px;
+    font-weight: 600;
+}
+.date-range-day:hover:not(:disabled) {
+    background: #eaf4ff;
+}
+.date-range-day:disabled {
+    color: #b6beca;
+    cursor: not-allowed;
+}
+.date-range-day.in-range {
+    border-radius: 0;
+    background: #dcecff;
+    color: #2b3859;
+}
+.date-range-day.selected-start,
+.date-range-day.selected-end {
+    z-index: 1;
+    border-radius: 50%;
+    background: #087ff5;
+    color: #fff;
+    font-weight: 800;
+    box-shadow: 0 0 0 5px #dcecff;
+}
+.date-range-day.selected-start {
+    box-shadow: 5px 0 0 0 #dcecff, 0 0 0 5px #dcecff;
+}
+.date-range-day.selected-end {
+    box-shadow: -5px 0 0 0 #dcecff, 0 0 0 5px #dcecff;
+}
+.date-range-helper {
+    min-height: 18px;
+    margin: 12px 0 0;
+    color: #7b879f;
+    font-size: 10px;
+}
+.booking-form-panel .booking-daily-grid + .booking-account-note {
+    margin-top: 4px;
+}
+@media (max-width: 700px) {
+    .booking-daily-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .date-range-popover {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        grid-template-columns: minmax(0, 1fr);
+        width: min(94vw, 430px);
+        max-height: 86vh;
+        overflow-y: auto;
+        transform: translate(-50%, -50%);
+    }
+    .date-range-presets {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        border-right: 0;
+        border-bottom: 1px solid #edf1f5;
+    }
+    .date-range-presets .reset {
+        margin-top: 0;
+    }
+    .date-range-calendar {
+        padding: 18px 14px 12px;
+    }
+    .date-range-day,
+    .date-range-empty {
+        height: 40px;
+    }
+}
+
+/* Daily booking date-range picker */
+.date-range-picker { position: relative; min-width: 0; }
+.date-range-trigger {
+    display: flex; width: 100%; min-height: 48px; align-items: center; gap: 10px;
+    padding: 0 14px; border: 1px solid #cfdbe7; border-radius: 8px; background: #fff;
+    color: var(--ink); font-size: 13px; font-weight: 700; text-align: left;
+}
+.date-range-trigger:hover, .date-range-trigger:focus-visible { border-color: #8fc8ff; box-shadow: 0 0 0 3px rgb(47 116 189 / 10%); }
+.date-range-trigger svg:first-child { width: 18px; color: var(--blue); flex: none; }
+.date-range-trigger span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.date-range-chevron { margin-left: auto; transition: transform .18s ease; }
+.date-range-chevron.open { transform: rotate(90deg); }
+.date-range-popover {
+    position: absolute; z-index: 50; top: calc(100% + 8px); left: 0;
+    display: grid; grid-template-columns: 150px minmax(310px, 1fr); width: min(620px, calc(100vw - 40px));
+    overflow: hidden; border: 1px solid #e3eaf1; border-radius: 12px; background: #fff;
+    box-shadow: 0 18px 48px rgb(20 36 63 / 14%);
+}
+.date-range-shortcuts { display: grid; align-content: start; gap: 3px; padding: 20px 12px; border-right: 1px solid #edf1f5; background: #fbfcfd; }
+.date-range-shortcuts strong { margin: 0 8px 10px; color: var(--ink); font-size: 11px; }
+.date-range-shortcuts button {
+    min-height: 38px; padding: 0 10px; border: 0; border-radius: 6px; background: transparent;
+    color: #334960; font-size: 12px; font-weight: 700; text-align: left;
+}
+.date-range-shortcuts button:hover, .date-range-shortcuts button:focus-visible { background: #eaf4ff; color: #087ff5; }
+.date-range-calendar { padding: 20px; }
+.date-range-calendar-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.date-range-calendar-head strong { color: var(--ink); font-size: 17px; text-transform: capitalize; }
+.date-range-calendar-head > div { display: flex; gap: 4px; }
+.date-range-calendar-head button {
+    display: grid; width: 34px; height: 34px; place-items: center; border: 0; border-radius: 6px;
+    background: transparent; color: var(--ink);
+}
+.date-range-calendar-head button:hover, .date-range-calendar-head button:focus-visible { background: #eaf4ff; color: #087ff5; }
+.date-range-calendar-head svg { width: 18px; }
+.date-range-weekdays, .date-range-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.date-range-weekdays { margin-bottom: 6px; }
+.date-range-weekdays span { padding: 4px 0; color: #7a8799; font-size: 10px; font-weight: 800; text-align: center; }
+.date-range-grid { row-gap: 2px; }
+.date-range-day {
+    position: relative; min-height: 40px; padding: 0; border: 0; background: transparent; color: var(--ink);
+    font-size: 12px; font-weight: 600;
+}
+.date-range-day:hover:not(:disabled), .date-range-day:focus-visible { z-index: 1; background: #eaf4ff; color: #087ff5; }
+.date-range-day.outside { color: #aeb8c4; }
+.date-range-day:disabled { color: #c8d0d9; cursor: not-allowed; }
+.date-range-day.in-range { background: #dceeff; border-radius: 0; color: var(--ink); }
+.date-range-day.selected { z-index: 2; background: #087ff5; color: #fff; border-radius: 50%; font-weight: 800; }
+.date-range-day.selected::after { content: ''; position: absolute; inset: -4px; border: 4px solid #dceeff; border-radius: 50%; z-index: -1; }
+.booking-daily-grid { grid-template-columns: minmax(0, 1.5fr) minmax(190px, 1fr); }
+.booking-date-range-field { grid-column: 1; }
+@media (max-width: 700px) {
+    .date-range-popover { grid-template-columns: 1fr; width: min(100vw - 28px, 420px); }
+    .date-range-shortcuts { grid-template-columns: repeat(4, 1fr); border-right: 0; border-bottom: 1px solid #edf1f5; padding: 10px; }
+    .date-range-shortcuts strong { grid-column: 1 / -1; margin: 0 4px 4px; }
+    .date-range-shortcuts button { min-height: 36px; text-align: center; }
+    .date-range-calendar { padding: 14px; }
+    .booking-daily-grid { grid-template-columns: 1fr; }
+    .booking-date-range-field { grid-column: auto; }
+}
