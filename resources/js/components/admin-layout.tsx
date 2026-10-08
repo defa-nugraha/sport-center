@@ -25,7 +25,6 @@ import { ProductTour } from '@/components/product-tour';
 
 const navItems = [
     { key: 'dashboard', label: 'Dasbor', href: '/admin', icon: LayoutDashboard },
-    { key: 'bookings', label: 'Kelola Booking', href: '/admin/bookings', icon: CalendarCheck, permission: 'kelola booking' },
     { key: 'account', label: 'Akun admin', href: '/admin/account', icon: UserCog },
 ];
 
@@ -110,6 +109,14 @@ export function AdminSidebar({
                         </Link>
                     );
                 })}
+                {permissions.includes('kelola booking') && <Link
+                    href="/admin/bookings"
+                    className={`admin-link ${active === 'bookings' ? 'active' : ''}`}
+                    onClick={() => setMobileOpen(false)}
+                >
+                    <CalendarCheck aria-hidden="true" />
+                    <span>Kelola Booking</span>
+                </Link>}
                 {visibleContentItems.length > 0 && <button
                     type="button"
                     className={`admin-link admin-content-toggle ${active === 'content' ? 'active' : ''}`}
