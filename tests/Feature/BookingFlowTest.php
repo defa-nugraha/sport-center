@@ -49,6 +49,28 @@ test('midtrans webhook is verified and idempotently confirms booking and creates
     expect($booking->fresh()->invoice()->count())->toBe(1);
 });
 
+
+test('booking status cannot be viewed by another user', function () {
+    $owner=User::factory()->create();
+    $other=User::factory()->create();
+    $facility=bookingFacility();
+    $booking=Booking::create(['user_id'=>$owner->id,'facility_id'=>$facility->id,'customer_name'=>'Owner','customer_email'=>'owner@test.test','customer_phone'=>'62816','booking_date'=>now()->addDay()->format('Y-m-d'),'start_time'=>'10:00:00','end_time'=>'11:00:00','duration_minutes'=>60,'price_per_hour'=>100000,'subtotal'=>100000,'total'=>100000,'status'=>BookingStatus::PENDING_PAYMENT,'expires_at'=>now()->addMinutes(15)]);
+    $this->actingAs($other)->get('/booking/'.$booking->id.'/status')->assertForbidden();
+});
+
+test('midtrans status order mismatch cannot confirm booking', function () {
+    config()->set('services.midtrans.server_key','test-server-key');
+    $user=User::factory()->create();
+    $facility=bookingFacility();
+    $booking=Booking::create(['user_id'=>$user->id,'facility_id'=>$facility->id,'customer_name'=>'User','customer_email'=>'user@test.test','customer_phone'=>'62817','booking_date'=>now()->addDay()->format('Y-m-d'),'start_time'=>'10:00:00','end_time'=>'11:00:00','duration_minutes'=>60,'price_per_hour'=>100000,'subtotal'=>100000,'total'=>100000,'status'=>BookingStatus::PENDING_PAYMENT,'expires_at'=>now()->addMinutes(15)]);
+    Payment::create(['booking_id'=>$booking->id,'order_id'=>'BOOKING-TEST-MISMATCH','gross_amount'=>100000,'payment_status'=>PaymentStatus::PENDING]);
+    $payload=['status_code'=>'200','gross_amount'=>'100000.00','order_id'=>'BOOKING-TEST-MISMATCH','transaction_id'=>'trx-mismatch','transaction_status'=>'settlement','fraud_status'=>'accept','signature_key'=>hash('sha512','BOOKING-TEST-MISMATCH'.'200'.'100000.00'.'test-server-key')];
+    $status=[...$payload,'order_id'=>'BOOKING-OTHER'];
+    Http::fake(['https://api.sandbox.midtrans.com/*'=>Http::response($status,200)]);
+    $this->postJson('/payments/midtrans/notification',$payload)->assertStatus(400);
+    expect($booking->fresh()->status)->toBe(BookingStatus::PENDING_PAYMENT);
+});
+
 test('invalid midtrans signature is rejected', function () {
     config()->set('services.midtrans.server_key','test-server-key');
     $payload=['status_code'=>'200','gross_amount'=>'100000.00','order_id'=>'UNKNOWN','signature_key'=>'invalid'];
