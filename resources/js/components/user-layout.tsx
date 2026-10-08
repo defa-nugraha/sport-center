@@ -91,9 +91,6 @@ export function UserShell({
                             {children}
                         </div>
                     </main>
-                    <footer className="footer user-footer">
-                        <small>&copy; 2026 GGM Majalengka. Seluruh hak cipta dilindungi.</small>
-                    </footer>
                 </div>
             </div>
         </>
