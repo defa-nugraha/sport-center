@@ -50,7 +50,7 @@ export default function AdminPages({
         event.preventDefault();
         const segment = mode === 'section' ? 'page-sections' : mode === 'banner' ? 'page-banners' : mode === 'highlight' ? 'homepage-highlights' : 'partner-logos';
         if (editing) form.transform((data: any) => ({ ...data, _method: 'put' }));
-        form.post(`/admin/${segment}${editing ? `/${editing.id}` : ''}`, { forceFormData: mode === 'logo' || mode === 'banner', preserveScroll: true, onSuccess: () => { setMode(null); setEditing(null); form.reset(); }, onError: fail });
+        form.post(`/admin/${segment}${editing ? `/${editing.encrypted_id}` : ''}`, { forceFormData: mode === 'logo' || mode === 'banner', preserveScroll: true, onSuccess: () => { setMode(null); setEditing(null); form.reset(); }, onError: fail });
     };
     const remove = () => router.delete(deleteTarget.url, { preserveScroll: true, onSuccess: () => setDeleteTarget(null), onError: fail });
     const submitGlobal = (event: FormEvent) => { event.preventDefault(); global.post('/admin/settings', { preserveScroll: true, onError: fail }); };
