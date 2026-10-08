@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { CalendarCheck, CalendarDays, CheckCircle2, Clock3, CreditCard, FileText } from 'lucide-react';
+import { CalendarCheck, CalendarDays, CheckCircle2, CreditCard, FileText } from 'lucide-react';
 import { UserShell } from '@/components/user-layout';
 
 const statusLabels: Record<string, string> = { PENDING_PAYMENT: 'Menunggu pembayaran', CONFIRMED: 'Dikonfirmasi', FAILED: 'Gagal', EXPIRED: 'Kedaluwarsa', CANCELLED: 'Dibatalkan', COMPLETED: 'Selesai' };
