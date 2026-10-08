@@ -9463,3 +9463,73 @@ textarea {
         padding: 20px;
     }
 }
+
+
+.account-list,
+.account-section-block {
+    display: grid;
+    gap: 28px;
+}
+.account-list-items {
+    display: grid;
+    gap: 12px;
+}
+.account-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+.account-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+}
+.account-card-main {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+}
+.account-card-title {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+.account-meta {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+}
+.account-empty {
+    padding: 32px 16px;
+    color: var(--text-muted);
+    text-align: center;
+}
+.account-danger {
+    display: grid;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid var(--danger);
+    border-radius: var(--radius-lg);
+    background: var(--danger-surface);
+}
+.account-danger-copy {
+    display: grid;
+    gap: 4px;
+    color: var(--danger);
+}
+@media (max-width: 700px) {
+    .account-section-header,
+    .account-card {
+        align-items: stretch;
+        flex-direction: column;
+    }
+    .account-card > :last-child {
+        align-self: flex-start;
+    }
+}
