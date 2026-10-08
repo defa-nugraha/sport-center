@@ -2,6 +2,7 @@
 
 namespace App\Concerns;
 
+use Illuminate\Contracts\Routing\UrlRoutable;
 use Illuminate\Support\Facades\Crypt;
 use Throwable;
 
@@ -19,14 +20,15 @@ trait HasEncryptedRouteKey
         return rtrim(strtr(base64_encode($encrypted), '+/', '-_'), '=');
     }
 
-    public function resolveRouteBinding($value, $field = null)
+    public function getRouteKey(): string
+    {
+        return $this->encrypted_id;
+    }
+
+    public function resolveRouteBinding($value, $field = null): ?UrlRoutable
     {
         if ($field !== null) {
             return parent::resolveRouteBinding($value, $field);
-        }
-
-        if (ctype_digit((string) $value)) {
-            return parent::resolveRouteBinding($value);
         }
 
         try {
