@@ -1,26 +1,27 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import { CalendarCheck, CalendarDays, CheckCircle2, Clock3, CreditCard, FileText } from 'lucide-react';
+import { UserShell } from '@/components/user-layout';
+
+const statusLabels: Record<string, string> = { PENDING_PAYMENT: 'Menunggu pembayaran', CONFIRMED: 'Dikonfirmasi', FAILED: 'Gagal', EXPIRED: 'Kedaluwarsa', CANCELLED: 'Dibatalkan', COMPLETED: 'Selesai' };
 
 export default function BookingStatus({ booking }: { booking: any }) {
     const flash = (usePage().props as any).flash ?? {};
     const paymentUrl = flash.payment_url || booking.payment?.payment_url;
+    const statusClass = String(booking.status).toLowerCase();
 
     return (
-        <>
-            <Head title={'Booking ' + booking.booking_number} />
-            <main className="mx-auto max-w-2xl px-6 py-12">
-                <h1 className="text-3xl font-semibold">Booking {booking.booking_number}</h1>
-                <div className="mt-6 space-y-2 rounded border p-6">
-                    <p><b>Fasilitas:</b> {booking.facility.name}</p>
-                    <p><b>Tanggal:</b> {booking.booking_date}</p>
-                    <p><b>Jam:</b> {booking.start_time?.slice(0, 5)} - {booking.end_time?.slice(0, 5)}</p>
-                    <p><b>Status:</b> {booking.status}</p>
-                    <p><b>Total:</b> Rp {Number(booking.total).toLocaleString('id-ID')}</p>
-                    {booking.expires_at && <p><b>Batas pembayaran:</b> {booking.expires_at}</p>}
-                </div>
-                {booking.status === 'PENDING_PAYMENT' && paymentUrl && <a className="mt-6 inline-block rounded bg-black px-5 py-3 text-white" href={paymentUrl}>Lanjutkan Pembayaran</a>}
-                {booking.status === 'CONFIRMED' && booking.invoice && <p className="mt-6 text-green-700">Pembayaran berhasil. Invoice {booking.invoice.invoice_number} telah dibuat dan dikirim.</p>}
-                <Link className="mt-6 block" href="/facilities">Kembali ke fasilitas</Link>
-            </main>
-        </>
+        <UserShell active="bookings" title="Detail Booking" description="Pantau status pemesanan dan pembayaran venue kamu.">
+            <section className="booking-status-hero">
+                <div className="booking-status-icon">{booking.status === 'CONFIRMED' ? <CheckCircle2 /> : <CalendarCheck />}</div>
+                <div><span className="eyebrow"><i /> {booking.booking_number}</span><h2>{statusLabels[booking.status] || booking.status}</h2><p>{booking.status === 'PENDING_PAYMENT' ? 'Selesaikan pembayaran sebelum batas waktu agar slot tetap tersimpan.' : booking.status === 'CONFIRMED' ? 'Pembayaran berhasil dan booking kamu sudah dikonfirmasi.' : 'Status booking ini perlu diperhatikan sebelum melanjutkan.'}</p></div>
+                {booking.status === 'PENDING_PAYMENT' && paymentUrl && <a className="button" href={paymentUrl}>Lanjutkan pembayaran</a>}
+            </section>
+            <div className="booking-status-grid">
+                <section className="user-panel"><div className="user-panel-head"><div><span className="eyebrow"><i /> Jadwal</span><h2>{booking.facility.name}</h2></div><CalendarDays /></div><div className="booking-detail-info"><div><span>Tanggal</span><strong>{new Date(booking.booking_date).toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })}</strong></div><div><span>Jam</span><strong>{booking.start_time?.slice(0, 5)} - {booking.end_time?.slice(0, 5)}</strong></div><div><span>Durasi</span><strong>{booking.duration_minutes / 60} jam</strong></div><div><span>Total</span><strong>Rp {Number(booking.total).toLocaleString('id-ID')}</strong></div></div></section>
+                <section className="user-panel"><div className="user-panel-head"><div><span className="eyebrow"><i /> Pembayaran</span><h2>Transaksi</h2></div><CreditCard /></div><div className="booking-detail-info"><div><span>Status pembayaran</span><strong>{booking.payment?.payment_status || '-'}</strong></div><div><span>Order ID</span><strong>{booking.payment?.order_id || '-'}</strong></div><div><span>Invoice</span><strong>{booking.invoice?.invoice_number || 'Belum dibuat'}</strong></div>{booking.expires_at && <div><span>Batas pembayaran</span><strong>{booking.expires_at}</strong></div>}</div></section>
+            </div>
+            {booking.status === 'CONFIRMED' && booking.invoice && <div className="booking-success-note"><FileText /><span>Invoice {booking.invoice.invoice_number} telah dibuat dan akan dikirim melalui notifikasi yang terdaftar.</span></div>}
+            <Link className="booking-back-user" href="/bookings">Kembali ke riwayat booking</Link>
+        </UserShell>
     );
 }
