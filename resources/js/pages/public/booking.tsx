@@ -1,5 +1,5 @@
 import { FormEvent, useMemo, useState } from 'react';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 import { CalendarCheck, CalendarDays, CheckCircle2, Clock3, Info, MapPin } from 'lucide-react';
 import { UserShell } from '@/components/user-layout';
 
