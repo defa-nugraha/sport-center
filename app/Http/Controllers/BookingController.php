@@ -140,7 +140,7 @@ class BookingController extends Controller
             SendBookingCreatedNotification::dispatch($booking->id, $payment->payment_url);
 
             return redirect()
-                ->route('booking.show', $booking)
+                ->route('booking.show', ['booking' => $booking->encrypted_id])
                 ->with('payment_url', $payment->payment_url)
                 ->with('success', 'Booking berhasil dibuat. Silakan lakukan pembayaran sebelum batas waktu berakhir.');
         } catch (\Throwable $e) {
