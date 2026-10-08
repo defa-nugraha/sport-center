@@ -28,6 +28,7 @@ function FacilityBookingSettings({ facility }: { facility: any }) {
     const form = useForm({
         booking_enabled: Boolean(facility.booking_enabled),
         booking_price_per_hour: facility.booking_price_per_hour ?? '',
+        booking_min_hours: facility.booking_min_hours ?? 1,
     });
 
     return (
@@ -65,6 +66,25 @@ function FacilityBookingSettings({ facility }: { facility: any }) {
                                 )
                             }
                         />
+                    </div>
+                </label>
+                <label>
+                    Minimal durasi
+                    <div className="booking-price-input">
+                        <input
+                            type="number"
+                            min="1"
+                            max="12"
+                            step="1"
+                            value={form.data.booking_min_hours}
+                            onChange={(event) =>
+                                form.setData(
+                                    'booking_min_hours',
+                                    Number(event.target.value),
+                                )
+                            }
+                        />
+                        <span>jam</span>
                     </div>
                 </label>
                 <label className="booking-toggle">
@@ -117,7 +137,7 @@ export default function Index({
                     description="Kelola jadwal pemesanan, harga venue, dan status booking pelanggan."
                 />
 
-                <section className="admin-panel booking-settings-panel">
+                <section className="admin-panel booking-settings-panel" id="settings">
                     <div className="panel-head">
                         <div>
                             <h2>Pengaturan venue</h2>
@@ -152,7 +172,7 @@ export default function Index({
                     )}
                 </section>
 
-                <section className="admin-panel booking-list-panel">
+                <section className="admin-panel booking-list-panel" id="list">
                     <div className="panel-head booking-list-head">
                         <div>
                             <h2>Daftar booking</h2>
