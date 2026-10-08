@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { CalendarCheck, CalendarDays, CheckCircle2, Clock3, CreditCard, FileText } from 'lucide-react';
+import { CalendarCheck, CalendarDays, CheckCircle2, CreditCard, FileText } from 'lucide-react';
 import { UserShell } from '@/components/user-layout';
 
 const statusLabels: Record<string, string> = { PENDING_PAYMENT: 'Menunggu pembayaran', CONFIRMED: 'Dikonfirmasi', FAILED: 'Gagal', EXPIRED: 'Kedaluwarsa', CANCELLED: 'Dibatalkan', COMPLETED: 'Selesai' };
@@ -7,7 +7,6 @@ const statusLabels: Record<string, string> = { PENDING_PAYMENT: 'Menunggu pembay
 export default function BookingStatus({ booking }: { booking: any }) {
     const flash = (usePage().props as any).flash ?? {};
     const paymentUrl = flash.payment_url || booking.payment?.payment_url;
-    const statusClass = String(booking.status).toLowerCase();
 
     return (
         <UserShell active="bookings" title="Detail Booking" description="Pantau status pemesanan dan pembayaran venue kamu.">

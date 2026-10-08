@@ -1,6 +1,6 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
 import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, CalendarDays, CreditCard, FileText, MapPin, UserRound } from 'lucide-react';
+import { ArrowLeft, CalendarDays, CreditCard, FileText, UserRound } from 'lucide-react';
 
 const statusLabels: Record<string, string> = {
     PENDING_PAYMENT: 'Menunggu pembayaran',

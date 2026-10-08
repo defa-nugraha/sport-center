@@ -11,9 +11,9 @@ class PasskeyLoginResponse implements PasskeyLoginResponseContract
 {
     public function toResponse($request): Response
     {
-        $redirect = $request->user() instanceof User && $request->user()->getAllPermissions()->isNotEmpty()
-            ? '/admin'
-            : '/dashboard';
+        $redirect = $request->user() instanceof User && $request->user()->hasRole('user')
+            ? '/dashboard'
+            : '/admin';
 
         return $request->wantsJson()
             ? new JsonResponse(['redirect' => $redirect], 200)
