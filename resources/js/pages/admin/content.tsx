@@ -258,7 +258,7 @@ export default function Content({
         const form: any = taxonomy === 'category' ? category : tag;
         const plural = taxonomy === 'category' ? 'categories' : 'tags';
         const url = editingTaxonomy
-            ? `/admin/blog/${plural}/${editingTaxonomy.id}`
+            ? `/admin/blog/${plural}/${editingTaxonomy.encrypted_id}`
             : `/admin/blog/${plural}`;
         const options = {
             preserveScroll: true,
@@ -282,7 +282,7 @@ export default function Content({
         if (!editing || !image.id) return;
         const segment = tab === 'sports' ? 'sports' : 'events';
         setDeleteTarget({
-            url: `/admin/${segment}/${editing.encrypted_id}/images/${image.id}`,
+            url: `/admin/${segment}/${editing.encrypted_id}/images/${image.encrypted_id}`,
             name: `Gambar ${editing.name || editing.title}`,
         });
     };
