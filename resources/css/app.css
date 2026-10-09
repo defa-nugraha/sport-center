@@ -9998,3 +9998,601 @@ textarea {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* =========================================================
+   Adaptive responsive UX system — final mobile overrides
+   ========================================================= */
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+    max-width: 100%;
+}
+
+@media (max-width: 767px) {
+    /* Public site: navigation becomes a true mobile drawer. */
+    .site-header {
+        height: 64px;
+        min-height: 64px;
+        padding: 0 14px;
+    }
+    .header-brand {
+        width: 132px;
+        height: 48px;
+    }
+    .mobile-toggle {
+        display: grid;
+        width: 44px;
+        height: 44px;
+        place-items: center;
+        border: 1px solid #d7e1eb;
+        border-radius: 8px;
+        background: #fff;
+    }
+    .site-header .nav {
+        position: fixed;
+        z-index: 80;
+        top: 64px;
+        right: 0;
+        left: 0;
+        display: none;
+        max-height: calc(100dvh - 64px);
+        padding: 10px 14px calc(18px + env(safe-area-inset-bottom));
+        overflow-y: auto;
+        border-top: 1px solid #e3eaf1;
+        background: #fff;
+        box-shadow: 0 18px 35px rgb(20 36 63 / 14%);
+    }
+    .site-header .nav.open {
+        display: flex;
+        align-items: stretch;
+        gap: 4px;
+    }
+    .site-header .nav a {
+        width: 100%;
+        min-height: 48px;
+        justify-content: flex-start;
+        padding: 0 12px;
+        border-bottom: 0;
+        border-radius: 8px;
+    }
+    .site-header .nav a.active {
+        padding: 0 12px;
+        border-bottom: 0;
+        background: #edf3f9;
+    }
+    .site-header .nav .header-login,
+    .site-header .nav .header-contact {
+        margin-top: 5px;
+        justify-content: center;
+    }
+
+    /* Public layouts never force a two-column desktop composition on phones. */
+    .home-hero,
+    .detail-hero,
+    .sport-hero,
+    .event-detail-hero,
+    .spec-layout,
+    .host-card,
+    .facility-card,
+    .filters form,
+    .review-form > div,
+    .two-col,
+    .three-col {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .detail-hero,
+    .sport-hero,
+    .event-detail-hero {
+        gap: 24px;
+        padding: 22px;
+    }
+    .detail-hero img,
+    .sport-hero img,
+    .event-detail-hero img {
+        height: auto;
+        max-height: 320px;
+        aspect-ratio: 16 / 10;
+    }
+    .spec-layout > img {
+        height: auto;
+        aspect-ratio: 16 / 10;
+    }
+    .section-title {
+        gap: 10px;
+    }
+    .section-title h2 {
+        overflow-wrap: anywhere;
+    }
+    .event-meta,
+    .event-calendar-actions {
+        align-items: flex-start;
+    }
+    .event-calendar-actions {
+        flex-direction: column;
+    }
+    .event-calendar-actions .button,
+    .event-calendar-actions .text-link {
+        width: 100%;
+        justify-content: center;
+    }
+    .gallery-grid,
+    .feature-grid,
+    .sport-list,
+    .event-grid,
+    .facility-grid,
+    .testimonial-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .gallery-grid img {
+        height: auto;
+        aspect-ratio: 16 / 10;
+    }
+    .region-wide {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .region-wide img {
+        height: auto;
+        aspect-ratio: 16 / 10;
+    }
+    .cta > div {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .cta {
+        padding: 24px 18px;
+    }
+
+    /* Customer workspace: content-first mobile hierarchy. */
+    .user-mobile-bar {
+        height: 64px;
+        padding: 8px 14px;
+    }
+    .user-mobile-bar img {
+        width: 112px;
+        height: 44px;
+    }
+    .user-side {
+        width: min(320px, 88vw);
+        padding: 18px 14px max(20px, env(safe-area-inset-bottom));
+        background: #fff;
+    }
+    .user-topbar {
+        min-height: 62px;
+        padding: 10px 14px;
+    }
+    .user-topbar > div:first-child strong {
+        font-size: 14px;
+    }
+    .user-container {
+        width: min(100% - 24px, 1180px);
+        padding: 24px 0 calc(42px + env(safe-area-inset-bottom));
+    }
+    .user-page-intro {
+        margin-bottom: 18px;
+    }
+    .user-page-intro p {
+        font-size: 13px;
+        line-height: 1.55;
+    }
+    .user-stat-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+    }
+    .user-stat-grid article {
+        min-width: 0;
+        grid-template-columns: 1fr;
+        gap: 5px;
+        padding: 12px;
+    }
+    .user-stat-grid svg {
+        width: 20px;
+        height: 20px;
+    }
+    .user-stat-grid strong {
+        font-size: 21px;
+    }
+    .user-panel {
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+    .user-panel-head {
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+    .user-panel-head h2 {
+        font-size: 21px;
+        line-height: 1.15;
+    }
+    .user-panel-head p {
+        font-size: 11px;
+    }
+    .user-panel-head > svg {
+        flex: none;
+    }
+    .user-booking-row {
+        grid-template-columns: 38px minmax(0, 1fr);
+        gap: 10px;
+    }
+    .user-booking-row .booking-status {
+        grid-column: 2;
+        justify-self: start;
+    }
+    .user-history-card {
+        gap: 12px;
+        padding: 14px;
+    }
+    .user-history-main {
+        align-items: flex-start;
+    }
+    .user-history-side {
+        width: 100%;
+        justify-items: start;
+        text-align: left;
+    }
+    .user-history-side .text-link {
+        justify-content: flex-start;
+    }
+    .user-facility-card {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .user-facility-image {
+        height: auto;
+        min-height: 0;
+        aspect-ratio: 16 / 10;
+    }
+    .user-facility-content {
+        padding: 16px;
+    }
+    .user-facility-content h2 {
+        font-size: 21px;
+    }
+
+    /* Booking: one decision per screen, no horizontal collisions. */
+    .booking-flow {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+    .booking-flow-summary {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .booking-flow-image {
+        height: auto;
+        min-height: 0;
+        aspect-ratio: 16 / 8;
+    }
+    .booking-flow-summary > div:last-child {
+        padding: 16px;
+    }
+    .booking-flow-summary h2 {
+        font-size: 21px;
+    }
+    .booking-step-grid,
+    .booking-daily-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .booking-mode-choice-options {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .booking-mode-choice-options button {
+        min-height: 62px;
+        border-radius: 8px;
+    }
+    .booking-progress {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 3px;
+    }
+    .booking-progress li {
+        min-width: 0;
+        padding: 6px 3px;
+    }
+    .booking-progress li strong {
+        overflow-wrap: anywhere;
+        font-size: 9px;
+    }
+    .booking-slot-picker {
+        margin-inline: -2px;
+        padding: 12px;
+    }
+    .booking-slot-picker-head {
+        align-items: flex-start;
+    }
+    .booking-slot-options {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px;
+    }
+    .booking-slot-options button {
+        min-height: 64px;
+        padding: 9px;
+    }
+    .booking-account-note {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+    .booking-account-note > small {
+        width: 100%;
+        margin-left: 31px;
+    }
+    .booking-check-row {
+        align-items: stretch;
+        flex-direction: column;
+    }
+    .booking-check-row .button,
+    .booking-availability {
+        width: 100%;
+        justify-content: center;
+    }
+    .booking-ready {
+        align-items: flex-start;
+    }
+    .booking-ready span {
+        overflow-wrap: anywhere;
+    }
+    .booking-submit {
+        min-height: 52px;
+        font-size: 13px;
+    }
+    .booking-status-hero {
+        grid-template-columns: 42px minmax(0, 1fr);
+        padding: 16px;
+        gap: 12px;
+    }
+    .booking-status-hero h2 {
+        font-size: 21px;
+    }
+    .booking-status-hero .button {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+    .booking-status-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .booking-detail-info > div {
+        display: grid;
+        gap: 5px;
+    }
+    .booking-detail-info strong {
+        max-width: none;
+        text-align: left;
+    }
+
+    /* Date picker is a mobile dialog, not an overflowing dropdown. */
+    .date-range-backdrop {
+        position: fixed;
+        z-index: 98;
+        inset: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+        padding: 0;
+        background: rgb(8 22 40 / 46%);
+        cursor: default;
+    }
+    .date-range-popover {
+        position: fixed;
+        z-index: 99;
+        top: 50%;
+        right: auto;
+        bottom: auto;
+        left: 50%;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        width: min(430px, calc(100vw - 24px));
+        max-height: min(760px, calc(100dvh - 24px));
+        overflow: hidden;
+        border: 1px solid #dce5ef;
+        border-radius: 12px;
+        box-shadow: 0 24px 70px rgb(7 25 45 / 28%);
+        transform: translate(-50%, -50%);
+    }
+    .date-range-presets {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 5px;
+        max-height: 116px;
+        overflow-y: auto;
+        padding: 10px;
+        border-right: 0;
+        border-bottom: 1px solid #edf1f5;
+    }
+    .date-range-presets button {
+        min-height: 40px;
+        padding: 0 8px;
+        text-align: center;
+        font-size: 12px;
+    }
+    .date-range-presets button.reset {
+        justify-content: center;
+    }
+    .date-range-calendar {
+        min-width: 0;
+        padding: 14px 12px 12px;
+        overflow-y: auto;
+    }
+    .date-range-calendar-head {
+        margin-bottom: 12px;
+    }
+    .date-range-calendar-head strong {
+        min-width: 0;
+        font-size: 15px;
+    }
+    .date-range-calendar-head button {
+        width: 40px;
+        height: 40px;
+    }
+    .date-range-weekdays span {
+        font-size: 10px;
+    }
+    .date-range-day,
+    .date-range-empty {
+        width: 100%;
+        height: 42px;
+        min-height: 42px;
+    }
+    .date-range-day {
+        font-size: 12px;
+    }
+    .date-range-helper {
+        margin-top: 10px;
+    }
+    .date-range-trigger {
+        min-height: 52px;
+        padding-inline: 12px;
+        font-size: 14px;
+    }
+    .date-range-trigger span {
+        overflow-wrap: anywhere;
+        white-space: normal;
+        line-height: 1.3;
+    }
+}
+
+@media (max-width: 430px) {
+    .user-stat-grid article {
+        padding: 10px 8px;
+    }
+    .user-stat-grid span {
+        font-size: 10px;
+    }
+    .user-stat-grid strong {
+        font-size: 19px;
+    }
+    .booking-slot-options {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .date-range-popover {
+        width: calc(100vw - 16px);
+        max-height: calc(100dvh - 16px);
+    }
+    .date-range-presets {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Admin mobile booking list becomes cards instead of a horizontally scrolling table. */
+.booking-mobile-list {
+    display: none;
+}
+@media (max-width: 767px) {
+    .booking-table-desktop {
+        display: none;
+    }
+    .booking-mobile-list {
+        display: grid;
+        gap: 10px;
+    }
+    .booking-mobile-card {
+        display: grid;
+        gap: 12px;
+        padding: 14px;
+        border: 1px solid #dfe7ef;
+        border-radius: 9px;
+        background: #fff;
+    }
+    .booking-mobile-card-head,
+    .booking-mobile-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+    .booking-mobile-card-head {
+        padding-bottom: 10px;
+        border-bottom: 1px solid #edf1f5;
+    }
+    .booking-mobile-card-main {
+        display: grid;
+        gap: 10px;
+    }
+    .booking-mobile-card-main > div,
+    .booking-mobile-card-footer > div {
+        display: grid;
+        min-width: 0;
+        gap: 3px;
+    }
+    .booking-mobile-card-main span,
+    .booking-mobile-card-footer span {
+        color: #7a899a;
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+    .booking-mobile-card-main strong {
+        color: #243a52;
+        font-size: 12px;
+        overflow-wrap: anywhere;
+    }
+    .booking-mobile-card-main small {
+        color: #718197;
+        font-size: 10px;
+    }
+    .booking-mobile-card-footer {
+        padding-top: 10px;
+        border-top: 1px solid #edf1f5;
+    }
+    .booking-mobile-card-footer strong {
+        color: #0870e5;
+        font-size: 14px;
+    }
+    .booking-mobile-card-footer .button {
+        min-height: 40px;
+    }
+}
+
+/* Prevent sticky editors, toolbars and popovers from exceeding the mobile viewport. */
+@media (max-width: 767px) {
+    .facility-editor-page,
+    .blog-editor-page,
+    .admin-main {
+        overflow-x: clip;
+    }
+    .facility-editor-nav {
+        max-width: 100vw;
+    }
+    .facility-editor-section-head,
+    .repeater-heading,
+    .booking-settings-card-head,
+    .booking-settings-card-footer {
+        min-width: 0;
+    }
+    .booking-settings-card-head {
+        align-items: flex-start;
+    }
+    .booking-settings-card-head h2,
+    .booking-settings-card-head p {
+        overflow-wrap: anywhere;
+    }
+    .booking-settings-fields {
+        padding: 16px;
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .booking-settings-card-footer {
+        padding: 12px 16px;
+    }
+    .booking-facility-card {
+        padding: 14px;
+    }
+    .booking-facility-heading {
+        align-items: flex-start;
+    }
+    .booking-facility-fields {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .cms-modal,
+    .gallery-modal {
+        max-width: calc(100vw - 16px);
+    }
+    .gallery-modal {
+        width: calc(100vw - 16px);
+    }
+}
