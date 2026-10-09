@@ -33,20 +33,20 @@ export default function TeamMembers({ members }: any) {
         <>
             <Head title="Kelola Tim" />
             <AdminSidebar active="pages" pageSection="team" />
-            <main className="admin-main">
+            <main className="admin-main team-admin-page">
                 <AdminTopbar title="Tim" />
                 <div className="admin-content">
-                    <div className="admin-page-heading">
+                    <div className="admin-page-heading team-admin-heading">
                         <div><span className="eyebrow">KONTEN BERANDA</span><h1>Kelola Tim</h1><p>Atur foto, nama, dan deskripsi singkat anggota tim yang tampil di beranda publik.</p></div>
                         <button className="button" type="button" onClick={openCreate}><Plus size={18}/> Tambah anggota</button>
                     </div>
                     {notice && <div className="flash-success">{notice}</div>}
-                    <section className="admin-panel">
-                        {members.length ? <div className="admin-list">{members.map((member: any) => (
-                            <div className="admin-row admin-row-media" key={member.id}>
-                                <img src={asset(member.photo)} alt={member.name} />
-                                <div><strong>{member.name}</strong><small>{member.description || 'Tanpa deskripsi'}</small></div>
-                                <span className="admin-row-actions">
+                    <section className="admin-panel team-admin-panel">
+                        {members.length ? <div className="admin-list team-admin-list">{members.map((member: any) => (
+                            <div className="admin-row admin-row-media team-admin-row" key={member.id}>
+                                <img className="team-admin-photo" src={asset(member.photo)} alt={member.name} />
+                                <div className="team-admin-member-copy"><strong>{member.name}</strong><small>{member.description || 'Tanpa deskripsi'}</small></div>
+                                <span className="admin-row-actions team-admin-actions">
                                     <button className="icon-button" type="button" onClick={() => openEdit(member)} aria-label={`Ubah ${member.name}`}><Pencil /></button>
                                     <button className="icon-button danger" type="button" onClick={() => remove(member)} aria-label={`Hapus ${member.name}`}><Trash2 /></button>
                                 </span>
