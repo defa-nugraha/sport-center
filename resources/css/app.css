@@ -10772,3 +10772,11 @@ canvas {
     .team-marquee-track { animation: none; }
     .team-marquee { overflow-x: auto; }
 }
+
+
+/* Keep the public site navigation visible while scrolling. */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 120;
+}
