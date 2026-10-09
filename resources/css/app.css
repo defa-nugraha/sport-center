@@ -11085,3 +11085,31 @@ canvas {
     }
 }
 
+
+
+/* Fix team admin page positioning inside the shared sidebar layout. */
+.admin-main.team-admin-page {
+    box-sizing: border-box;
+    flex: 1 1 0%;
+    width: 0;
+    min-width: 0;
+    max-width: none;
+    margin: 0;
+    align-self: stretch;
+}
+.team-admin-page .admin-topbar {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+}
+.team-admin-page .admin-content {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+}
+@media (max-width: 760px) {
+    .admin-main.team-admin-page {
+        width: 100%;
+        flex-basis: auto;
+    }
+}
