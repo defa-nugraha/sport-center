@@ -2,6 +2,17 @@ import { Link } from '@inertiajs/react';
 import { CalendarDays, ChevronRight } from 'lucide-react';
 import { UserShell } from '@/components/user-layout';
 
+const formatBookingDate = (value?: string | null) => {
+    if (!value) return 'Tanggal belum tersedia';
+    const date = new Date(`${value.slice(0, 10)}T00:00:00`);
+    if (Number.isNaN(date.getTime())) return value;
+    return new Intl.DateTimeFormat('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+    }).format(date);
+};
+
 const statusLabels: Record<string, string> = { PENDING_PAYMENT: 'Menunggu pembayaran', CONFIRMED: 'Dikonfirmasi', FAILED: 'Gagal', EXPIRED: 'Kedaluwarsa', CANCELLED: 'Dibatalkan', COMPLETED: 'Selesai' };
 
 export default function Bookings({ bookings }: any) {
@@ -17,7 +28,7 @@ export default function Bookings({ bookings }: any) {
                                 <div>
                                     <span className="eyebrow"><i /> {booking.booking_number}</span>
                                     <h3>{booking.facility?.name}</h3>
-                                    <p>{isDaily ? `${booking.booking_date} – ${booking.booking_end_date || booking.booking_date} · Per hari` : `${booking.booking_date} · ${booking.start_time?.slice(0, 5)} - ${booking.end_time?.slice(0, 5)}`}</p>
+                                    <p>{isDaily ? `${formatBookingDate(booking.booking_date)} – ${formatBookingDate(booking.booking_end_date || booking.booking_date)} · Per hari` : `${formatBookingDate(booking.booking_date)} · ${booking.start_time?.slice(0, 5)} - ${booking.end_time?.slice(0, 5)}`}</p>
                                 </div>
                             </div>
                             <div className="user-history-side">
