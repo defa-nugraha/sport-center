@@ -14,6 +14,9 @@ function FacilityBookingSettings({ facility }: { facility: any }) {
         booking_price_per_hour: formatRupiah(facility.booking_price_per_hour),
         booking_price_per_day: formatRupiah(facility.booking_price_per_day),
         booking_min_hours: String(facility.booking_min_hours ?? 1),
+        booking_operating_start: String(facility.booking_operating_start ?? '07:00').slice(0, 5),
+        booking_operating_end: String(facility.booking_operating_end ?? '22:00').slice(0, 5),
+        booking_buffer_minutes: String(facility.booking_buffer_minutes ?? 45),
     });
     const daily = form.data.booking_mode === 'daily';
     const hourly = form.data.booking_mode === 'hourly';
@@ -34,7 +37,7 @@ function FacilityBookingSettings({ facility }: { facility: any }) {
                 <div>
                     <span className="booking-settings-kicker">Venue</span>
                     <h2>{facility.name}</h2>
-                    <p>Atur mode, harga, durasi minimum, dan status ketersediaan venue.</p>
+                    <p>Atur mode, harga, durasi, jam operasional, jeda sterilisasi, dan status ketersediaan venue.</p>
                 </div>
                 <span className={form.data.booking_enabled ? 'booking-enabled-badge' : 'booking-disabled-badge'}>
                     {form.data.booking_enabled ? 'Booking aktif' : 'Booking nonaktif'}
@@ -67,6 +70,24 @@ function FacilityBookingSettings({ facility }: { facility: any }) {
                             <small>Minimal waktu yang dapat dipesan pelanggan.</small>
                             {form.errors.booking_min_hours && <span className="booking-field-error">{form.errors.booking_min_hours}</span>}
                         </label>
+                        <label>
+                            Mulai operasional
+                            <input type="time" value={form.data.booking_operating_start} onChange={(event) => form.setData('booking_operating_start', event.target.value)} />
+                            <small>Waktu paling awal pelanggan dapat memilih sesi.</small>
+                            {form.errors.booking_operating_start && <span className="booking-field-error">{form.errors.booking_operating_start}</span>}
+                        </label>
+                        <label>
+                            Selesai operasional
+                            <input type="time" value={form.data.booking_operating_end} onChange={(event) => form.setData('booking_operating_end', event.target.value)} />
+                            <small>Booking harus selesai sebelum jam ini.</small>
+                            {form.errors.booking_operating_end && <span className="booking-field-error">{form.errors.booking_operating_end}</span>}
+                        </label>
+                        <label>
+                            Jeda sterilisasi antar sesi
+                            <div className="booking-unit-input"><input type="number" min="0" max="180" step="5" value={form.data.booking_buffer_minutes} onChange={(event) => form.setData('booking_buffer_minutes', event.target.value)} /><span>menit</span></div>
+                            <small>Waktu setelah satu sesi selesai sebelum sesi berikutnya dapat dimulai.</small>
+                            {form.errors.booking_buffer_minutes && <span className="booking-field-error">{form.errors.booking_buffer_minutes}</span>}
+                        </label>
                     </>
                 )}
                 {(daily || both) && (
@@ -98,7 +119,7 @@ export default function Settings({ facilities }: { facilities: any[] }) {
             <Head title="Pengaturan venue" />
             <AdminSidebar active="bookings" />
             <main className="admin-main">
-                <AdminTopbar eyebrow="Kelola booking" title="Pengaturan venue" description="Atur mode, harga, durasi minimum, dan ketersediaan booking setiap venue." />
+                <AdminTopbar eyebrow="Kelola booking" title="Pengaturan venue" description="Atur mode, harga, durasi, jam operasional, jeda sterilisasi, dan ketersediaan booking setiap venue." />
                 <div className="booking-admin-page-actions"><Link href="/admin/bookings" className="text-button">Daftar booking</Link></div>
                 <section className="admin-panel booking-settings-page-panel">
                     <div className="panel-head"><div><span className="booking-settings-kicker">Konfigurasi</span><h2>Venue yang dapat dipesan</h2><p>Setiap venue memiliki pengaturan sendiri agar aturan booking tetap mudah dikelola.</p></div><Clock3 aria-hidden="true" /></div>

@@ -9878,6 +9878,81 @@ textarea {
     .booking-date-range-field { grid-column: auto; }
 }
 
+/* Automatic hourly booking slot selector */
+.booking-slot-picker {
+    display: grid;
+    gap: 12px;
+    margin: 18px 0;
+    padding: 16px;
+    border: 1px solid #dce5ef;
+    background: #f8fafc;
+}
+.booking-slot-picker-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+.booking-slot-picker-head > div {
+    display: grid;
+    gap: 4px;
+}
+.booking-slot-picker-head strong {
+    color: var(--ink);
+    font-size: 14px;
+}
+.booking-slot-picker-head small {
+    color: var(--muted);
+    font-size: 11px;
+}
+.booking-slot-picker-head > svg {
+    width: 20px;
+    color: var(--blue);
+}
+.booking-slot-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+}
+.booking-slot-options button {
+    display: grid;
+    gap: 4px;
+    min-height: 62px;
+    padding: 10px 12px;
+    border: 1px solid #cfdbe7;
+    border-radius: 0;
+    background: #fff;
+    color: var(--ink);
+    text-align: left;
+    cursor: pointer;
+}
+.booking-slot-options button:hover {
+    border-color: #8fc8ff;
+    background: #eaf4ff;
+}
+.booking-slot-options button.selected {
+    border-color: #087ff5;
+    background: #087ff5;
+    color: #fff;
+}
+.booking-slot-options button strong {
+    font-size: 13px;
+}
+.booking-slot-options button small {
+    font-size: 11px;
+    opacity: .78;
+}
+@media (max-width: 700px) {
+    .booking-slot-options {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+@media (max-width: 420px) {
+    .booking-slot-options {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Booking mode selector for venues that support both hourly and daily booking. */
 .booking-mode-choice {
     display: grid;

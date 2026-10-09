@@ -36,6 +36,9 @@ class AdminBookingController extends Controller
                 'booking_price_per_hour',
                 'booking_price_per_day',
                 'booking_min_hours',
+                'booking_operating_start',
+                'booking_operating_end',
+                'booking_buffer_minutes',
             ]),
         ]);
     }
@@ -60,6 +63,9 @@ class AdminBookingController extends Controller
             'booking_price_per_hour' => ['nullable', 'integer', 'min:1', 'required_if:booking_mode,hourly', 'required_if:booking_mode,both'],
             'booking_price_per_day' => ['nullable', 'integer', 'min:1', 'required_if:booking_mode,daily', 'required_if:booking_mode,both'],
             'booking_min_hours' => ['required', 'integer', 'min:1', 'max:12'],
+            'booking_operating_start' => ['required', 'date_format:H:i'],
+            'booking_operating_end' => ['required', 'date_format:H:i', 'after:booking_operating_start'],
+            'booking_buffer_minutes' => ['required', 'integer', 'min:0', 'max:180'],
         ]);
 
         $facility->update($data);

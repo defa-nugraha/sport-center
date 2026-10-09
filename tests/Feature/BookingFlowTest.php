@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 
 function bookingFacility(): Facility {
     return Facility::create([
-        'name'=>'Test Venue','slug'=>'test-venue-'.uniqid(),'booking_enabled'=>true,'booking_price_per_hour'=>100000,'published'=>true,
+        'name'=>'Test Venue','slug'=>'test-venue-'.uniqid(),'booking_enabled'=>true,'booking_price_per_hour'=>100000,'published'=>true,'booking_operating_start'=>'07:00:00','booking_operating_end'=>'22:00:00','booking_buffer_minutes'=>45,
     ]);
 }
 
@@ -23,8 +23,35 @@ test('availability rejects overlapping booking and allows adjacent booking', fun
     ]);
     $service=app(BookingService::class);
     expect(fn()=> $service->create($facility,['customer_name'=>'B','customer_email'=>'b@test.test','customer_phone'=>'62813','booking_date'=>'2026-10-10','start_time'=>'11:00','duration_minutes'=>60]))->toThrow(RuntimeException::class);
-    $result=$service->create($facility,['customer_name'=>'C','customer_email'=>'c@test.test','customer_phone'=>'62814','booking_date'=>'2026-10-10','start_time'=>'12:00','duration_minutes'=>60]);
-    expect($result['booking']->start_time)->toBe('12:00:00');
+    expect(fn()=> $service->create($facility,['customer_name'=>'C','customer_email'=>'c@test.test','customer_phone'=>'62814','booking_date'=>'2026-10-10','start_time'=>'12:00','duration_minutes'=>60]))->toThrow(RuntimeException::class);
+    $result=$service->create($facility,['customer_name'=>'C','customer_email'=>'c@test.test','customer_phone'=>'62814','booking_date'=>'2026-10-10','start_time'=>'12:45','duration_minutes'=>60]);
+    expect($result['booking']->start_time)->toBe('12:45:00');
+});
+
+test('hourly availability applies the configured turnaround buffer', function () {
+    $user=User::factory()->create();
+    $facility=bookingFacility();
+    Booking::create([
+        'user_id'=>$user->id,'facility_id'=>$facility->id,'customer_name'=>'A','customer_email'=>'a@test.test','customer_phone'=>'62812',
+        'booking_date'=>'2026-11-07','start_time'=>'07:00:00','end_time'=>'08:00:00','duration_minutes'=>60,'price_per_hour'=>100000,'subtotal'=>100000,'total'=>100000,'status'=>BookingStatus::CONFIRMED,
+    ]);
+
+    $service=app(BookingService::class);
+    $slots=$service->hourlySlots($facility,'2026-11-07',120);
+
+    expect($slots[0]['start_time'])->toBe('08:45')
+        ->and($slots[0]['end_time'])->toBe('10:45');
+});
+
+test('hourly booking must finish within operating hours', function () {
+    $facility=bookingFacility();
+    $user=User::factory()->create();
+    $this->actingAs($user);
+
+    expect(fn()=> app(BookingService::class)->create($facility,[
+        'customer_name'=>'Late User','customer_email'=>'late@test.test','customer_phone'=>'62899',
+        'booking_date'=>'2026-11-07','start_time'=>'21:00','duration_minutes'=>120,
+    ]))->toThrow(RuntimeException::class);
 });
 
 test('booking creates temporary hold and calculated end time', function () {

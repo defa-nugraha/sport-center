@@ -59,26 +59,14 @@ class BookingService
 
             $this->expireStale($facility->id);
 
-            $conflict = Booking::where('facility_id', $facility->id)
-                ->whereIn('status', [BookingStatus::CONFIRMED->value, BookingStatus::PENDING_PAYMENT->value])
-                ->where(function ($q) use ($start, $end) {
-                    $q->where(function ($q) use ($start) {
-                        $q->where('booking_mode', 'daily')
-                            ->whereDate('booking_date', '<=', $start->toDateString())
-                            ->whereDate('booking_end_date', '>=', $start->toDateString());
-                    })->orWhere(function ($q) use ($start, $end) {
-                        $q->where('booking_mode', 'hourly')
-                            ->whereDate('booking_date', $start->toDateString())
-                            ->where('start_time', '<', $end->format('H:i:s'))
-                            ->where('end_time', '>', $start->format('H:i:s'));
-                    });
-                })
-                ->where(fn ($q) => $q->where('status', BookingStatus::CONFIRMED->value)
-                    ->orWhere(fn ($q) => $q->where('status', BookingStatus::PENDING_PAYMENT->value)->where('expires_at', '>', now())))
-                ->exists();
+            $availableSlot = collect($this->hourlySlots(
+                $facility,
+                $start->toDateString(),
+                $duration
+            ))->firstWhere('start_time', $start->format('H:i'));
 
-            if ($conflict) {
-                throw new RuntimeException('Slot yang dipilih sudah tidak tersedia.');
+            if (! $availableSlot) {
+                throw new RuntimeException('Slot yang dipilih sudah tidak tersedia atau berada di luar jam operasional.');
             }
 
             $total = (int) round($facility->booking_price_per_hour * ($duration / 60));
@@ -105,6 +93,109 @@ class BookingService
 
             return ['booking' => $booking->fresh('facility'), 'total' => $total];
         });
+    }
+
+    /**
+     * Return customer-facing hourly start options for a date and duration.
+     * A booking blocks its own duration plus the configured turnaround buffer.
+     */
+    public function hourlySlots(Facility $facility, string $date, int $durationMinutes): array
+    {
+        $this->expireStale($facility->id);
+
+        $dateValue = Carbon::createFromFormat('Y-m-d', $date)->startOfDay();
+        if ($dateValue->lt(Carbon::today())) {
+            throw new RuntimeException('Tanggal booking harus berada di masa depan.');
+        }
+
+        $minimumMinutes = max(30, (int) $facility->booking_min_hours * 60);
+        if ($durationMinutes < $minimumMinutes || $durationMinutes > 720 || $durationMinutes % 30 !== 0) {
+            throw new RuntimeException('Durasi booking tidak valid.');
+        }
+
+        $opening = Carbon::parse($date . ' ' . ($facility->booking_operating_start ?: '07:00:00'));
+        $closing = Carbon::parse($date . ' ' . ($facility->booking_operating_end ?: '22:00:00'));
+        if ($closing->lte($opening)) {
+            throw new RuntimeException('Jam operasional venue tidak valid.');
+        }
+
+        $buffer = max(0, (int) ($facility->booking_buffer_minutes ?? 0));
+        $bookings = Booking::where('facility_id', $facility->id)
+            ->where(function ($q) use ($date) {
+                $q->where(function ($q) use ($date) {
+                    $q->where('booking_mode', 'hourly')->whereDate('booking_date', $date);
+                })->orWhere(function ($q) use ($date) {
+                    $q->where('booking_mode', 'daily')
+                        ->whereDate('booking_date', '<=', $date)
+                        ->whereDate('booking_end_date', '>=', $date);
+                });
+            })
+            ->whereIn('status', [BookingStatus::CONFIRMED->value, BookingStatus::PENDING_PAYMENT->value])
+            ->where(fn ($q) => $q->where('status', BookingStatus::CONFIRMED->value)
+                ->orWhere(fn ($q) => $q->where('status', BookingStatus::PENDING_PAYMENT->value)->where('expires_at', '>', now())))
+            ->get(['booking_mode', 'booking_date', 'booking_end_date', 'start_time', 'end_time']);
+
+        if ($bookings->contains(fn ($booking) => $booking->booking_mode === 'daily')) {
+            return [];
+        }
+
+        $blocked = $bookings
+            ->filter(fn ($booking) => $booking->booking_mode === 'hourly')
+            ->map(function ($booking) use ($date, $buffer) {
+                $start = Carbon::parse($date . ' ' . $booking->start_time);
+                $end = Carbon::parse($date . ' ' . $booking->end_time)->addMinutes($buffer);
+                return [$start, $end];
+            })
+            ->sortBy(fn ($range) => $range[0]->timestamp)
+            ->values();
+
+        $anchors = [$opening->copy()];
+        foreach ($blocked as [$blockedStart, $blockedEnd]) {
+            if ($blockedEnd->gt($opening) && $blockedEnd->lt($closing)) {
+                $anchors[] = $blockedEnd->copy();
+            }
+        }
+
+        $slots = [];
+        foreach ($anchors as $anchor) {
+            $candidate = $anchor->copy();
+            while ($candidate->lt($closing)) {
+                $end = $candidate->copy()->addMinutes($durationMinutes);
+                if ($end->gt($closing)) {
+                    break;
+                }
+
+                if ($dateValue->isToday() && $candidate->lte(now())) {
+                    $candidate->addMinutes(15);
+                    continue;
+                }
+
+                $overlap = false;
+                foreach ($blocked as [$blockedStart, $blockedEnd]) {
+                    if ($candidate->lt($blockedEnd) && $end->gt($blockedStart)) {
+                        $overlap = true;
+                        break;
+                    }
+                }
+
+                if (! $overlap) {
+                    $key = $candidate->format('H:i');
+                    $slots[$key] = [
+                        'start_time' => $key,
+                        'end_time' => $end->format('H:i'),
+                        'label' => $candidate->format('H.i') . ' - ' . $end->format('H.i'),
+                        'total' => $facility->booking_price_per_hour
+                            ? (int) round($facility->booking_price_per_hour * ($durationMinutes / 60))
+                            : null,
+                    ];
+                }
+
+                $candidate->addMinutes(15);
+            }
+        }
+
+        ksort($slots);
+        return array_values($slots);
     }
 
     private function createDaily(Facility $facility, array $data): array
