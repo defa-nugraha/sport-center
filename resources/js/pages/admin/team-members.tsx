@@ -63,7 +63,7 @@ export default function TeamMembers({ members }: any) {
                     <label>Deskripsi singkat<textarea value={form.data.description} onChange={e => form.setData('description', e.target.value)} rows={3} maxLength={180} placeholder="Contoh: Pengelola fasilitas olahraga" /></label>
                     <label>Foto anggota {!editing && '*'}<input type="file" accept="image/*" onChange={e => form.setData('photo', e.target.files?.[0] || null)} required={!editing} />{editing && <small>Kosongkan jika tidak ingin mengganti foto. Maksimal 5 MB.</small>}</label>
                     {Object.values(form.errors).length > 0 && <p className="form-error">{Object.values(form.errors)[0] as string}</p>}
-                    <footer className="cms-modal-actions"><button type="button" className="button button-secondary" onClick={() => setModal(false)}>Batal</button><button className="button" disabled={form.processing}>{form.processing ? 'Menyimpan...' : 'Simpan'}</button></footer>
+                    <footer className="cms-modal-actions" style={{ justifyContent: 'flex-end' }}><button className="button" disabled={form.processing}>{form.processing ? 'Menyimpan...' : 'Simpan'}</button></footer>
                 </form>
             </CmsModal>
         </>
