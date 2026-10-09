@@ -131,7 +131,14 @@ export function DateRangePicker({
             </button>
 
             {open && (
-                <div className="date-range-popover" role="dialog" aria-label={mode === 'single' ? 'Pilih tanggal' : 'Pilih rentang tanggal'}>
+                <>
+                    <button
+                        type="button"
+                        className="date-range-backdrop"
+                        aria-label="Tutup kalender"
+                        onClick={() => setOpen(false)}
+                    />
+                    <div className="date-range-popover" role="dialog" aria-label={mode === 'single' ? 'Pilih tanggal' : 'Pilih rentang tanggal'}>
                     <div className="date-range-presets">
                         <button type="button" onClick={() => choosePreset('today')}>Hari ini</button>
                         <button type="button" onClick={() => choosePreset('tomorrow')}>Besok</button>
@@ -193,7 +200,8 @@ export function DateRangePicker({
                             {mode === 'single' ? 'Pilih tanggal booking' : start && !end ? 'Pilih tanggal selesai' : 'Pilih rentang tanggal penggunaan venue'}
                         </p>
                     </div>
-                </div>
+                    </div>
+                </>
             )}
         </div>
     );
