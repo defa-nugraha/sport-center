@@ -11010,3 +11010,78 @@ canvas {
     .team-admin-row .team-admin-photo { width: 54px; height: 54px; }
 }
 
+/* Use the full available width for booking history cards on small screens. */
+@media (max-width: 560px) {
+    .user-panel,
+    .user-history-list,
+    .user-history-card {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .user-history-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+        padding: 14px;
+    }
+
+    .user-history-main {
+        display: grid;
+        grid-template-columns: 38px minmax(0, 1fr);
+        align-items: start;
+        gap: 10px;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .user-history-main > div:last-child {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .user-history-main h3,
+    .user-history-main p {
+        max-width: 100%;
+        overflow-wrap: anywhere;
+    }
+
+    .user-history-side {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-rows: auto auto;
+        width: 100%;
+        min-width: 0;
+        justify-items: stretch;
+        align-items: center;
+        row-gap: 10px;
+    }
+
+    .user-history-side .booking-status {
+        grid-column: 1;
+        grid-row: 1;
+        justify-self: start;
+        min-width: 0;
+    }
+
+    .user-history-side strong {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: end;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+        text-align: right;
+    }
+
+    .user-history-side .text-link {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-self: end;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+}
+
