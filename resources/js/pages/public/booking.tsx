@@ -1,6 +1,7 @@
 import { FormEvent, useMemo, useState } from 'react';
 import { useForm } from '@inertiajs/react';
-import { CalendarCheck, CalendarDays, CheckCircle2, ChevronLeft, ChevronRight, Clock3, Info, MapPin } from 'lucide-react';
+import { CalendarCheck, CalendarDays, CheckCircle2, Clock3, Info, MapPin } from 'lucide-react';
+import { DateRangePicker } from '@/components/date-range-picker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UserShell } from '@/components/user-layout';
 
@@ -15,91 +16,6 @@ const parseDate = (value: string) => {
     const [year, month, day] = value.split('-').map(Number);
     return new Date(year, month - 1, day);
 };
-
-const formatRange = (start: string, end: string) => {
-    if (!start) return 'Pilih rentang tanggal';
-    const formatter = new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-    return end ? `${formatter.format(parseDate(start))} – ${formatter.format(parseDate(end))}` : `${formatter.format(parseDate(start))} – pilih tanggal akhir`;
-};
-
-function DateRangePicker({ start, end, onChange }: { start: string; end: string; onChange: (start: string, end: string) => void }) {
-    const today = useMemo(() => {
-        const date = new Date();
-        date.setHours(0, 0, 0, 0);
-        return date;
-    }, []);
-    const [open, setOpen] = useState(false);
-    const [month, setMonth] = useState(() => start ? parseDate(start) : today);
-    const [selectingEnd, setSelectingEnd] = useState(Boolean(start && !end));
-
-    const cells = useMemo(() => {
-        const first = new Date(month.getFullYear(), month.getMonth(), 1);
-        const firstWeekday = (first.getDay() + 6) % 7;
-        const days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
-        const previousDays = new Date(month.getFullYear(), month.getMonth(), 0).getDate();
-        return Array.from({ length: 42 }, (_, index) => {
-            const dayNumber = index - firstWeekday + 1;
-            if (dayNumber < 1) return new Date(month.getFullYear(), month.getMonth() - 1, previousDays + dayNumber);
-            if (dayNumber > days) return new Date(month.getFullYear(), month.getMonth() + 1, dayNumber - days);
-            return new Date(month.getFullYear(), month.getMonth(), dayNumber);
-        });
-    }, [month]);
-
-    const choose = (date: Date) => {
-        if (date < today) return;
-        const key = toDateKey(date);
-        if (!start || (start && end) || selectingEnd === false) {
-            onChange(key, '');
-            setSelectingEnd(true);
-            return;
-        }
-        if (key < start) {
-            onChange(key, '');
-            setSelectingEnd(true);
-            return;
-        }
-        onChange(start, key);
-        setSelectingEnd(false);
-        setOpen(false);
-    };
-
-    return (
-        <div className="date-range-picker">
-            <button type="button" className="date-range-trigger" aria-expanded={open} onClick={() => setOpen((value) => !value)}>
-                <CalendarDays aria-hidden="true" />
-                <span>{formatRange(start, end)}</span>
-                <ChevronRight aria-hidden="true" className={open ? 'date-range-chevron open' : 'date-range-chevron'} />
-            </button>
-            {open && (
-                <div className="date-range-popover" role="dialog" aria-label="Pilih rentang tanggal">
-                    <div className="date-range-shortcuts">
-                        <strong>Rentang tanggal</strong>
-                        <button type="button" onClick={() => { const value = toDateKey(today); onChange(value, value); setSelectingEnd(false); setOpen(false); }}>Hari ini</button>
-                        <button type="button" onClick={() => { const value = toDateKey(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1)); onChange(value, value); setSelectingEnd(false); setOpen(false); }}>Besok</button>
-                        <button type="button" onClick={() => { onChange('', ''); setSelectingEnd(false); }}>Reset</button>
-                    </div>
-                    <div className="date-range-calendar">
-                        <div className="date-range-calendar-head">
-                            <strong>{new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' }).format(month)}</strong>
-                            <div><button type="button" aria-label="Bulan sebelumnya" onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}><ChevronLeft /></button><button type="button" aria-label="Bulan berikutnya" onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}><ChevronRight /></button></div>
-                        </div>
-                        <div className="date-range-weekdays">{['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map((day) => <span key={day}>{day}</span>)}</div>
-                        <div className="date-range-grid">
-                            {cells.map((date) => {
-                                const key = toDateKey(date);
-                                const outside = date.getMonth() !== month.getMonth();
-                                const disabled = date < today;
-                                const selected = key === start || key === end;
-                                const inRange = Boolean(start && end && key > start && key < end);
-                                return <button key={key} type="button" disabled={disabled} className={['date-range-day', outside ? 'outside' : '', selected ? 'selected' : '', inRange ? 'in-range' : ''].filter(Boolean).join(' ')} onClick={() => choose(date)}>{date.getDate()}</button>;
-                            })}
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-}
 
 export default function Booking({ facility, user }: { facility: any; user: { name: string; email: string } }) {
     const supportsBothModes = facility.booking_mode === 'both';
@@ -206,7 +122,7 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
                     <div className={daily ? 'booking-step-grid booking-daily-grid' : 'booking-step-grid'}>
                         <label className={daily ? 'booking-date-range-field' : ''}>
                             {daily ? 'Rentang tanggal' : 'Tanggal'}
-                            {daily ? <DateRangePicker start={form.data.booking_date} end={form.data.booking_end_date} onChange={(start, end) => { form.setData('booking_date', start); form.setData('booking_end_date', end); resetAvailability(); }} /> : <input id="booking-date" required type="date" min={toDateKey(new Date())} value={form.data.booking_date} onChange={(e) => { form.setData('booking_date', e.target.value); resetAvailability(); }} />}
+                            {daily ? <DateRangePicker mode="range" start={form.data.booking_date} end={form.data.booking_end_date} onChange={(start, end) => { form.setData('booking_date', start); form.setData('booking_end_date', end); resetAvailability(); }} /> : <DateRangePicker mode="single" start={form.data.booking_date} end="" minDate={toDateKey(new Date())} onChange={(date) => { form.setData('booking_date', date); resetAvailability(); }} />}
                             {daily && <small>Pilih tanggal mulai lalu tanggal selesai.</small>}
                         </label>
 

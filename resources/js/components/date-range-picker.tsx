@@ -35,12 +35,14 @@ function addDays(date: Date, days: number) {
 export function DateRangePicker({
     start,
     end,
+    mode = 'range',
     minDate,
     onChange,
     disabled = false,
 }: {
     start: string;
     end: string;
+    mode?: 'range' | 'single';
     minDate?: string;
     onChange: (start: string, end: string) => void;
     disabled?: boolean;
@@ -73,6 +75,12 @@ export function DateRangePicker({
 
     const selectDate = (date: Date) => {
         const value = isoDate(date);
+
+        if (mode === 'single') {
+            onChange(value, '');
+            setOpen(false);
+            return;
+        }
         if (!start || (start && end)) {
             onChange(value, '');
             return;
@@ -118,17 +126,19 @@ export function DateRangePicker({
                 aria-expanded={open}
                 aria-haspopup="dialog"
             >
-                <span>{formatRange(start, end)}</span>
+                <span>{mode === 'single' ? (start ? `${localDate(start).getDate()} ${shortMonthNames[localDate(start).getMonth()]} ${localDate(start).getFullYear()}` : 'Pilih tanggal') : formatRange(start, end)}</span>
                 <ChevronDown className={`date-range-trigger-chevron ${open ? 'rotated' : ''}`} aria-hidden="true" />
             </button>
 
             {open && (
-                <div className="date-range-popover" role="dialog" aria-label="Pilih rentang tanggal">
+                <div className="date-range-popover" role="dialog" aria-label={mode === 'single' ? 'Pilih tanggal' : 'Pilih rentang tanggal'}>
                     <div className="date-range-presets">
                         <button type="button" onClick={() => choosePreset('today')}>Hari ini</button>
                         <button type="button" onClick={() => choosePreset('tomorrow')}>Besok</button>
-                        <button type="button" onClick={() => choosePreset('week')}>Minggu ini</button>
-                        <button type="button" onClick={() => choosePreset('month')}>Bulan ini</button>
+                        {mode === 'range' && <>
+                            <button type="button" onClick={() => choosePreset('week')}>Minggu ini</button>
+                            <button type="button" onClick={() => choosePreset('month')}>Bulan ini</button>
+                        </>}
                         <button type="button" className="reset" onClick={reset}><RotateCcw aria-hidden="true" /> Reset</button>
                     </div>
 
@@ -180,7 +190,7 @@ export function DateRangePicker({
                             })}
                         </div>
                         <p className="date-range-helper">
-                            {start && !end ? 'Pilih tanggal selesai' : 'Pilih rentang tanggal penggunaan venue'}
+                            {mode === 'single' ? 'Pilih tanggal booking' : start && !end ? 'Pilih tanggal selesai' : 'Pilih rentang tanggal penggunaan venue'}
                         </p>
                     </div>
                 </div>
