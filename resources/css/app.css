@@ -10600,3 +10600,62 @@ canvas {
         width: calc(100vw - 16px);
     }
 }
+
+
+/* Mobile sticky booking action — desktop keeps the inline submit button. */
+.booking-mobile-action-bar {
+    display: none;
+}
+@media (max-width: 767px) {
+    .booking-submit-inline {
+        display: none;
+    }
+    .booking-mobile-action-bar {
+        position: fixed;
+        z-index: 85;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: block;
+        padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+        border-top: 1px solid #dce5ef;
+        background: rgb(255 255 255 / 96%);
+        box-shadow: 0 -8px 28px rgb(20 36 63 / 10%);
+        backdrop-filter: blur(12px);
+    }
+    .booking-submit-floating {
+        display: flex;
+        width: 100%;
+        min-height: 50px;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        margin: 0;
+        padding: 12px 14px;
+        white-space: normal;
+        line-height: 1.3;
+        text-align: center;
+        box-shadow: 0 4px 12px rgb(8 127 245 / 20%);
+    }
+    .booking-submit-floating svg {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 auto;
+    }
+    .booking-form-panel {
+        padding-bottom: calc(24px + 78px + env(safe-area-inset-bottom));
+        scroll-margin-bottom: 100px;
+    }
+}
+@media (max-width: 380px) {
+    .booking-mobile-action-bar {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+    .booking-submit-floating {
+        gap: 7px;
+        padding-right: 10px;
+        padding-left: 10px;
+        font-size: 12px;
+    }
+}
