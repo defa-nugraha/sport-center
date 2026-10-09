@@ -11115,7 +11115,7 @@ canvas {
 }
 
 
-/* Mobile booking history: align price and detail/chevron on the bottom row. */
+/* Final mobile booking-history alignment: price and detail action share the bottom row. */
 @media (max-width: 560px) {
     .user-history-side {
         display: grid;
@@ -11127,11 +11127,13 @@ canvas {
         width: 100%;
         min-width: 0;
     }
+
     .user-history-side .booking-status {
         grid-column: 1 / -1;
         grid-row: 1;
         justify-self: start;
     }
+
     .user-history-side > strong {
         grid-column: 1;
         grid-row: 2;
@@ -11141,6 +11143,7 @@ canvas {
         text-align: left;
         overflow-wrap: anywhere;
     }
+
     .user-history-side .text-link {
         grid-column: 2;
         grid-row: 2;
@@ -11154,7 +11157,7 @@ canvas {
     }
 }
 
-/* Keep the team management content within the shared admin shell. */
+/* Stabilize the team page within the shared admin shell at all viewport sizes. */
 .admin-main.team-admin-page {
     box-sizing: border-box;
     flex: 1 1 0;
@@ -11165,6 +11168,7 @@ canvas {
     padding-top: 0;
     align-self: stretch;
 }
+
 .admin-main.team-admin-page > .admin-topbar,
 .admin-main.team-admin-page > .admin-content {
     box-sizing: border-box;
@@ -11172,7 +11176,11 @@ canvas {
     max-width: 100%;
     min-width: 0;
 }
-.admin-main.team-admin-page .team-admin-heading,
+
+.admin-main.team-admin-page .team-admin-heading {
+    min-width: 0;
+}
+
 .admin-main.team-admin-page .team-admin-panel,
 .admin-main.team-admin-page .team-admin-list,
 .admin-main.team-admin-page .team-admin-row {
@@ -11180,15 +11188,18 @@ canvas {
     min-width: 0;
     max-width: 100%;
 }
+
 @media (max-width: 760px) {
     .admin-main.team-admin-page {
         width: 100%;
         flex-basis: auto;
         padding-inline: 14px;
     }
+
     .admin-main.team-admin-page .team-admin-row {
         grid-template-columns: 64px minmax(0, 1fr);
     }
+
     .admin-main.team-admin-page .team-admin-actions {
         grid-column: 1 / -1;
     }

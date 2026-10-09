@@ -1,8 +1,9 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
+import { CmsModal } from '@/components/admin-cms';
 import { asset } from '@/components/public-site';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { FormEvent, useEffect, useState } from 'react';
-import { Pencil, Plus, Trash2, Users, X } from 'lucide-react';
+import { Pencil, Plus, Trash2, Users } from 'lucide-react';
 
 const blank = { name: '', description: '', photo: null as File | null };
 export default function TeamMembers({ members }: any) {
@@ -21,10 +22,9 @@ export default function TeamMembers({ members }: any) {
     const submit = (event: FormEvent) => {
         event.preventDefault();
         const options = { forceFormData: true, preserveScroll: true, onSuccess: () => { setModal(false); setEditing(null); form.reset(); } };
-        if (editing) {
-            form.transform(data => ({ ...data, _method: 'put' }));
-            form.post(`/admin/team-members/${editing.id}`, options);
-        } else form.post('/admin/team-members', options);
+        form.transform(data => editing ? { ...data, _method: 'put' } : data);
+        if (editing) form.post(`/admin/team-members/${editing.id}`, options);
+        else form.post('/admin/team-members', options);
     };
     const remove = (member: any) => {
         if (window.confirm(`Hapus anggota tim "${member.name}"?`)) router.delete(`/admin/team-members/${member.id}`, { preserveScroll: true });
@@ -57,18 +57,15 @@ export default function TeamMembers({ members }: any) {
                 </div>
                 </main>
             </div>
-            {modal && <div className="cms-modal-backdrop" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) setModal(false); }}>
-                <section className="cms-modal" role="dialog" aria-modal="true" aria-labelledby="team-member-modal-title">
-                    <header><h2 id="team-member-modal-title">{editing ? 'Ubah anggota tim' : 'Tambah anggota tim'}</h2><button className="icon-button" type="button" onClick={() => setModal(false)} aria-label="Tutup"><X/></button></header>
-                    <form onSubmit={submit} encType="multipart/form-data">
-                        <label className="field-label">Nama anggota<input value={form.data.name} onChange={e => form.setData('name', e.target.value)} required maxLength={120} /></label>
-                        <label className="field-label">Deskripsi singkat<textarea value={form.data.description} onChange={e => form.setData('description', e.target.value)} rows={3} maxLength={180} placeholder="Contoh: Pengelola fasilitas olahraga" /></label>
-                        <label className="field-label">Foto anggota<input type="file" accept="image/*" onChange={e => form.setData('photo', e.target.files?.[0] || null)} required={!editing} />{editing && <small>Kosongkan jika tidak ingin mengganti foto. Maksimal 5 MB.</small>}</label>
-                        {Object.values(form.errors).length > 0 && <p className="form-error">{Object.values(form.errors)[0] as string}</p>}
-                        <footer className="cms-modal-actions"><button type="button" className="button button-secondary" onClick={() => setModal(false)}>Batal</button><button className="button" disabled={form.processing}>{form.processing ? 'Menyimpan...' : 'Simpan'}</button></footer>
-                    </form>
-                </section>
-            </div>}
+            <CmsModal open={modal} onOpenChange={setModal} title={editing ? 'Ubah anggota tim' : 'Tambah anggota tim'} description={editing ? 'Perbarui informasi anggota tim. Foto bersifat opsional jika tidak ingin diganti.' : 'Isi informasi anggota tim yang akan ditampilkan di beranda.'} size="md">
+                <form className="cms-form modal-form" onSubmit={submit} encType="multipart/form-data">
+                    <label>Nama anggota *<input value={form.data.name} onChange={e => form.setData('name', e.target.value)} required maxLength={120} /></label>
+                    <label>Deskripsi singkat<textarea value={form.data.description} onChange={e => form.setData('description', e.target.value)} rows={3} maxLength={180} placeholder="Contoh: Pengelola fasilitas olahraga" /></label>
+                    <label>Foto anggota {!editing && '*'}<input type="file" accept="image/*" onChange={e => form.setData('photo', e.target.files?.[0] || null)} required={!editing} />{editing && <small>Kosongkan jika tidak ingin mengganti foto. Maksimal 5 MB.</small>}</label>
+                    {Object.values(form.errors).length > 0 && <p className="form-error">{Object.values(form.errors)[0] as string}</p>}
+                    <footer className="cms-modal-actions" style={{ justifyContent: 'flex-end' }}><button className="button" disabled={form.processing}>{form.processing ? 'Menyimpan...' : 'Simpan'}</button></footer>
+                </form>
+            </CmsModal>
         </>
     );
 }
