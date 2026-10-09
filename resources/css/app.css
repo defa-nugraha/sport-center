@@ -10848,3 +10848,165 @@ canvas {
     }
 }
 
+/* Dedicated responsive layout for the team management page */
+.team-admin-page {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding: clamp(20px, 3vw, 44px) clamp(16px, 3vw, 42px) 48px;
+}
+.team-admin-page .admin-topbar {
+    position: relative;
+    inset: auto;
+    width: auto;
+    min-width: 0;
+    margin: 0 0 28px;
+}
+.team-admin-page .admin-content {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+}
+.team-admin-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin: 0 0 24px;
+}
+.team-admin-heading > div { min-width: 0; }
+.team-admin-heading h1 {
+    margin: 8px 0 10px;
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1.08;
+    overflow-wrap: anywhere;
+}
+.team-admin-heading p {
+    max-width: 680px;
+    margin: 0;
+    color: var(--muted, #718096);
+    line-height: 1.6;
+}
+.team-admin-heading > .button {
+    flex: 0 0 auto;
+    min-height: 44px;
+    white-space: nowrap;
+}
+.team-admin-panel {
+    width: 100%;
+    min-width: 0;
+    padding: clamp(12px, 2vw, 24px);
+    overflow: hidden;
+}
+.team-admin-list {
+    display: grid;
+    gap: 12px;
+}
+.team-admin-row {
+    display: grid !important;
+    grid-template-columns: 88px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 18px;
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid var(--line, #e4eaf0);
+    border-radius: 14px;
+    background: #fff;
+}
+.team-admin-row .team-admin-photo {
+    display: block;
+    width: 88px;
+    height: 76px;
+    min-width: 0;
+    border-radius: 10px;
+    object-fit: cover;
+    background: #edf3f8;
+}
+.team-admin-member-copy {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+.team-admin-member-copy strong {
+    color: var(--ink, #10283f);
+    font-size: 16px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+.team-admin-member-copy small {
+    color: var(--muted, #718096);
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+.team-admin-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    white-space: nowrap;
+}
+.team-admin-actions .icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+.team-admin-page .user-empty {
+    padding: 40px 16px;
+    text-align: center;
+}
+@media (max-width: 760px) {
+    .team-admin-page {
+        padding: 18px 14px 32px;
+    }
+    .team-admin-page .admin-topbar {
+        margin-bottom: 22px;
+    }
+    .team-admin-heading {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+    .team-admin-heading h1 {
+        font-size: clamp(28px, 8vw, 38px);
+    }
+    .team-admin-heading > .button {
+        width: 100%;
+        justify-content: center;
+    }
+    .team-admin-panel {
+        padding: 10px;
+        border-radius: 12px;
+    }
+    .team-admin-row {
+        grid-template-columns: 64px minmax(0, 1fr);
+        gap: 12px;
+        padding: 12px;
+        border-radius: 10px;
+    }
+    .team-admin-row .team-admin-photo {
+        width: 64px;
+        height: 64px;
+    }
+    .team-admin-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+        padding-top: 10px;
+        border-top: 1px solid var(--line, #e4eaf0);
+    }
+    .team-admin-actions .icon-button {
+        width: 42px;
+        height: 42px;
+    }
+}
+@media (max-width: 380px) {
+    .team-admin-page { padding-inline: 10px; }
+    .team-admin-row { grid-template-columns: 54px minmax(0, 1fr); gap: 10px; padding: 10px; }
+    .team-admin-row .team-admin-photo { width: 54px; height: 54px; }
+}
+
