@@ -14,6 +14,7 @@ use App\Models\Region;
 use App\Models\SiteSetting;
 use App\Models\Sport;
 use App\Models\Testimonial;
+use App\Models\TeamMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
