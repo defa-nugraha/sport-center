@@ -32,8 +32,9 @@ export default function TeamMembers({ members }: any) {
     return (
         <>
             <Head title="Kelola Tim" />
-            <AdminSidebar active="pages" pageSection="team" />
-            <main className="admin-main team-admin-page">
+            <div className="admin-shell">
+                <AdminSidebar active="pages" pageSection="team" />
+                <main className="admin-main team-admin-page">
                 <AdminTopbar title="Tim" />
                 <div className="admin-content">
                     <div className="admin-page-heading team-admin-heading">
@@ -54,7 +55,8 @@ export default function TeamMembers({ members }: any) {
                         ))}</div> : <div className="user-empty"><Users/><strong>Belum ada anggota tim</strong><p>Tambahkan anggota agar section tim muncul di beranda.</p></div>}
                     </section>
                 </div>
-            </main>
+                </main>
+            </div>
             {modal && <div className="cms-modal-backdrop" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) setModal(false); }}>
                 <section className="cms-modal" role="dialog" aria-modal="true" aria-labelledby="team-member-modal-title">
                     <header><h2 id="team-member-modal-title">{editing ? 'Ubah anggota tim' : 'Tambah anggota tim'}</h2><button className="icon-button" type="button" onClick={() => setModal(false)} aria-label="Tutup"><X/></button></header>
