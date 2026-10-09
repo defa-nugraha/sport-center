@@ -3,7 +3,7 @@ import { CmsModal } from '@/components/admin-cms';
 import { asset } from '@/components/public-site';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { FormEvent, useEffect, useState } from 'react';
-import { Pencil, Plus, Trash2, Users, X } from 'lucide-react';
+import { Pencil, Plus, Trash2, Users } from 'lucide-react';
 
 const blank = { name: '', description: '', photo: null as File | null };
 export default function TeamMembers({ members }: any) {
@@ -22,10 +22,9 @@ export default function TeamMembers({ members }: any) {
     const submit = (event: FormEvent) => {
         event.preventDefault();
         const options = { forceFormData: true, preserveScroll: true, onSuccess: () => { setModal(false); setEditing(null); form.reset(); } };
-        if (editing) {
-            form.transform(data => ({ ...data, _method: 'put' }));
-            form.post(`/admin/team-members/${editing.id}`, options);
-        } else form.post('/admin/team-members', options);
+        form.transform(data => editing ? { ...data, _method: 'put' } : data);
+        if (editing) form.post(`/admin/team-members/${editing.id}`, options);
+        else form.post('/admin/team-members', options);
     };
     const remove = (member: any) => {
         if (window.confirm(`Hapus anggota tim "${member.name}"?`)) router.delete(`/admin/team-members/${member.id}`, { preserveScroll: true });
