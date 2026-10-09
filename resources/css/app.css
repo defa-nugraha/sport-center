@@ -10817,3 +10817,34 @@ canvas {
     }
 }
 
+/* Booking history mobile: show status and price on a single row. */
+@media (max-width: 560px) {
+    .user-history-side {
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-rows: auto auto;
+        align-items: center;
+        row-gap: 8px;
+    }
+
+    .user-history-side .booking-status {
+        grid-column: 1;
+        grid-row: 1;
+        justify-self: start;
+        min-width: 0;
+    }
+
+    .user-history-side strong {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: end;
+        align-self: center;
+        text-align: right;
+    }
+
+    .user-history-side .text-link {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-self: end;
+    }
+}
+
