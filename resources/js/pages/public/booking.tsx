@@ -214,7 +214,13 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
                     </div>
                     {available === true && <div className="booking-ready" role="status"><Info /><span>{daily ? `Rp ${Number(facility.booking_price_per_day || 0).toLocaleString('id-ID')} × ${Math.max(1, Math.round((parseDate(form.data.booking_end_date).getTime() - parseDate(form.data.booking_date).getTime()) / 86400000) + 1)} hari` : `Jadwal ${form.data.start_time} - ${hourlySlots.find((slot) => slot.start_time === form.data.start_time)?.end_time || ''}`}</span></div>}
                     {bookingError && <p className="form-error">{bookingError}</p>}
-                    <button type="submit" disabled={form.processing || available !== true || !selectedMode || (hourly && !form.data.start_time)} className="button booking-submit"><CalendarCheck /> {form.processing ? 'Membuat booking...' : 'Buat booking & lanjutkan pembayaran'}</button>
+                    <button type="submit" disabled={form.processing || available !== true || !selectedMode || (hourly && !form.data.start_time)} className="button booking-submit booking-submit-inline"><CalendarCheck /> {form.processing ? 'Membuat booking...' : 'Buat booking & lanjutkan pembayaran'}</button>
+                    <div className="booking-mobile-action-bar">
+                        <button type="submit" disabled={form.processing || available !== true || !selectedMode || (hourly && !form.data.start_time)} className="button booking-submit booking-submit-floating">
+                            <CalendarCheck aria-hidden="true" />
+                            {form.processing ? 'Membuat booking...' : 'Buat booking & lanjutkan pembayaran'}
+                        </button>
+                    </div>
                 </form>
             </section>
         </UserShell>
