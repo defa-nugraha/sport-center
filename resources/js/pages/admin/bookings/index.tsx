@@ -73,7 +73,7 @@ export default function Index({
 
                     {bookings.data.length > 0 ? (
                         <>
-                            <div className="booking-table-wrap">
+                            <div className="booking-table-wrap booking-table-desktop">
                                 <table className="booking-table">
                                     <thead>
                                         <tr>
@@ -89,54 +89,48 @@ export default function Index({
                                         {bookings.data.map((booking: any) => (
                                             <tr key={booking.encrypted_id}>
                                                 <td>
-                                                    <Link
-                                                        className="booking-number"
-                                                        href={`/admin/bookings/${booking.encrypted_id}`}
-                                                    >
+                                                    <Link className="booking-number" href={`/admin/bookings/${booking.encrypted_id}`}>
                                                         {booking.booking_number}
                                                     </Link>
-                                                    <small>
-                                                        {booking.payment?.payment_status
-                                                            ? `Pembayaran: ${booking.payment.payment_status}`
-                                                            : 'Pembayaran belum tersedia'}
-                                                    </small>
+                                                    <small>{booking.payment?.payment_status ? `Pembayaran: ${booking.payment.payment_status}` : 'Pembayaran belum tersedia'}</small>
                                                 </td>
-                                                <td>
-                                                    <strong>{booking.customer_name}</strong>
-                                                    <small>{booking.customer_phone || '-'}</small>
-                                                </td>
+                                                <td><strong>{booking.customer_name}</strong><small>{booking.customer_phone || '-'}</small></td>
                                                 <td>{booking.facility?.name || '-'}</td>
                                                 <td>
                                                     <strong>
-                                                        {new Date(booking.booking_date).toLocaleDateString('id-ID', {
-                                                            day: '2-digit',
-                                                            month: 'short',
-                                                            year: 'numeric',
-                                                        })}
-                                                        {booking.booking_mode === 'daily' && booking.booking_end_date && (
-                                                            <> – {new Date(booking.booking_end_date).toLocaleDateString('id-ID', {
-                                                                day: '2-digit',
-                                                                month: 'short',
-                                                                year: 'numeric',
-                                                            })}</>
-                                                        )}
+                                                        {new Date(booking.booking_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                        {booking.booking_mode === 'daily' && booking.booking_end_date && <> – {new Date(booking.booking_end_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</>}
                                                     </strong>
-                                                    <small>
-                                                        {booking.booking_mode === 'daily'
-                                                            ? 'Per hari'
-                                                            : `${booking.start_time?.slice(0, 5)} - ${booking.end_time?.slice(0, 5)}`}
-                                                    </small>
+                                                    <small>{booking.booking_mode === 'daily' ? 'Per hari' : `${booking.start_time?.slice(0, 5)} - ${booking.end_time?.slice(0, 5)}`}</small>
                                                 </td>
-                                                <td>
-                                                    <BookingStatusBadge status={booking.status} />
-                                                </td>
-                                                <td>
-                                                    <strong>{formatCurrency(booking.total)}</strong>
-                                                </td>
+                                                <td><BookingStatusBadge status={booking.status} /></td>
+                                                <td><strong>{formatCurrency(booking.total)}</strong></td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
+                            </div>
+                            <div className="booking-mobile-list" aria-label="Daftar booking versi mobile">
+                                {bookings.data.map((booking: any) => (
+                                    <article className="booking-mobile-card" key={booking.encrypted_id}>
+                                        <div className="booking-mobile-card-head">
+                                            <Link className="booking-number" href={`/admin/bookings/${booking.encrypted_id}`}>{booking.booking_number}</Link>
+                                            <BookingStatusBadge status={booking.status} />
+                                        </div>
+                                        <div className="booking-mobile-card-main">
+                                            <div><span>Customer</span><strong>{booking.customer_name}</strong><small>{booking.customer_phone || '-'}</small></div>
+                                            <div><span>Venue</span><strong>{booking.facility?.name || '-'}</strong></div>
+                                            <div><span>Jadwal</span><strong>
+                                                {new Date(booking.booking_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                {booking.booking_mode === 'daily' && booking.booking_end_date && <> – {new Date(booking.booking_end_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</>}
+                                            </strong><small>{booking.booking_mode === 'daily' ? 'Per hari' : `${booking.start_time?.slice(0, 5)} - ${booking.end_time?.slice(0, 5)}`}</small></div>
+                                        </div>
+                                        <div className="booking-mobile-card-footer">
+                                            <div><span>Total</span><strong>{formatCurrency(booking.total)}</strong></div>
+                                            <Link className="button small" href={`/admin/bookings/${booking.encrypted_id}`}>Detail</Link>
+                                        </div>
+                                    </article>
+                                ))}
                             </div>
 
                             {bookings.links?.length > 3 && (
