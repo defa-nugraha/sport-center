@@ -35,4 +35,11 @@ jobs:
         run: composer setup
 
       - name: Run CI Checks
-        run: composer ci:check
+        run: |
+          composer lint:check
+          npm run check:fix
+          npm run types:check
+
+      - name: Run Unit Tests
+        if: success()
+        run: php artisan test
