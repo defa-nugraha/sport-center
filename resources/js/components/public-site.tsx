@@ -311,7 +311,7 @@ export function SiteFooter() {
                 </a>
             </div>
             <small>
-                &copy; 2026 GGM Majalengka. Seluruh hak cipta dilindungi.
+                &copy; 2026 Smart Sport UNMA. Seluruh hak cipta dilindungi.
             </small>
         </footer>
     );

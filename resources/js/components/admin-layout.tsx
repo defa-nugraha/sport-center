@@ -41,6 +41,7 @@ const pageItems = [
     { key: 'banners', label: 'Banner halaman', icon: Images },
     { key: 'highlights', label: 'Keunggulan beranda', icon: Trophy },
     { key: 'partners', label: 'Jejak kebersamaan', icon: Users },
+    { key: 'team', label: 'Tim', icon: Users, href: '/admin/team-members' },
     { key: 'settings', label: 'Identitas & footer', icon: Settings },
 ];
 
@@ -188,7 +189,7 @@ export function AdminSidebar({
                             return (
                                 <Link
                                     key={item.key}
-                                    href={`/admin/pages/${item.key}`}
+                                    href={item.href || `/admin/pages/${item.key}`}
                                     className={pageSection === item.key ? 'active' : ''}
                                     onClick={() => setMobileOpen(false)}
                                 >

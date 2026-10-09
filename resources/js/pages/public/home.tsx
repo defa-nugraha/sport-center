@@ -40,6 +40,7 @@ export default function Home({
     sections = {},
     highlights = [],
     partnerLogos = [],
+    teamMembers = [],
     banners = [],
 }: any) {
     type HeroSlide = {
@@ -468,6 +469,25 @@ export default function Home({
                     </div>
                 </div>
             </section>
+
+            {teamMembers.length > 0 && <section className="page-section team-section">
+                <SectionTitle
+                    eyebrow="KENALI KAMI"
+                    title="Tim Kami"
+                    copy="Orang-orang di balik pengalaman olahraga yang lebih baik di GGM Majalengka."
+                />
+                <div className="team-marquee" aria-label="Anggota tim GGM Majalengka">
+                    <div className="team-marquee-track">
+                        {[...teamMembers, ...teamMembers].map((member: any, index: number) => (
+                            <article className={`team-card team-card-tone-${index % 4}`} key={`${member.id}-${index}`} aria-hidden={index >= teamMembers.length}>
+                                <div className="team-card-photo"><img src={asset(member.photo)} alt={index < teamMembers.length ? member.name : ''} loading="lazy" /></div>
+                                <h3>{member.name}</h3>
+                                {member.description && <p>{member.description}</p>}
+                            </article>
+                        ))}
+                    </div>
+                </div>
+            </section>}
 
             <section className="page-section booking-section">
                 <CTA illustrated eyebrow={section('booking', {}).eyebrow} title={section('booking', {}).title} copy={section('booking', {}).description} buttonLabel={section('booking', {}).button_label} />
