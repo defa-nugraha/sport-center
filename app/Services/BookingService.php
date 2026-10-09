@@ -115,7 +115,15 @@ class BookingService
 
         $buffer = max(0, (int) ($facility->booking_buffer_minutes ?? 0));
         $bookings = Booking::where('facility_id', $facility->id)
-            ->whereDate('booking_date', $date)
+            ->where(function ($q) use ($date) {
+                $q->where(function ($q) use ($date) {
+                    $q->where('booking_mode', 'hourly')->whereDate('booking_date', $date);
+                })->orWhere(function ($q) use ($date) {
+                    $q->where('booking_mode', 'daily')
+                        ->whereDate('booking_date', '<=', $date)
+                        ->whereDate('booking_end_date', '>=', $date);
+                });
+            })
             ->whereIn('status', [BookingStatus::CONFIRMED->value, BookingStatus::PENDING_PAYMENT->value])
             ->where(fn ($q) => $q->where('status', BookingStatus::CONFIRMED->value)
                 ->orWhere(fn ($q) => $q->where('status', BookingStatus::PENDING_PAYMENT->value)->where('expires_at', '>', now())))
@@ -194,7 +202,15 @@ class BookingService
 
         $buffer = max(0, (int) ($facility->booking_buffer_minutes ?? 0));
         $bookings = Booking::where('facility_id', $facility->id)
-            ->whereDate('booking_date', $start->toDateString())
+            ->where(function ($q) use ($start) {
+                $q->where(function ($q) use ($start) {
+                    $q->where('booking_mode', 'hourly')->whereDate('booking_date', $start->toDateString());
+                })->orWhere(function ($q) use ($start) {
+                    $q->where('booking_mode', 'daily')
+                        ->whereDate('booking_date', '<=', $start->toDateString())
+                        ->whereDate('booking_end_date', '>=', $start->toDateString());
+                });
+            })
             ->whereIn('status', [BookingStatus::CONFIRMED->value, BookingStatus::PENDING_PAYMENT->value])
             ->where(fn ($q) => $q->where('status', BookingStatus::CONFIRMED->value)
                 ->orWhere(fn ($q) => $q->where('status', BookingStatus::PENDING_PAYMENT->value)->where('expires_at', '>', now())))
