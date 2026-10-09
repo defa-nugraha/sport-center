@@ -96,7 +96,7 @@ class BookingController extends Controller
 
         try {
             $slots = $service->hourlySlots($facility, $data['booking_date'], (int) $data['duration_minutes']);
-        } catch (\\Throwable $e) {
+        } catch (\Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 422);
         }
 
