@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { CalendarCheck, CalendarDays, CheckCircle2, Clock3, Info, MapPin } from 'lucide-react';
 import { DateRangePicker } from '@/components/date-range-picker';
@@ -17,6 +17,13 @@ const parseDate = (value: string) => {
     return new Date(year, month - 1, day);
 };
 
+type HourlySlot = {
+    start_time: string;
+    end_time: string;
+    label: string;
+    total: number | null;
+};
+
 export default function Booking({ facility, user }: { facility: any; user: { name: string; email: string } }) {
     const supportsBothModes = facility.booking_mode === 'both';
     const [selectedMode, setSelectedMode] = useState<'hourly' | 'daily' | ''>(supportsBothModes ? '' : ((facility.booking_mode || 'hourly') as 'hourly' | 'daily'));
@@ -26,6 +33,7 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
     const [available, setAvailable] = useState<boolean | null>(null);
     const [checking, setChecking] = useState(false);
     const [availabilityMessage, setAvailabilityMessage] = useState('');
+    const [hourlySlots, setHourlySlots] = useState<HourlySlot[]>([]);
     const form = useForm({
         customer_phone: '',
         booking_date: '',
@@ -41,37 +49,30 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
         return options;
     }, [minimumHours]);
 
-    const check = async () => {
-        if (!selectedMode) {
-            setAvailabilityMessage('Pilih mode booking per jam atau per hari terlebih dahulu.');
-            setAvailable(false);
-            return;
-        }
-        if (daily && (!form.data.booking_date || !form.data.booking_end_date)) {
-            setAvailabilityMessage('Pilih tanggal mulai dan tanggal akhir terlebih dahulu.');
-            setAvailable(false);
-            return;
-        }
-        if (!daily && (!form.data.booking_date || !form.data.start_time)) {
-            setAvailabilityMessage('Pilih tanggal dan jam mulai terlebih dahulu.');
-            setAvailable(false);
-            return;
-        }
+    const loadHourlySlots = async () => {
+        if (!hourly || !form.data.booking_date) return;
 
         setChecking(true);
+        setAvailable(null);
         setAvailabilityMessage('');
+        setHourlySlots([]);
         try {
-            const params = new URLSearchParams({ booking_date: form.data.booking_date, booking_mode: selectedMode });
-            if (daily) params.set('booking_end_date', form.data.booking_end_date);
-            else {
-                params.set('start_time', form.data.start_time);
-                params.set('duration_minutes', String(form.data.duration_minutes));
-            }
+            const params = new URLSearchParams({
+                booking_date: form.data.booking_date,
+                booking_mode: 'hourly',
+                duration_minutes: String(form.data.duration_minutes),
+            });
             const response = await fetch('/booking/' + facility.slug + '/availability?' + params.toString(), { headers: { Accept: 'application/json' } });
             const data = await response.json();
             if (!response.ok) throw new Error(data.message || 'Ketersediaan venue belum dapat diperiksa.');
-            setAvailable(Boolean(data.available));
-            setAvailabilityMessage(data.available ? (daily ? `Rentang ${data.days} hari tersedia.` : 'Slot tersedia. Kamu bisa melanjutkan booking.') : 'Slot sudah terisi. Silakan pilih waktu lain.');
+
+            const slots = Array.isArray(data.slots) ? data.slots as HourlySlot[] : [];
+            setHourlySlots(slots);
+            setAvailabilityMessage(
+                slots.length
+                    ? `${slots.length} pilihan waktu tersedia. Pilih salah satu waktu di bawah.`
+                    : 'Tidak ada waktu yang tersedia untuk durasi tersebut pada tanggal ini.',
+            );
         } catch (error) {
             setAvailable(false);
             setAvailabilityMessage(error instanceof Error ? error.message : 'Terjadi kesalahan saat memeriksa ketersediaan.');
@@ -80,11 +81,57 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
         }
     };
 
+    useEffect(() => {
+        if (!hourly || !form.data.booking_date) {
+            setHourlySlots([]);
+            setAvailable(null);
+            return;
+        }
+
+        form.setData('start_time', '');
+        setAvailable(null);
+        void loadHourlySlots();
+    }, [hourly, form.data.booking_date, form.data.duration_minutes]);
+
+    const checkDaily = async () => {
+        if (!form.data.booking_date || !form.data.booking_end_date) {
+            setAvailabilityMessage('Pilih tanggal mulai dan tanggal akhir terlebih dahulu.');
+            setAvailable(false);
+            return;
+        }
+
+        setChecking(true);
+        setAvailabilityMessage('');
+        try {
+            const params = new URLSearchParams({
+                booking_date: form.data.booking_date,
+                booking_mode: 'daily',
+                booking_end_date: form.data.booking_end_date,
+            });
+            const response = await fetch('/booking/' + facility.slug + '/availability?' + params.toString(), { headers: { Accept: 'application/json' } });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'Ketersediaan venue belum dapat diperiksa.');
+            setAvailable(Boolean(data.available));
+            setAvailabilityMessage(data.available ? `Rentang ${data.days} hari tersedia.` : 'Rentang tanggal yang dipilih sudah terisi. Silakan pilih tanggal lain.');
+        } catch (error) {
+            setAvailable(false);
+            setAvailabilityMessage(error instanceof Error ? error.message : 'Terjadi kesalahan saat memeriksa ketersediaan.');
+        } finally {
+            setChecking(false);
+        }
+    };
+
+    const selectHourlySlot = (slot: HourlySlot) => {
+        form.setData('start_time', slot.start_time);
+        setAvailable(true);
+        setAvailabilityMessage(`Slot ${slot.label} tersedia untuk ${form.data.duration_minutes / 60} jam.`);
+    };
+
     const bookingError = (form.errors as Record<string, string | undefined>).booking;
 
     const submit = (event: FormEvent) => {
         event.preventDefault();
-        if (!selectedMode) return;
+        if (!selectedMode || (hourly && !form.data.start_time)) return;
         form.post('/booking/' + facility.slug);
     };
 
