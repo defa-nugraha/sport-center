@@ -10659,3 +10659,36 @@ canvas {
         font-size: 12px;
     }
 }
+
+/* Mobile booking history: keep price and detail action on one bottom row. */
+@media (max-width: 560px) {
+    .user-history-side {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        justify-items: stretch;
+        width: 100%;
+        text-align: left;
+    }
+
+    .user-history-side .booking-status {
+        grid-column: 1 / -1;
+        justify-self: start;
+    }
+
+    .user-history-side strong {
+        grid-column: 1;
+        justify-self: start;
+        align-self: center;
+    }
+
+    .user-history-side .text-link {
+        grid-column: 2;
+        justify-self: end;
+        align-self: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-end;
+        white-space: nowrap;
+    }
+}
+
