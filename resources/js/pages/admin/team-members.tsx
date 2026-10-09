@@ -4,7 +4,7 @@ import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { FormEvent, useEffect, useState } from 'react';
 import { Pencil, Plus, Trash2, Users, X } from 'lucide-react';
 
-const blank = { name: '', description: '', photo: null as File | null, published: true };
+const blank = { name: '', description: '', photo: null as File | null };
 export default function TeamMembers({ members }: any) {
     const { flash } = usePage().props as any;
     const form = useForm(blank);
@@ -15,7 +15,7 @@ export default function TeamMembers({ members }: any) {
     const openCreate = () => { setEditing(null); form.reset(); form.setData(blank); setModal(true); };
     const openEdit = (member: any) => {
         setEditing(member);
-        form.setData({ name: member.name, description: member.description || '', photo: null, published: Boolean(member.published) });
+        form.setData({ name: member.name, description: member.description || '', photo: null });
         setModal(true);
     };
     const submit = (event: FormEvent) => {
@@ -45,7 +45,7 @@ export default function TeamMembers({ members }: any) {
                         {members.length ? <div className="admin-list">{members.map((member: any) => (
                             <div className="admin-row admin-row-media" key={member.id}>
                                 <img src={asset(member.photo)} alt={member.name} />
-                                <div><strong>{member.name}</strong><small>{member.description || 'Tanpa deskripsi'} · {member.published ? 'Ditampilkan' : 'Disembunyikan'}</small></div>
+                                <div><strong>{member.name}</strong><small>{member.description || 'Tanpa deskripsi'}</small></div>
                                 <span className="admin-row-actions">
                                     <button className="icon-button" type="button" onClick={() => openEdit(member)} aria-label={`Ubah ${member.name}`}><Pencil /></button>
                                     <button className="icon-button danger" type="button" onClick={() => remove(member)} aria-label={`Hapus ${member.name}`}><Trash2 /></button>
@@ -62,7 +62,6 @@ export default function TeamMembers({ members }: any) {
                         <label className="field-label">Nama anggota<input value={form.data.name} onChange={e => form.setData('name', e.target.value)} required maxLength={120} /></label>
                         <label className="field-label">Deskripsi singkat<textarea value={form.data.description} onChange={e => form.setData('description', e.target.value)} rows={3} maxLength={180} placeholder="Contoh: Pengelola fasilitas olahraga" /></label>
                         <label className="field-label">Foto anggota<input type="file" accept="image/*" onChange={e => form.setData('photo', e.target.files?.[0] || null)} required={!editing} />{editing && <small>Kosongkan jika tidak ingin mengganti foto. Maksimal 5 MB.</small>}</label>
-                        <label className="field-check"><input type="checkbox" checked={form.data.published} onChange={e => form.setData('published', e.target.checked)} /> Tampilkan di beranda publik</label>
                         {Object.values(form.errors).length > 0 && <p className="form-error">{Object.values(form.errors)[0] as string}</p>}
                         <footer className="cms-modal-actions"><button type="button" className="button button-secondary" onClick={() => setModal(false)}>Batal</button><button className="button" disabled={form.processing}>{form.processing ? 'Menyimpan...' : 'Simpan'}</button></footer>
                     </form>
