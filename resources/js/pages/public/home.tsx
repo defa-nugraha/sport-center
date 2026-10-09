@@ -40,6 +40,7 @@ export default function Home({
     sections = {},
     highlights = [],
     partnerLogos = [],
+    teamMembers = [],
     banners = [],
 }: any) {
     type HeroSlide = {
