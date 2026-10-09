@@ -31,7 +31,10 @@ export default function AdminPages({
     const logo = useForm({ name: '', image: null as File | null, url: '', alt_text: '', published: true, sort_order: 0 });
     const global = useForm({ site_name: settings.site_name || '', tagline: settings.tagline || '', address: settings.address || '', phone: settings.phone || '', whatsapp: settings.whatsapp || '', email: settings.email || '', instagram: settings.instagram || '', facebook: settings.facebook || '', youtube: settings.youtube || '', tiktok: settings.tiktok || '' });
 
-    useEffect(() => { if (flash?.success) setStatus({ type: 'success', message: flash.success }); }, [flash?.success]);
+    useEffect(() => {
+        if (flash?.success) setStatus({ type: 'success', message: flash.success });
+        if (flash?.error) setStatus({ type: 'error', message: flash.error });
+    }, [flash?.success, flash?.error]);
     useEffect(() => {
         if (pageSection === 'settings') {
             global.setData({ site_name: settings.site_name || '', tagline: settings.tagline || '', address: settings.address || '', phone: settings.phone || '', whatsapp: settings.whatsapp || '', email: settings.email || '', instagram: settings.instagram || '', facebook: settings.facebook || '', youtube: settings.youtube || '', tiktok: settings.tiktok || '' });
@@ -50,10 +53,37 @@ export default function AdminPages({
         event.preventDefault();
         const segment = mode === 'section' ? 'page-sections' : mode === 'banner' ? 'page-banners' : mode === 'highlight' ? 'homepage-highlights' : 'partner-logos';
         if (editing) form.transform((data: any) => ({ ...data, _method: 'put' }));
-        form.post(`/admin/${segment}${editing ? `/${editing.encrypted_id}` : ''}`, { forceFormData: mode === 'logo' || mode === 'banner', preserveScroll: true, onSuccess: () => { setMode(null); setEditing(null); form.reset(); }, onError: fail });
+        form.post(`/admin/${segment}${editing ? `/${editing.encrypted_id}` : ''}`, {
+            forceFormData: mode === 'logo' || mode === 'banner',
+            preserveScroll: true,
+            onSuccess: () => {
+                setStatus({ type: 'success', message: editing ? 'Data berhasil diperbarui.' : 'Data berhasil ditambahkan.' });
+                setMode(null);
+                setEditing(null);
+                form.reset();
+            },
+            onError: fail,
+        });
     };
-    const remove = () => router.delete(deleteTarget.url, { preserveScroll: true, onSuccess: () => setDeleteTarget(null), onError: fail });
-    const submitGlobal = (event: FormEvent) => { event.preventDefault(); global.post('/admin/settings', { preserveScroll: true, onError: fail }); };
+    const remove = () => {
+        if (!deleteTarget) return;
+        router.delete(deleteTarget.url, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setStatus({ type: 'success', message: 'Data berhasil dihapus.' });
+                setDeleteTarget(null);
+            },
+            onError: fail,
+        });
+    };
+    const submitGlobal = (event: FormEvent) => {
+        event.preventDefault();
+        global.post('/admin/settings', {
+            preserveScroll: true,
+            onSuccess: () => setStatus({ type: 'success', message: 'Identitas situs berhasil diperbarui.' }),
+            onError: fail,
+        });
+    };
     if (loading) return <AdminPagesSkeleton />;
 
     return <div className="admin-shell">
