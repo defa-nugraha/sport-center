@@ -173,16 +173,48 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
                             {daily && <small>Pilih tanggal mulai lalu tanggal selesai.</small>}
                         </label>
 
-                        {hourly && <label htmlFor="booking-start-time">Jam mulai<input id="booking-start-time" required type="time" value={form.data.start_time} onChange={(e) => { form.setData('start_time', e.target.value); resetAvailability(); }} /></label>}
-                        {hourly && <label htmlFor="booking-duration">Durasi<Select value={String(form.data.duration_minutes)} onValueChange={(value) => { form.setData('duration_minutes', Number(value)); resetAvailability(); }}><SelectTrigger id="booking-duration" className="user-select-trigger" aria-label="Durasi booking"><SelectValue placeholder="Pilih durasi" /></SelectTrigger><SelectContent>{durationOptions.map((minutes) => <SelectItem key={minutes} value={String(minutes)}>{minutes / 60} jam</SelectItem>)}</SelectContent></Select></label>}
+                        {hourly && <label htmlFor="booking-duration">
+                            Durasi
+                            <Select value={String(form.data.duration_minutes)} onValueChange={(value) => { form.setData('duration_minutes', Number(value)); form.setData('start_time', ''); setAvailable(null); }}>
+                                <SelectTrigger id="booking-duration" className="user-select-trigger" aria-label="Durasi booking"><SelectValue placeholder="Pilih durasi" /></SelectTrigger>
+                                <SelectContent>{durationOptions.map((minutes) => <SelectItem key={minutes} value={String(minutes)}>{minutes / 60} jam</SelectItem>)}</SelectContent>
+                            </Select>
+                            <small>Setelah durasi dipilih, pilihan waktu tersedia akan dimuat otomatis.</small>
+                        </label>}
                         <label htmlFor="customer-phone">Nomor WhatsApp<input id="customer-phone" required placeholder="08xxxxxxxxxx" value={form.data.customer_phone} onChange={(e) => form.setData('customer_phone', e.target.value)} /><small>Digunakan untuk notifikasi booking.</small></label>
                     </div>
 
+                    {hourly && form.data.booking_date && (
+                        <section className="booking-slot-picker" aria-labelledby="booking-slot-title">
+                            <div className="booking-slot-picker-head">
+                                <div>
+                                    <strong id="booking-slot-title">Pilih waktu yang tersedia</strong>
+                                    <small>{checking ? 'Memuat pilihan waktu...' : availabilityMessage}</small>
+                                </div>
+                                <Clock3 aria-hidden="true" />
+                            </div>
+                            {!checking && hourlySlots.length > 0 && (
+                                <div className="booking-slot-options">
+                                    {hourlySlots.map((slot) => (
+                                        <button key={slot.start_time} type="button" className={form.data.start_time === slot.start_time ? 'selected' : ''} onClick={() => selectHourlySlot(slot)}>
+                                            <strong>{slot.label}</strong>
+                                            <small>Rp {Number(slot.total || 0).toLocaleString('id-ID')}</small>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </section>
+                    )}
+
                     <div className="booking-account-note"><CheckCircle2 /><div><strong>{user.name}</strong><span>{user.email}</span></div><small>Akun yang digunakan untuk booking</small></div>
-                    <div className="booking-check-row"><button type="button" className="button" onClick={check} disabled={checking || form.processing}>{checking ? 'Memeriksa...' : 'Cek ketersediaan'}</button>{available === true && <span role="status" className="booking-availability success"><CheckCircle2 /> {availabilityMessage}</span>}{available === false && availabilityMessage && <span role="alert" className="booking-availability error">{availabilityMessage}</span>}</div>
-                    {available === true && <div className="booking-ready" role="status"><Info /><span>{daily ? `Rp ${Number(facility.booking_price_per_day || 0).toLocaleString('id-ID')} × ${Math.max(1, Math.round((parseDate(form.data.booking_end_date).getTime() - parseDate(form.data.booking_date).getTime()) / 86400000) + 1)} hari` : availabilityMessage}</span></div>}
+                    <div className="booking-check-row">
+                        {daily && <button type="button" className="button" onClick={checkDaily} disabled={checking || form.processing}>{checking ? 'Memeriksa...' : 'Cek ketersediaan'}</button>}
+                        {available === true && <span role="status" className="booking-availability success"><CheckCircle2 /> {availabilityMessage}</span>}
+                        {available === false && availabilityMessage && <span role="alert" className="booking-availability error">{availabilityMessage}</span>}
+                    </div>
+                    {available === true && <div className="booking-ready" role="status"><Info /><span>{daily ? `Rp ${Number(facility.booking_price_per_day || 0).toLocaleString('id-ID')} × ${Math.max(1, Math.round((parseDate(form.data.booking_end_date).getTime() - parseDate(form.data.booking_date).getTime()) / 86400000) + 1)} hari` : `Jadwal ${form.data.start_time} - ${hourlySlots.find((slot) => slot.start_time === form.data.start_time)?.end_time || ''}`}</span></div>}
                     {bookingError && <p className="form-error">{bookingError}</p>}
-                    <button type="submit" disabled={form.processing || available !== true || !selectedMode} className="button booking-submit"><CalendarCheck /> {form.processing ? 'Membuat booking...' : 'Buat booking & lanjutkan pembayaran'}</button>
+                    <button type="submit" disabled={form.processing || available !== true || !selectedMode || (hourly && !form.data.start_time)} className="button booking-submit"><CalendarCheck /> {form.processing ? 'Membuat booking...' : 'Buat booking & lanjutkan pembayaran'}</button>
                 </form>
             </section>
         </UserShell>
