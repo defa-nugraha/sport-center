@@ -10692,3 +10692,83 @@ canvas {
     }
 }
 
+
+
+/* Team carousel on the public homepage */
+.team-section {
+    overflow: hidden;
+    padding-block: clamp(42px, 6vw, 84px);
+}
+.team-marquee {
+    overflow: hidden;
+    width: 100%;
+    margin-top: clamp(28px, 5vw, 64px);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+}
+.team-marquee-track {
+    display: flex;
+    width: max-content;
+    align-items: flex-start;
+    gap: clamp(18px, 2.5vw, 36px);
+    padding: 18px 18px 28px;
+    animation: team-marquee-left 34s linear infinite;
+}
+.team-marquee:hover .team-marquee-track,
+.team-marquee:focus-within .team-marquee-track {
+    animation-play-state: paused;
+}
+.team-card {
+    --team-tone: #ffe0c5;
+    flex: 0 0 clamp(220px, 22vw, 310px);
+    text-align: center;
+}
+.team-card-tone-1 { --team-tone: #f7c1c0; }
+.team-card-tone-2 { --team-tone: #cfe4f4; }
+.team-card-tone-3 { --team-tone: #ffdfbf; }
+.team-card-photo {
+    height: clamp(230px, 25vw, 340px);
+    padding: 12px 10px 0;
+    overflow: hidden;
+    background: var(--team-tone);
+    clip-path: polygon(0 9%, 14% 14%, 50% 17%, 86% 14%, 100% 9%, 100% 88%, 84% 95%, 50% 100%, 16% 95%, 0 88%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+.team-card-photo img {
+    display: block;
+    width: 100%;
+    height: 94%;
+    object-fit: cover;
+    object-position: center top;
+    mix-blend-mode: multiply;
+}
+.team-card h3 {
+    margin: 16px 0 4px;
+    color: var(--ink, #292929);
+    font-size: clamp(17px, 1.4vw, 22px);
+    font-weight: 750;
+    line-height: 1.25;
+}
+.team-card p {
+    max-width: 28ch;
+    margin: 0 auto;
+    color: var(--muted, #777);
+    font-size: 13px;
+    line-height: 1.5;
+}
+@keyframes team-marquee-left {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+@media (max-width: 640px) {
+    .team-marquee { margin-top: 24px; }
+    .team-marquee-track { gap: 16px; padding-inline: 10px; animation-duration: 26s; }
+    .team-card { flex-basis: 220px; }
+    .team-card-photo { height: 250px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .team-marquee-track { animation: none; }
+    .team-marquee { overflow-x: auto; }
+}
