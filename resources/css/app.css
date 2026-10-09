@@ -10004,6 +10004,10 @@ textarea {
    Adaptive responsive UX system — final mobile overrides
    ========================================================= */
 
+.date-range-backdrop {
+    display: none;
+}
+
 html,
 body {
     max-width: 100%;
