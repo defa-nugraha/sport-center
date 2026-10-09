@@ -90,36 +90,37 @@ class BookingController extends Controller
         $minimumMinutes = max(30, (int) $facility->booking_min_hours * 60);
         $data = $request->validate([
             'booking_date' => ['required', 'date_format:Y-m-d'],
-            'start_time' => ['required', 'date_format:H:i'],
             'duration_minutes' => ['required', 'integer', 'min:30', 'max:720', 'multiple_of:30', 'min:' . $minimumMinutes],
+            'start_time' => ['nullable', 'date_format:H:i'],
         ]);
 
-        $start = Carbon::parse($data['booking_date'] . ' ' . $data['start_time']);
-        $end = $start->copy()->addMinutes((int) $data['duration_minutes'])->format('H:i:s');
+        try {
+            $slots = $service->hourlySlots($facility, $data['booking_date'], (int) $data['duration_minutes']);
+        } catch (\\Throwable $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
 
-        $conflict = Booking::where('facility_id', $facility->id)
-            ->whereIn('status', ['PENDING_PAYMENT', 'CONFIRMED'])
-            ->where(function ($q) use ($data, $end) {
-                $q->where(function ($q) use ($data) {
-                    $q->where('booking_mode', 'daily')
-                        ->whereDate('booking_date', '<=', $data['booking_date'])
-                        ->whereDate('booking_end_date', '>=', $data['booking_date']);
-                })->orWhere(function ($q) use ($data, $end) {
-                    $q->where('booking_mode', 'hourly')
-                        ->whereDate('booking_date', $data['booking_date'])
-                        ->where('start_time', '<', $end)
-                        ->where('end_time', '>', $data['start_time']);
-                });
-            })
-            ->where(fn ($q) => $q->where('status', 'CONFIRMED')->orWhere(fn ($q) => $q->where('status', 'PENDING_PAYMENT')->where('expires_at', '>', now())))
-            ->exists();
+        if (! empty($data['start_time'])) {
+            $selected = collect($slots)->firstWhere('start_time', $data['start_time']);
+
+            return response()->json([
+                'available' => $selected !== null,
+                'start_time' => $selected['start_time'] ?? $data['start_time'],
+                'end_time' => $selected['end_time'] ?? null,
+                'slots' => $slots,
+                'price_per_hour' => $facility->booking_price_per_hour,
+                'total' => $selected['total'] ?? null,
+            ]);
+        }
 
         return response()->json([
-            'available' => ! $conflict,
-            'start_time' => $data['start_time'],
-            'end_time' => substr($end, 0, 5),
+            'available' => count($slots) > 0,
+            'slots' => $slots,
+            'operating_start' => substr((string) $facility->booking_operating_start, 0, 5),
+            'operating_end' => substr((string) $facility->booking_operating_end, 0, 5),
+            'buffer_minutes' => (int) ($facility->booking_buffer_minutes ?? 0),
             'price_per_hour' => $facility->booking_price_per_hour,
-            'total' => $facility->booking_price_per_hour ? (int) round($facility->booking_price_per_hour * ((int) $data['duration_minutes'] / 60)) : null,
+            'total' => null,
         ]);
     }
 
