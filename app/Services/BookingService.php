@@ -59,7 +59,13 @@ class BookingService
 
             $this->expireStale($facility->id);
 
-            if (! $this->isHourlySlotAvailable($facility, $start, $end)) {
+            $availableSlot = collect($this->hourlySlots(
+                $facility,
+                $start->toDateString(),
+                $duration
+            ))->firstWhere('start_time', $start->format('H:i'));
+
+            if (! $availableSlot) {
                 throw new RuntimeException('Slot yang dipilih sudah tidak tersedia atau berada di luar jam operasional.');
             }
 
@@ -190,45 +196,6 @@ class BookingService
 
         ksort($slots);
         return array_values($slots);
-    }
-
-    private function isHourlySlotAvailable(Facility $facility, Carbon $start, Carbon $end): bool
-    {
-        $opening = Carbon::parse($start->toDateString() . ' ' . ($facility->booking_operating_start ?: '07:00:00'));
-        $closing = Carbon::parse($start->toDateString() . ' ' . ($facility->booking_operating_end ?: '22:00:00'));
-        if ($start->lt($opening) || $end->gt($closing)) {
-            return false;
-        }
-
-        $buffer = max(0, (int) ($facility->booking_buffer_minutes ?? 0));
-        $bookings = Booking::where('facility_id', $facility->id)
-            ->where(function ($q) use ($start) {
-                $q->where(function ($q) use ($start) {
-                    $q->where('booking_mode', 'hourly')->whereDate('booking_date', $start->toDateString());
-                })->orWhere(function ($q) use ($start) {
-                    $q->where('booking_mode', 'daily')
-                        ->whereDate('booking_date', '<=', $start->toDateString())
-                        ->whereDate('booking_end_date', '>=', $start->toDateString());
-                });
-            })
-            ->whereIn('status', [BookingStatus::CONFIRMED->value, BookingStatus::PENDING_PAYMENT->value])
-            ->where(fn ($q) => $q->where('status', BookingStatus::CONFIRMED->value)
-                ->orWhere(fn ($q) => $q->where('status', BookingStatus::PENDING_PAYMENT->value)->where('expires_at', '>', now())))
-            ->get(['booking_mode', 'start_time', 'end_time']);
-
-        foreach ($bookings as $booking) {
-            if ($booking->booking_mode === 'daily') {
-                return false;
-            }
-
-            $blockedStart = Carbon::parse($start->toDateString() . ' ' . $booking->start_time);
-            $blockedEnd = Carbon::parse($start->toDateString() . ' ' . $booking->end_time)->addMinutes($buffer);
-            if ($start->lt($blockedEnd) && $end->gt($blockedStart)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private function createDaily(Facility $facility, array $data): array
