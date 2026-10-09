@@ -26,7 +26,7 @@ class AdminTeamMemberController extends Controller
         ]);
         $data['photo'] = $request->file('photo')->store('ggm/team', 'public');
         $data['published'] = $request->boolean('published', true);
-        $data['sort_order'] = (TeamMember::max('sort_order') ?? -1) + 1;
+        $data['sort_order'] = (int) (TeamMember::max('sort_order') ?? -1) + 1;
         TeamMember::create($data);
 
         return back()->with('success', 'Data tim berhasil ditambahkan.');
