@@ -8,6 +8,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\AdminBookingController;
+use App\Http\Controllers\AdminTeamMemberController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Teams\TeamInvitationController;
@@ -45,7 +46,11 @@ Route::get('/invoices/{invoice:uuid}/pdf', [InvoiceController::class, 'show'])->
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/content', [AdminController::class, 'content'])->name('content');
-    Route::get('/pages', [AdminController::class, 'pagesIndex'])->middleware('permission:kelola halaman')->name('pages');\n    Route::get('/team-members', [AdminTeamMemberController::class, 'index'])->middleware('permission:kelola halaman')->name('team-members.index');\n    Route::post('/team-members', [AdminTeamMemberController::class, 'store'])->middleware('permission:kelola halaman')->name('team-members.store');\n    Route::put('/team-members/{teamMember}', [AdminTeamMemberController::class, 'update'])->middleware('permission:kelola halaman')->name('team-members.update');\n    Route::delete('/team-members/{teamMember}', [AdminTeamMemberController::class, 'destroy'])->middleware('permission:kelola halaman')->name('team-members.destroy');
+    Route::get('/pages', [AdminController::class, 'pagesIndex'])->middleware('permission:kelola halaman')->name('pages');
+    Route::get('/team-members', [AdminTeamMemberController::class, 'index'])->middleware('permission:kelola halaman')->name('team-members.index');
+    Route::post('/team-members', [AdminTeamMemberController::class, 'store'])->middleware('permission:kelola halaman')->name('team-members.store');
+    Route::put('/team-members/{teamMember}', [AdminTeamMemberController::class, 'update'])->middleware('permission:kelola halaman')->name('team-members.update');
+    Route::delete('/team-members/{teamMember}', [AdminTeamMemberController::class, 'destroy'])->middleware('permission:kelola halaman')->name('team-members.destroy');
     Route::get('/pages/{section}', [AdminController::class, 'pages'])
         ->middleware('permission:kelola halaman')
         ->whereIn('section', ['sections', 'banners', 'highlights', 'partners', 'settings'])
