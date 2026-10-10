@@ -45,7 +45,7 @@ test('valid signed verification link verifies the email', function () {
 
     $response = $this->actingAs($user)->get($verificationUrl);
 
-    $response->assertRedirect('/dashboard');
+    $response->assertRedirect('/admin?verified=1');
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
 });
 
