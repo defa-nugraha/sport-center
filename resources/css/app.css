@@ -11256,3 +11256,38 @@ canvas {
         padding: 18px 16px;
     }
 }
+
+
+/* Prevent the team admin layout from creating an unnecessary right-side scrollbar. */
+html:has(.team-admin-page),
+body:has(.team-admin-page) {
+    overflow-x: clip;
+}
+.admin-shell:has(.team-admin-page) {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+}
+.admin-main.team-admin-page,
+.team-admin-page .admin-content,
+.team-admin-page .team-admin-panel,
+.team-admin-page .team-admin-row {
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
+}
+.team-admin-page .team-admin-member-copy {
+    overflow-wrap: anywhere;
+}
+@media (min-width: 768px) {
+    .admin-shell:has(.team-admin-page) {
+        align-items: stretch;
+    }
+    .admin-shell:has(.team-admin-page) > .admin-side {
+        flex: 0 0 230px;
+    }
+    .admin-shell:has(.team-admin-page) > .admin-main.team-admin-page {
+        flex: 1 1 0;
+        width: 0;
+    }
+}
