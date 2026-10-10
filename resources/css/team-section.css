@@ -1,9 +1,34 @@
 /* Reference-inspired public homepage team cards */
 .team-section {
     max-width: none;
-    background: #f0f1eb;
+    position: relative;
+    background: #eef7ff;
     padding: 72px max(24px, calc((100vw - 1180px) / 2));
     overflow: hidden;
+}
+.team-section::before,
+.team-section::after {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    width: 430px;
+    height: 430px;
+    border: 54px solid #deefff;
+    border-radius: 50%;
+    opacity: .8;
+    pointer-events: none;
+}
+.team-section::before {
+    right: -250px;
+    top: -270px;
+}
+.team-section::after {
+    bottom: -285px;
+    left: -270px;
+}
+.team-section > * {
+    position: relative;
+    z-index: 1;
 }
 .team-reference-heading {
     margin: 0 auto 25px;
