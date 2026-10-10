@@ -27,7 +27,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                             <p className="mb-8 text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#2f74bd]">
                                 SPORT CENTER
                             </p>
-                            <h1 className="text-[32px] font-bold leading-[1.12] tracking-[-0.045em] text-[#14243f] sm:text-[36px]">
+                            <h1 className="text-2xl font-bold leading-tight tracking-[-0.03em] text-[#14243f] sm:text-[28px]">
                                 Lupa password?
                             </h1>
                             <p className="mt-4 max-w-[34ch] text-[14px] leading-6 text-[#5b687b]">
