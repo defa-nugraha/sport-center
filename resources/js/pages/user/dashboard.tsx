@@ -3,6 +3,13 @@ import { CalendarCheck, CalendarDays, ChevronRight, Clock3, UserRound } from 'lu
 import { UserShell } from '@/components/user-layout';
 import { BookingStatusBadge } from '@/components/booking-status-badge';
 
+const formatBookingDate = (value?: string | null) => {
+    if (!value) return 'Tanggal belum tersedia';
+    const date = new Date(`${value.slice(0, 10)}T00:00:00`);
+    if (Number.isNaN(date.getTime())) return value;
+    return new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+};
+
 export default function Dashboard({ user, stats, bookings }: any) {
     return (
         <UserShell active="dashboard" title={'Halo, ' + user.name + '.'} description="Kelola booking venue, lihat jadwal, dan pantau transaksi kamu di GGM.">
@@ -16,7 +23,7 @@ export default function Dashboard({ user, stats, bookings }: any) {
             </section>
             <section className="user-panel">
                 <div className="user-panel-head"><div><span className="eyebrow"><i /> Aktivitas terbaru</span><h2>Booking terakhir</h2></div><Link href="/bookings" className="text-link">Lihat semua <ChevronRight /></Link></div>
-                {bookings.length ? <div className="user-booking-list">{bookings.map((booking: any) => <Link href={'/booking/' + booking.encrypted_id + '/status'} className="user-booking-row" key={booking.id}><div className="user-booking-icon"><CalendarDays /></div><div><strong>{booking.facility?.name}</strong><span>{booking.booking_date} · {booking.start_time?.slice(0, 5)} - {booking.end_time?.slice(0, 5)}</span></div><BookingStatusBadge status={booking.status} /></Link>)}</div> : <div className="user-empty"><UserRound /><strong>Belum ada booking</strong><p>Booking pertama kamu akan muncul di sini.</p></div>}
+                {bookings.length ? <div className="user-booking-list">{bookings.map((booking: any) => <Link href={'/booking/' + booking.encrypted_id + '/status'} className="user-booking-row" key={booking.id}><div className="user-booking-icon"><CalendarDays /></div><div><strong>{booking.facility?.name}</strong><span>{(booking.booking_mode || 'hourly') === 'daily' ? `${formatBookingDate(booking.booking_date)} – ${formatBookingDate(booking.booking_end_date || booking.booking_date)} · Per hari` : `${formatBookingDate(booking.booking_date)} · ${booking.start_time?.slice(0, 5)} - ${booking.end_time?.slice(0, 5)}`}</span></div><BookingStatusBadge status={booking.status} /></Link>)}</div> : <div className="user-empty"><UserRound /><strong>Belum ada booking</strong><p>Booking pertama kamu akan muncul di sini.</p></div>}
             </section>
         </UserShell>
     );
