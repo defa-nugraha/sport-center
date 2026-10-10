@@ -21,7 +21,8 @@ export default function ReviewIndex({ reviews, filters, counts }: any) {
 
     useEffect(() => {
         if (flash?.success) setStatus({ type: 'success', message: flash.success });
-    }, [flash?.success]);
+        if (flash?.error) setStatus({ type: 'error', message: flash.error });
+    }, [flash?.success, flash?.error]);
 
     const filter = (event: FormEvent) => {
         event.preventDefault();
@@ -30,6 +31,7 @@ export default function ReviewIndex({ reviews, filters, counts }: any) {
     const moderate = (review: any, nextStatus: string) => {
         router.patch(`/admin/reviews/${review.encrypted_id}/status`, { status: nextStatus }, {
             preserveScroll: true,
+            onSuccess: () => setStatus({ type: 'success', message: nextStatus === 'approved' ? 'Ulasan berhasil disetujui.' : nextStatus === 'rejected' ? 'Ulasan berhasil ditolak.' : 'Ulasan dikembalikan ke antrean.' }),
             onError: (errors) => setStatus({ type: 'error', message: Object.values(errors)[0] || 'Status ulasan tidak dapat diperbarui.' }),
         });
     };
@@ -37,7 +39,10 @@ export default function ReviewIndex({ reviews, filters, counts }: any) {
         if (!deleteTarget) return;
         router.delete(`/admin/reviews/${deleteTarget.encrypted_id}`, {
             preserveScroll: true,
-            onSuccess: () => setDeleteTarget(null),
+            onSuccess: () => {
+                setDeleteTarget(null);
+                setStatus({ type: 'success', message: 'Ulasan berhasil dihapus.' });
+            },
             onError: (errors) => setStatus({ type: 'error', message: Object.values(errors)[0] || 'Ulasan tidak dapat dihapus.' }),
         });
     };

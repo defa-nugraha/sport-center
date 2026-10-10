@@ -1,5 +1,5 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
-import { CmsModal } from '@/components/admin-cms';
+import { CmsModal, ConfirmDialog, StatusDialog } from '@/components/admin-cms';
 import { asset } from '@/components/public-site';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { FormEvent, useEffect, useState } from 'react';
@@ -11,8 +11,13 @@ export default function TeamMembers({ members }: any) {
     const form = useForm(blank);
     const [editing, setEditing] = useState<any>(null);
     const [modal, setModal] = useState(false);
-    const [notice, setNotice] = useState('');
-    useEffect(() => { if (flash?.success) setNotice(flash.success); }, [flash?.success]);
+    const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+    const [deleteTarget, setDeleteTarget] = useState<any>(null);
+    const [deleting, setDeleting] = useState(false);
+    useEffect(() => {
+        if (flash?.success) setStatus({ type: 'success', message: flash.success });
+        if (flash?.error) setStatus({ type: 'error', message: flash.error });
+    }, [flash?.success, flash?.error]);
     const openCreate = () => { setEditing(null); form.reset(); form.setData(blank); setModal(true); };
     const openEdit = (member: any) => {
         setEditing(member);
@@ -21,13 +26,39 @@ export default function TeamMembers({ members }: any) {
     };
     const submit = (event: FormEvent) => {
         event.preventDefault();
-        const options = { forceFormData: true, preserveScroll: true, onSuccess: () => { setModal(false); setEditing(null); form.reset(); } };
+        const options = {
+            forceFormData: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                setModal(false);
+                setEditing(null);
+                form.reset();
+                setStatus({ type: 'success', message: editing ? 'Data anggota tim berhasil diperbarui.' : 'Anggota tim berhasil ditambahkan.' });
+            },
+            onError: (errors: Record<string, string>) => setStatus({
+                type: 'error',
+                message: Object.values(errors)[0] || 'Anggota tim gagal disimpan. Silakan coba lagi.',
+            }),
+        };
         form.transform(data => editing ? { ...data, _method: 'put' } : data);
         if (editing) form.post(`/admin/team-members/${editing.id}`, options);
         else form.post('/admin/team-members', options);
     };
-    const remove = (member: any) => {
-        if (window.confirm(`Hapus anggota tim "${member.name}"?`)) router.delete(`/admin/team-members/${member.id}`, { preserveScroll: true });
+    const remove = () => {
+        if (!deleteTarget) return;
+        setDeleting(true);
+        router.delete(`/admin/team-members/${deleteTarget.id}`, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setDeleteTarget(null);
+                setStatus({ type: 'success', message: 'Anggota tim berhasil dihapus.' });
+            },
+            onError: (errors: Record<string, string>) => setStatus({
+                type: 'error',
+                message: Object.values(errors)[0] || 'Anggota tim gagal dihapus. Silakan coba lagi.',
+            }),
+            onFinish: () => setDeleting(false),
+        });
     };
     return (
         <>
@@ -41,7 +72,6 @@ export default function TeamMembers({ members }: any) {
                         <div><span className="eyebrow">KONTEN BERANDA</span><h1>Kelola Tim</h1><p>Atur foto, nama, dan deskripsi singkat anggota tim yang tampil di beranda publik.</p></div>
                         <button className="button" type="button" onClick={openCreate}><Plus size={18}/> Tambah anggota</button>
                     </div>
-                    {notice && <div className="flash-success">{notice}</div>}
                     <section className="admin-panel team-admin-panel">
                         {members.length ? <div className="admin-list team-admin-list">{members.map((member: any) => (
                             <div className="admin-row admin-row-media team-admin-row" key={member.id}>
@@ -49,7 +79,7 @@ export default function TeamMembers({ members }: any) {
                                 <div className="team-admin-member-copy"><strong>{member.name}</strong><small>{member.description || 'Tanpa deskripsi'}</small></div>
                                 <span className="admin-row-actions team-admin-actions">
                                     <button className="icon-button" type="button" onClick={() => openEdit(member)} aria-label={`Ubah ${member.name}`}><Pencil /></button>
-                                    <button className="icon-button danger" type="button" onClick={() => remove(member)} aria-label={`Hapus ${member.name}`}><Trash2 /></button>
+                                    <button className="icon-button danger" type="button" onClick={() => setDeleteTarget(member)} aria-label={`Hapus ${member.name}`}><Trash2 /></button>
                                 </span>
                             </div>
                         ))}</div> : <div className="user-empty"><Users/><strong>Belum ada anggota tim</strong><p>Tambahkan anggota agar section tim muncul di beranda.</p></div>}
@@ -66,6 +96,19 @@ export default function TeamMembers({ members }: any) {
                     <footer className="cms-modal-actions" style={{ justifyContent: 'flex-end' }}><button className="button" disabled={form.processing}>{form.processing ? 'Menyimpan...' : 'Simpan'}</button></footer>
                 </form>
             </CmsModal>
+            <ConfirmDialog
+                open={Boolean(deleteTarget)}
+                onOpenChange={(open) => !open && !deleting && setDeleteTarget(null)}
+                itemName={deleteTarget?.name}
+                onConfirm={remove}
+                processing={deleting}
+            />
+            <StatusDialog
+                open={Boolean(status)}
+                onOpenChange={(open) => !open && setStatus(null)}
+                type={status?.type || 'success'}
+                message={status?.message || ''}
+            />
         </>
     );
 }

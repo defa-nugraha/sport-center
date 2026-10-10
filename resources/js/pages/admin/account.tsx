@@ -30,10 +30,9 @@ export default function AdminAccount({
     });
 
     useEffect(() => {
-        if (flash?.success) {
-            setStatus({ type: 'success', message: flash.success });
-        }
-    }, [flash?.success]);
+        if (flash?.success) setStatus({ type: 'success', message: flash.success });
+        if (flash?.error) setStatus({ type: 'error', message: flash.error });
+    }, [flash?.success, flash?.error]);
 
     const fail = (errors: Record<string, string>) =>
         setStatus({
@@ -44,13 +43,20 @@ export default function AdminAccount({
         });
     const submitProfile = (event: FormEvent) => {
         event.preventDefault();
-        profile.patch('/admin/account', { preserveScroll: true, onError: fail });
+        profile.patch('/admin/account', {
+            preserveScroll: true,
+            onSuccess: () => setStatus({ type: 'success', message: 'Profil akun berhasil diperbarui.' }),
+            onError: fail,
+        });
     };
     const submitPassword = (event: FormEvent) => {
         event.preventDefault();
         password.put('/admin/account/password', {
             preserveScroll: true,
-            onSuccess: () => password.reset(),
+            onSuccess: () => {
+                password.reset();
+                setStatus({ type: 'success', message: 'Kata sandi berhasil diperbarui.' });
+            },
             onError: (errors) => {
                 fail(errors);
                 if (errors.current_password) currentPassword.current?.focus();
