@@ -1,7 +1,8 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { ArrowLeft, Save, UserRound } from 'lucide-react';
-import { FormEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { FormEvent } from 'react';
 import '../../../css/admin-users.css';
 
 type UserFormProps = {

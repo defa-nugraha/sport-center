@@ -1,6 +1,7 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
-import { FormEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { FormEvent } from 'react';
 import { CheckCircle2, CircleSlash, LockKeyhole, Pencil, Plus, Search, ShieldCheck, Trash2, UserRound, Users, X } from 'lucide-react';
 import '../../../css/admin-users.css';
 
