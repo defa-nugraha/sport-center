@@ -100,8 +100,8 @@ export default function TeamEdit({
                         <>
                             <Heading
                                 variant="small"
-                                title="Team settings"
-                                description="Update your team name and settings"
+                                title="Pengaturan tim"
+                                description="Perbarui nama dan pengaturan tim"
                             />
 
                             <Form
@@ -130,7 +130,7 @@ export default function TeamEdit({
                                                 data-test="team-save-button"
                                                 disabled={processing}
                                             >
-                                                Save
+                                                Simpan
                                             </Button>
                                         </div>
                                     </>
@@ -148,10 +148,10 @@ export default function TeamEdit({
                     <div className="account-section-header">
                         <Heading
                             variant="small"
-                            title="Team members"
+                            title="Anggota tim"
                             description={
                                 permissions.canCreateInvitation
-                                    ? 'Manage who belongs to this team'
+                                    ? 'Kelola anggota yang tergabung dalam tim ini'
                                     : ''
                             }
                         />
@@ -161,7 +161,7 @@ export default function TeamEdit({
                                 data-test="invite-member-button"
                                 onClick={() => setInviteDialogOpen(true)}
                             >
-                                <UserPlus /> Invite member
+                                <UserPlus /> Undang anggota
                             </Button>
                         ) : null}
                     </div>
@@ -266,8 +266,8 @@ export default function TeamEdit({
                     <div className="account-section-block">
                         <Heading
                             variant="small"
-                            title="Pending invitations"
-                            description="Invitations that haven't been accepted yet"
+                            title="Undangan tertunda"
+                            description="Undangan yang belum diterima"
                         />
 
                         <div className="account-list-items">
@@ -309,7 +309,7 @@ export default function TeamEdit({
                                                     </Button>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
-                                                    <p>Cancel invitation</p>
+                                                    <p>Batalkan undangan</p>
                                                 </TooltipContent>
                                             </Tooltip>
                                         </TooltipProvider>
@@ -324,15 +324,15 @@ export default function TeamEdit({
                     <div className="account-section-block">
                         <Heading
                             variant="small"
-                            title="Delete team"
-                            description="Permanently delete your team"
+                            title="Hapus tim"
+                            description="Hapus tim secara permanen"
                         />
                         <div className="account-danger">
                             <div className="account-danger-copy">
-                                <p className="account-card-title">Warning</p>
+                                <p className="account-card-title">Peringatan</p>
                                 <p className="text-sm">
-                                    Please proceed with caution, this cannot be
-                                    undone.
+                                    Lanjutkan dengan hati-hati. Tindakan ini tidak dapat
+                                    dibatalkan.
                                 </p>
                             </div>
                             <Button
@@ -340,7 +340,7 @@ export default function TeamEdit({
                                 data-test="delete-team-button"
                                 onClick={() => setDeleteDialogOpen(true)}
                             >
-                                Delete team
+                                Hapus tim
                             </Button>
                         </div>
                     </div>
@@ -384,7 +384,7 @@ export default function TeamEdit({
 TeamEdit.layout = (props: { team: { name: string; slug: string } }) => ({
     breadcrumbs: [
         {
-            title: 'Teams',
+            title: 'Tim',
             href: index(),
         },
         {
