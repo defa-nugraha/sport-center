@@ -3,6 +3,7 @@
 use App\Models\User;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\URL;
 use Laravel\Fortify\Features;
 
 beforeEach(function () {
