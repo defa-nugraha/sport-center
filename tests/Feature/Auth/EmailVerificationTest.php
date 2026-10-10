@@ -45,7 +45,7 @@ test('valid signed verification link verifies the email', function () {
 
     $response = $this->actingAs($user)->get($verificationUrl);
 
-    $response->assertRedirect('/admin?verified=1');
+    $response->assertRedirect('/dashboard?verified=1');
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
 });
 
@@ -63,7 +63,7 @@ test('invalid verification signature is rejected', function () {
 
 test('verified administrator is redirected to the admin dashboard', function () {
     Role::findOrCreate('administrator', 'web');
-    $user = User::factory()->unverified()->create();
+    $user = User::factory()->unverified()->create(['role' => 'admin']);
     $user->assignRole('administrator');
 
     $verificationUrl = URL::temporarySignedRoute(
@@ -81,7 +81,7 @@ test('verified administrator is redirected to the admin dashboard', function () 
 test('regular users cannot access admin routes after email verification', function () {
     Role::findOrCreate('administrator', 'web');
     Role::findOrCreate('user', 'web');
-    $user = User::factory()->create();
+    $user = User::factory()->create(['role' => 'user']);
     $user->assignRole('user');
 
     $this->actingAs($user)
