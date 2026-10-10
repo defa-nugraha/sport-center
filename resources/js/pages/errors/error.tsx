@@ -63,7 +63,7 @@ const errorContent: Record<number, { title: string; description: string; eyebrow
     },
 };
 
-export default function ErrorPage({ status = 500 }: ErrorPageProps) {
+export default function ErrorPage({ status }: ErrorPageProps) {
     const content = errorContent[status] ?? {
         title: 'Terjadi kesalahan',
         description: 'Maaf, permintaan kamu belum dapat diselesaikan. Coba kembali atau kembali ke halaman utama.',
