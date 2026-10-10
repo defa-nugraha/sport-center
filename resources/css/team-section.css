@@ -51,21 +51,109 @@
     font-size: 15px;
     line-height: 1.65;
 }
-.team-reference-grid {
+.team-reference-carousel {
     position: relative;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-items: end;
-    gap: clamp(18px, 2.5vw, 30px);
     width: 100%;
-    max-width: 1080px;
+    max-width: 1180px;
     margin: 0 auto;
 }
-.team-reference-grid-count-2 {
-    max-width: 760px;
+.team-reference-grid {
+    --team-card-gap: clamp(16px, 2vw, 22px);
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: end;
+    gap: var(--team-card-gap);
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
 }
 .team-reference-grid-count-1 {
     max-width: 360px;
+    grid-template-columns: minmax(0, 1fr);
+}
+.team-reference-grid-count-2 {
+    max-width: 760px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.team-reference-grid-count-3 {
+    max-width: 980px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.team-reference-grid-count-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.team-reference-grid.is-scrollable {
+    display: grid;
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 22%;
+    align-items: end;
+    max-width: 1180px;
+    padding: 116px 0 18px;
+    margin-top: -116px;
+    margin-bottom: -18px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(255 255 255 / 62%) rgb(20 32 61 / 18%);
+}
+.team-reference-grid.is-scrollable .team-reference-card {
+    width: 100%;
+    min-width: 0;
+    margin-top: 0;
+    scroll-snap-align: start;
+}
+.team-reference-grid.is-scrollable .team-reference-card:nth-child(3n + 2) {
+    margin-top: 0;
+}
+.team-reference-grid.is-scrollable:focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 4px;
+}
+.team-reference-scroll-cue {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 14px;
+    margin: 12px 0 0;
+    color: #fff;
+}
+.team-reference-scroll-cue > span {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-shadow: 0 1px 5px rgb(0 0 0 / 16%);
+}
+.team-reference-scroll-actions {
+    display: inline-flex;
+    gap: 8px;
+}
+.team-reference-scroll-actions button {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    border: 1px solid rgb(255 255 255 / 70%);
+    border-radius: 50%;
+    background: rgb(255 255 255 / 90%);
+    color: #17203d;
+    box-shadow: 0 4px 12px rgb(20 32 61 / 14%);
+    cursor: pointer;
+    transition: background-color .2s ease, transform .2s ease;
+}
+.team-reference-scroll-actions button:hover {
+    background: #fff;
+    transform: translateY(-1px);
+}
+.team-reference-scroll-actions svg {
+    width: 18px;
+    height: 18px;
+}
+.team-reference-arrow-back {
+    transform: rotate(180deg);
 }
 .team-reference-card {
     --team-primary: #00dca0;
@@ -235,9 +323,37 @@
         margin-bottom: 94px;
     }
     .team-reference-grid {
+        --team-card-gap: 18px;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 78px 18px;
+        gap: 78px var(--team-card-gap);
         max-width: 560px;
+    }
+    .team-reference-grid-count-1 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .team-reference-grid-count-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-width: 560px;
+    }
+    .team-reference-grid-count-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .team-reference-grid-count-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .team-reference-grid.is-scrollable {
+        grid-template-columns: none;
+        grid-auto-columns: 42%;
+        gap: 18px;
+        max-width: none;
+        padding-top: 108px;
+        margin-top: -108px;
+    }
+    .team-reference-grid.is-scrollable .team-reference-card:nth-child(3n + 2) {
+        margin-top: 0;
+    }
+    .team-reference-scroll-cue {
+        justify-content: space-between;
     }
     .team-reference-card {
         height: clamp(300px, 54vw, 390px);
@@ -261,6 +377,32 @@
 @media (max-width: 480px) {
     .team-section {
         padding: 54px 22px 20px;
+    }
+    .team-reference-grid-count-1 {
+        max-width: 300px;
+    }
+    .team-reference-grid-count-2,
+    .team-reference-grid-count-3,
+    .team-reference-grid-count-4 {
+        grid-template-columns: minmax(0, 1fr);
+        max-width: 340px;
+    }
+    .team-reference-grid.is-scrollable {
+        grid-auto-columns: 72%;
+        gap: 16px;
+        max-width: none;
+        padding-top: 100px;
+        padding-right: 2px;
+        margin-top: -100px;
+    }
+    .team-reference-scroll-cue > span {
+        max-width: 190px;
+        font-size: 9px;
+        line-height: 1.4;
+    }
+    .team-reference-scroll-actions button {
+        width: 32px;
+        height: 32px;
     }
 }
 @media (prefers-reduced-motion: reduce) {
