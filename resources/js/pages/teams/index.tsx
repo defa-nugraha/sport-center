@@ -32,13 +32,13 @@ export default function TeamsIndex({ teams }: Props) {
         <>
             <Head title="Tim" />
 
-            <h1 className="sr-only">Teams</h1>
+            <h1 className="sr-only">Tim</h1>
 
             <div className="account-list">
                 <div className="account-section-header">
                     <Heading
                         variant="small"
-                        title="Teams"
+                        title="Tim"
                         description="Kelola tim dan keanggotaan tim kamu"
                     />
 
