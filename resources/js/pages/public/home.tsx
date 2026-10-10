@@ -474,7 +474,7 @@ export default function Home({
             {teamMembers.length > 0 && (
                 <section className="page-section team-section">
                     <h2 className="team-reference-sr-only">Kenali Tim Kami</h2>
-                    <div className="team-reference-grid">
+                    <div className={`team-reference-grid team-reference-grid-count-${Math.min(teamMembers.length, 3)}`}>
                         {teamMembers.map((member: any, index: number) => (
                             <article
                                 className={`team-reference-card team-reference-card-${(index % 3) + 1}`}
