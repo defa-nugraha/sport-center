@@ -134,9 +134,9 @@ export default function Content({
     const category = useForm({ name: '', description: '' });
     const tag = useForm({ name: '' });
     useEffect(() => {
-        if (flash?.success)
-            setStatus({ type: 'success', message: flash.success });
-    }, [flash?.success]);
+        if (flash?.success) setStatus({ type: 'success', message: flash.success });
+        if (flash?.error) setStatus({ type: 'error', message: flash.error });
+    }, [flash?.success, flash?.error]);
     const opts = useMemo(
         () => ({
             regions: regions.map((x: any) => ({
@@ -219,6 +219,7 @@ export default function Content({
             preserveScroll: true,
             onSuccess: () => {
                 setModalOpen(false);
+                setStatus({ type: 'success', message: editing ? 'Data berhasil diperbarui.' : 'Data berhasil ditambahkan.' });
                 setEditing(null);
                 currentForm.reset();
             },
@@ -234,7 +235,10 @@ export default function Content({
         setDeleting(true);
         router.delete(deleteTarget.url, {
             preserveScroll: true,
-            onSuccess: () => setDeleteTarget(null),
+            onSuccess: () => {
+                setStatus({ type: 'success', message: 'Data berhasil dihapus.' });
+                setDeleteTarget(null);
+            },
             onError: fail,
             onFinish: () => setDeleting(false),
         });
@@ -263,6 +267,7 @@ export default function Content({
         const options = {
             preserveScroll: true,
             onSuccess: () => {
+                setStatus({ type: 'success', message: editingTaxonomy ? 'Taksonomi berhasil diperbarui.' : 'Taksonomi berhasil ditambahkan.' });
                 setTaxonomy(null);
                 form.reset();
             },

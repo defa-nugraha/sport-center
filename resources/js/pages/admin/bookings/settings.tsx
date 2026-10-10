@@ -1,13 +1,15 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { StatusDialog } from '@/components/admin-cms';
 import { Check, Clock3, Settings2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 function formatRupiah(value: number | string) {
     const digits = String(value ?? '').replace(/\D/g, '');
     return digits ? `Rp ${Number(digits).toLocaleString('id-ID')}` : '';
 }
 
-function FacilityBookingSettings({ facility }: { facility: any }) {
+function FacilityBookingSettings({ facility, onStatus }: { facility: any; onStatus: (status: { type: 'success' | 'error'; message: string }) => void }) {
     const form = useForm({
         booking_enabled: Boolean(facility.booking_enabled),
         booking_mode: facility.booking_mode || 'hourly',
@@ -30,7 +32,11 @@ function FacilityBookingSettings({ facility }: { facility: any }) {
     return (
         <form className="booking-settings-card" onSubmit={(event) => {
             event.preventDefault();
-            form.put(`/admin/bookings/facilities/${facility.encrypted_id}`, { preserveScroll: true });
+            form.put(`/admin/bookings/facilities/${facility.encrypted_id}`, {
+                preserveScroll: true,
+                onSuccess: () => onStatus({ type: 'success', message: `Pengaturan booking ${facility.name} berhasil disimpan.` }),
+                onError: (errors) => onStatus({ type: 'error', message: Object.values(errors)[0] || `Pengaturan booking ${facility.name} gagal disimpan.` }),
+            });
         }}>
             <div className="booking-settings-card-head">
                 <div className="booking-facility-icon"><Settings2 aria-hidden="true" /></div>
@@ -114,6 +120,12 @@ function FacilityBookingSettings({ facility }: { facility: any }) {
 }
 
 export default function Settings({ facilities }: { facilities: any[] }) {
+    const { flash } = usePage().props as any;
+    const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+    useEffect(() => {
+        if (flash?.success) setStatus({ type: 'success', message: flash.success });
+        if (flash?.error) setStatus({ type: 'error', message: flash.error });
+    }, [flash?.success, flash?.error]);
     return (
         <div className="admin-shell">
             <Head title="Pengaturan venue" />
@@ -123,9 +135,10 @@ export default function Settings({ facilities }: { facilities: any[] }) {
                 <div className="booking-admin-page-actions"><Link href="/admin/bookings" className="text-button">Daftar booking</Link></div>
                 <section className="admin-panel booking-settings-page-panel">
                     <div className="panel-head"><div><span className="booking-settings-kicker">Konfigurasi</span><h2>Venue yang dapat dipesan</h2><p>Setiap venue memiliki pengaturan sendiri agar aturan booking tetap mudah dikelola.</p></div><Clock3 aria-hidden="true" /></div>
-                    {facilities.length > 0 ? <div className="booking-settings-list">{facilities.map((facility) => <FacilityBookingSettings key={facility.encrypted_id} facility={facility} />)}</div> : <div className="booking-empty-state"><Settings2 aria-hidden="true" /><strong>Belum ada fasilitas</strong><p>Tambahkan fasilitas terlebih dahulu agar dapat digunakan untuk booking.</p><Link className="text-link" href="/admin/content?tab=facilities">Kelola fasilitas</Link></div>}
+                    {facilities.length > 0 ? <div className="booking-settings-list">{facilities.map((facility) => <FacilityBookingSettings key={facility.encrypted_id} facility={facility} onStatus={setStatus} />)}</div> : <div className="booking-empty-state"><Settings2 aria-hidden="true" /><strong>Belum ada fasilitas</strong><p>Tambahkan fasilitas terlebih dahulu agar dapat digunakan untuk booking.</p><Link className="text-link" href="/admin/content?tab=facilities">Kelola fasilitas</Link></div>}
                 </section>
             </main>
+            <StatusDialog open={Boolean(status)} onOpenChange={(open) => !open && setStatus(null)} type={status?.type || 'success'} message={status?.message || ''} />
         </div>
     );
 }

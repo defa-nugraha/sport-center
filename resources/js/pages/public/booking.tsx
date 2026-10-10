@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { useForm } from '@inertiajs/react';
+import { StatusDialog } from '@/components/admin-cms';
 import { CalendarCheck, CalendarDays, CheckCircle2, Clock3, Info, MapPin } from 'lucide-react';
 import { DateRangePicker } from '@/components/date-range-picker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -34,6 +35,7 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
     const [checking, setChecking] = useState(false);
     const [availabilityMessage, setAvailabilityMessage] = useState('');
     const [hourlySlots, setHourlySlots] = useState<HourlySlot[]>([]);
+    const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const form = useForm({
         customer_phone: '',
         booking_date: '',
@@ -132,7 +134,12 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
     const submit = (event: FormEvent) => {
         event.preventDefault();
         if (!selectedMode || (hourly && !form.data.start_time)) return;
-        form.post('/booking/' + facility.slug);
+        form.post('/booking/' + facility.slug, {
+            onError: (errors) => setStatus({
+                type: 'error',
+                message: Object.values(errors)[0] || 'Booking gagal dibuat. Periksa kembali jadwal dan data Anda.',
+            }),
+        });
     };
 
     const resetAvailability = () => {
@@ -223,6 +230,12 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
                     </div>
                 </form>
             </section>
+            <StatusDialog
+                open={Boolean(status)}
+                onOpenChange={(open) => !open && setStatus(null)}
+                type={status?.type || 'error'}
+                message={status?.message || ''}
+            />
         </UserShell>
     );
 }

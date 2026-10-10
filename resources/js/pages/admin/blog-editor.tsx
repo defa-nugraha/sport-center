@@ -13,7 +13,7 @@ import { AdminBlogEditorSkeleton, usePageLoading } from '@/components/page-skele
 
 export default function BlogEditor({ post, categories, tags }: any) {
     const loading = usePageLoading();
-    const { flash } = usePage().props as { flash?: { success?: string } };
+    const { flash } = usePage().props as { flash?: { success?: string; error?: string } };
     const [status, setStatus] = useState<{
         type: 'success' | 'error';
         message: string;
@@ -41,14 +41,15 @@ export default function BlogEditor({ post, categories, tags }: any) {
         canonical_url: post?.canonical_url || '',
     });
     useEffect(() => {
-        if (flash?.success)
-            setStatus({ type: 'success', message: flash.success });
-    }, [flash?.success]);
+        if (flash?.success) setStatus({ type: 'success', message: flash.success });
+        if (flash?.error) setStatus({ type: 'error', message: flash.error });
+    }, [flash?.success, flash?.error]);
     const submit = (event: FormEvent) => {
         event.preventDefault();
         const options = {
             forceFormData: true,
             preserveScroll: true,
+            onSuccess: () => setStatus({ type: 'success', message: post ? 'Artikel berhasil diperbarui.' : 'Artikel berhasil dibuat.' }),
             onError: (errors: Record<string, string>) =>
                 setStatus({
                     type: 'error' as const,
@@ -67,7 +68,10 @@ export default function BlogEditor({ post, categories, tags }: any) {
         setDeleting(true);
         router.delete(imageDelete.url, {
             preserveScroll: true,
-            onSuccess: () => setImageDelete(null),
+            onSuccess: () => {
+                setImageDelete(null);
+                setStatus({ type: 'success', message: 'Gambar artikel berhasil dihapus.' });
+            },
             onError: (errors) =>
                 setStatus({
                     type: 'error',

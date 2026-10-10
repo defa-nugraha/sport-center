@@ -67,7 +67,8 @@ export default function FacilityEditor({ facility, regions, sports, sectionDefau
 
     useEffect(() => {
         if (flash?.success) setStatus({ type: 'success', message: flash.success });
-    }, [flash?.success]);
+        if (flash?.error) setStatus({ type: 'error', message: flash.error });
+    }, [flash?.success, flash?.error]);
 
     const setSection = (key: string, field: string, value: any) => {
         form.setData('sections', {
@@ -80,6 +81,7 @@ export default function FacilityEditor({ facility, regions, sports, sectionDefau
         const options = {
             forceFormData: true,
             preserveScroll: true,
+            onSuccess: () => setStatus({ type: 'success', message: facility ? 'Fasilitas berhasil diperbarui.' : 'Fasilitas berhasil ditambahkan.' }),
             onError: (errors: Record<string, string>) => setStatus({
                 type: 'error',
                 message: Object.values(errors)[0] || 'Periksa kembali informasi fasilitas.',
@@ -94,7 +96,10 @@ export default function FacilityEditor({ facility, regions, sports, sectionDefau
         if (!imageDelete || !facility) return;
         router.delete(`/admin/facilities/${facility.encrypted_id}/images/${imageDelete.encrypted_id}`, {
             preserveScroll: true,
-            onSuccess: () => setImageDelete(null),
+            onSuccess: () => {
+                setImageDelete(null);
+                setStatus({ type: 'success', message: 'Gambar fasilitas berhasil dihapus.' });
+            },
             onError: (errors) => setStatus({ type: 'error', message: Object.values(errors)[0] || 'Gambar tidak dapat dihapus.' }),
         });
     };
