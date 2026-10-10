@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1850" height="650" viewBox="0 0 1850 650" preserveAspectRatio="none">
-  <!-- The cyan base follows one continuous curve to the bottom edge. -->
-  <path d="M0 475 C220 504 440 558 690 565 C985 574 1225 610 1515 650 L1850 650 L1850 0 L0 0 Z" fill="#00c8df"/>
-  <!-- Coral/red mass sweeps behind the cards and down toward the lower center. -->
+  <!-- Continuous cyan base wave: only the area below this curved edge is filled. -->
+  <path d="M0 475 C220 504 440 558 690 565 C985 574 1225 610 1515 650 L1850 650 L1850 650 L0 650 Z" fill="#00c8df"/>
+  <!-- Coral/red field sweeps behind the cards and curves down near the center. -->
   <path d="M610 0 C820 0 1005 31 1210 84 C1410 136 1570 188 1645 252 C1700 301 1590 373 1450 445 C1298 523 1153 601 1040 650 L810 650 C884 569 883 498 817 425 C751 352 637 302 610 222 C585 149 579 63 610 0 Z" fill="#ff563f"/>
-  <!-- Golden field enters from the far right with a single broad, round sweep. -->
+  <!-- Golden field enters from the right with a single broad curve. -->
   <path d="M1850 74 C1652 105 1478 157 1375 229 C1294 286 1297 364 1368 431 C1452 510 1601 585 1754 626 L1850 650 Z" fill="#ffad35"/>
-  <!-- Blue organic field remains anchored to the left edge and overlaps coral cleanly. -->
+  <!-- Blue field stays anchored to the left edge and overlaps coral, avoiding white seams. -->
   <path d="M0 236 C208 257 397 298 546 362 C653 408 718 461 713 505 C706 571 547 613 360 625 C227 633 96 607 0 571 Z" fill="#4d70d3"/>
-  <!-- The hot-pink pointer is an intentional pointed accent, not a gap between fields. -->
+  <!-- Hot-pink pointed accent between the middle cards. -->
   <path d="M631 0 C733 17 802 62 850 133 L949 650 L812 650 L720 356 C689 263 640 158 631 0 Z" fill="#f32960"/>
 </svg>
