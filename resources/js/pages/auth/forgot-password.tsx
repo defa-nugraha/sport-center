@@ -77,7 +77,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                                         autoComplete="email"
                                         autoFocus
                                         placeholder="nama@email.com"
-                                        className="h-12 rounded-xl border-[#dce5ef] bg-white pl-11 shadow-sm transition focus-visible:border-[#2f74bd] focus-visible:ring-[#2f74bd]/20"
+                                        className="h-12 rounded-xl border-[#dce5ef] bg-white pl-12 pr-4 shadow-sm transition placeholder:text-[#9aa7b7] focus-visible:border-[#2f74bd] focus-visible:ring-[#2f74bd]/20"
                                         aria-invalid={Boolean(errors.email)}
                                         aria-describedby={errors.email ? 'email-error' : 'email-hint'}
                                     />
