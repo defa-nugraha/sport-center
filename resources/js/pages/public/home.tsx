@@ -55,14 +55,40 @@ export default function Home({
     const [heroSlide, setHeroSlide] = useState(0);
     const [activePost, setActivePost] = useState(0);
     const teamGridRef = useRef<HTMLDivElement | null>(null);
-    const scrollTeamGrid = (direction: -1 | 1) => {
+    const [teamScrollPage, setTeamScrollPage] = useState(0);
+    const [teamScrollPages, setTeamScrollPages] = useState(1);
+
+    useEffect(() => {
         const grid = teamGridRef.current;
-        if (!grid) return;
-        grid.scrollBy({
-            left: direction * grid.clientWidth * 0.8,
-            behavior: 'smooth',
-        });
-    };
+        if (!grid || teamMembers.length <= 4) {
+            setTeamScrollPage(0);
+            setTeamScrollPages(1);
+            return;
+        }
+
+        const updateTeamScrollState = () => {
+            const maxScroll = Math.max(0, grid.scrollWidth - grid.clientWidth);
+            const pageStep = Math.max(1, grid.clientWidth * 0.8);
+            const pageCount = maxScroll > 1
+                ? Math.ceil(maxScroll / pageStep) + 1
+                : 1;
+            const progress = maxScroll > 0 ? grid.scrollLeft / maxScroll : 0;
+
+            setTeamScrollPages(pageCount);
+            setTeamScrollPage(
+                Math.min(pageCount - 1, Math.max(0, Math.round(progress * (pageCount - 1)))),
+            );
+        };
+
+        updateTeamScrollState();
+        grid.addEventListener('scroll', updateTeamScrollState, { passive: true });
+        window.addEventListener('resize', updateTeamScrollState);
+
+        return () => {
+            grid.removeEventListener('scroll', updateTeamScrollState);
+            window.removeEventListener('resize', updateTeamScrollState);
+        };
+    }, [teamMembers.length]);
     const fallbackHeroSlides: HeroSlide[] = [
         {
             image: '/assets/ggm/Panggung GGM 1.png',
@@ -526,13 +552,23 @@ export default function Home({
                         {teamMembers.length > 4 && (
                             <div className="team-reference-scroll-cue">
                                 <span>GESER UNTUK MELIHAT ANGGOTA LAINNYA</span>
-                                <div className="team-reference-scroll-actions">
-                                    <button type="button" aria-label="Anggota tim sebelumnya" onClick={() => scrollTeamGrid(-1)}>
-                                        <ChevronRight className="team-reference-arrow-back" aria-hidden="true" />
-                                    </button>
-                                    <button type="button" aria-label="Anggota tim berikutnya" onClick={() => scrollTeamGrid(1)}>
-                                        <ChevronRight aria-hidden="true" />
-                                    </button>
+                                <div className="team-reference-scroll-dots" role="group" aria-label="Navigasi daftar anggota tim">
+                                    {Array.from({ length: teamScrollPages }, (_, index) => (
+                                        <button
+                                            key={index}
+                                            type="button"
+                                            className={teamScrollPage === index ? 'is-active' : ''}
+                                            aria-label={`Tampilkan bagian anggota tim ${index + 1}`}
+                                            aria-pressed={teamScrollPage === index}
+                                            onClick={() => {
+                                                const grid = teamGridRef.current;
+                                                if (!grid) return;
+                                                const maxScroll = Math.max(0, grid.scrollWidth - grid.clientWidth);
+                                                const progress = teamScrollPages > 1 ? index / (teamScrollPages - 1) : 0;
+                                                grid.scrollTo({ left: maxScroll * progress, behavior: 'smooth' });
+                                            }}
+                                        />
+                                    ))}
                                 </div>
                             </div>
                         )}
