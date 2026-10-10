@@ -151,7 +151,7 @@ export default function Home({
     const hero = section('hero', { eyebrow: 'Pusat Aktivitas Olahraga Majalengka', title: 'Temukan Olahragamu.', title_accent: 'Temukan Tempatmu.', description: 'Yuk, jelajahi fasilitas, acara, dan tempat olahraga seru di Majalengka.', button_label: 'Jelajahi fasilitas' });
 
     return (
-        <Shell active="Home">
+        <Shell active="Home" showBookingPrompt={false}>
             <Head title="Temukan Olahragamu, Temukan Tempatmu" />
             <section className="home-hero">
                 <div className="hero-content">
@@ -201,10 +201,26 @@ export default function Home({
                             />
                         </div>
                         <button type="submit">
-                            {hero.button_label}
+                            Cari venue &amp; cek jadwal
                             <ChevronRight size={18} aria-hidden="true" />
                         </button>
                     </form>
+                    <div className="booking-flow-strip" aria-label="Cara booking venue">
+                        <div className="booking-flow-step">
+                            <span className="booking-flow-number">1</span>
+                            <strong>Pilih venue</strong>
+                        </div>
+                        <span className="booking-flow-arrow" aria-hidden="true">→</span>
+                        <div className="booking-flow-step">
+                            <span className="booking-flow-number">2</span>
+                            <strong>Cek jadwal</strong>
+                        </div>
+                        <span className="booking-flow-arrow" aria-hidden="true">→</span>
+                        <div className="booking-flow-step">
+                            <span className="booking-flow-number">3</span>
+                            <strong>Pesan &amp; bayar</strong>
+                        </div>
+                    </div>
                     <div className="popular-sports">
                         <span>Olahraga populer:</span>
                         {sports.slice(0, 3).map((sport: any) => {

@@ -1,4 +1,5 @@
 import { Link, useForm, usePage } from '@inertiajs/react';
+import '../../css/public-booking-ux.css';
 import {
     Activity,
     ArrowUpRight,
@@ -149,7 +150,7 @@ export function SiteHeader({ active = '' }: { active?: string }) {
     const links = [
         ['Home', 'Beranda', '/'],
         ['Sports', 'Olahraga', '/sports'],
-        ['Facilities', 'Fasilitas', '/facilities'],
+        ['Facilities', 'Venue & Booking', '/facilities'],
         ['Events', 'Acara', '/events'],
         ['Blog', 'Kabar', '/kabar'],
     ];
@@ -194,19 +195,13 @@ export function SiteHeader({ active = '' }: { active?: string }) {
                     </Link>
                 ))}
                 <Link
+                    className="header-contact"
                     href="/login"
-                    className="header-login"
                     onClick={() => setOpen(false)}
+                    data-tour="public-contact"
                 >
                     Masuk
                 </Link>
-                <a
-                    className="header-contact"
-                    href={whatsappUrl(settings.whatsapp || settings.phone)}
-                    data-tour="public-contact"
-                >
-                    Hubungi Kami
-                </a>
             </nav>
         </header>
     );
@@ -264,7 +259,7 @@ export function SiteFooter() {
             </div>
             <nav className="footer-links" aria-label="Navigasi footer">
                 <strong>Jelajahi</strong>
-                <Link href="/facilities">Fasilitas</Link>
+                <Link href="/facilities">Venue &amp; Booking</Link>
                 <Link href="/sports">Olahraga</Link>
                 <Link href="/events">Acara</Link>
                 <Link href="/kabar">Kabar</Link>
@@ -320,9 +315,11 @@ export function SiteFooter() {
 export function Shell({
     active,
     children,
+    showBookingPrompt = true,
 }: {
     active?: string;
     children: React.ReactNode;
+    showBookingPrompt?: boolean;
 }) {
     return (
         <>
@@ -331,13 +328,25 @@ export function Shell({
             </a>
             <SiteHeader active={active} />
             <main id="main-content" data-tour="public-content">{children}</main>
+            {showBookingPrompt && (
+                <section className="public-booking-prompt" aria-labelledby="public-booking-prompt-title">
+                    <div className="public-booking-prompt-copy">
+                        <span className="public-booking-prompt-eyebrow">BOOKING VENUE GGM</span>
+                        <h2 id="public-booking-prompt-title">Sudah punya rencana olahraga?</h2>
+                        <p>Cari venue yang cocok, cek jadwal yang tersedia, lalu pesan dan lanjutkan pembayaran secara online.</p>
+                    </div>
+                    <Link className="button public-booking-prompt-action" href="/facilities">
+                        Cari venue &amp; cek jadwal <ArrowUpRight size={18} aria-hidden="true" />
+                    </Link>
+                </section>
+            )}
             <SiteFooter />
             <ProductTour
                 storageKey="ggm-public-product-tour-v1"
                 steps={[
                     { target: '[data-tour="public-navigation"]', title: 'Jelajahi GGM', description: 'Gunakan menu ini untuk menemukan olahraga, fasilitas, acara, dan kabar terbaru.' },
                     { target: '#main-content > section:first-of-type', title: 'Temukan informasi utama', description: 'Konten halaman menampilkan informasi lengkap yang bisa Anda jelajahi sesuai kebutuhan.' },
-                    { target: '[data-tour="public-contact"]', title: 'Hubungi pengelola', description: 'Gunakan tombol ini saat ingin bertanya, mengecek jadwal, atau melakukan reservasi.' },
+                    { target: '[data-tour="public-contact"]', title: 'Masuk & mulai booking', description: 'Masuk ke akun untuk melanjutkan pemesanan venue dan mengelola booking Anda.' },
                     { target: '[data-tour="public-footer"]', title: 'Informasi GGM', description: 'Alamat, kontak, dan kanal media sosial tersedia di bagian bawah setiap halaman.' },
                 ]}
             />
@@ -418,7 +427,10 @@ export function FacilityCard({
                 decoding="async"
             />
             <div>
-                <Eyebrow>Fasilitas pilihan</Eyebrow>
+                <span className={`facility-booking-status ${facility.booking_enabled ? 'is-online' : 'is-contact'}`}>
+                    <span aria-hidden="true" />
+                    {facility.booking_enabled ? 'Booking online tersedia' : 'Reservasi via WhatsApp'}
+                </span>
                 <h3>{facility.name}</h3>
                 <p className="muted">
                     {facility.subtitle || facility.venue_type}
@@ -430,7 +442,7 @@ export function FacilityCard({
                     ))}
                 </div>
                 <span className="card-action">
-                    Lihat fasilitas{' '}
+                    {facility.booking_enabled ? 'Cek jadwal & pesan' : 'Lihat info reservasi'}{' '}
                     <ChevronRight size={14} aria-hidden="true" />
                 </span>
             </div>
