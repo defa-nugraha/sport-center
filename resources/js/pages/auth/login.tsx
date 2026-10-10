@@ -50,6 +50,9 @@ export default function Login({
                 />
             </div>
 
+            <a href="/auth/google" className="login-google"><span className="google-mark" aria-hidden="true">G</span>Lanjutkan dengan Google</a>
+            <div className="login-google-divider" aria-hidden="true">atau gunakan email</div>
+
             <Form
                 {...store.form()}
                 resetOnSuccess={['password']}
@@ -57,6 +60,7 @@ export default function Login({
             >
                 {({ processing, errors }) => (
                     <>
+                        {errors.google && <p className="login-status" role="alert">{errors.google}</p>}
                         <div className="login-field">
                             <Label className="sr-only" htmlFor="email">
                                 Email atau nama pengguna
