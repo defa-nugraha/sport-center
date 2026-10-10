@@ -12,9 +12,12 @@ export default function Register({ redirect }: { redirect?: string }) {
     return (
         <>
             <Head title="Daftar akun" />
+            <a href="/auth/google" className="login-google"><span className="google-mark" aria-hidden="true">G</span>Daftar dengan Google</a>
+            <div className="login-google-divider" aria-hidden="true">atau isi formulir</div>
             <Form action="/register" method="post" className="login-form" options={{ preserveScroll: true }}>
                 {({ processing, errors }) => (
                     <>
+                        {errors.google && <p className="login-status" role="alert">{errors.google}</p>}
                         <input type="hidden" name="redirect" value={redirect || ''} />
                         <div className="login-field">
                             <Label className="sr-only" htmlFor="name">Nama lengkap</Label>
