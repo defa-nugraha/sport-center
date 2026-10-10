@@ -1,10 +1,10 @@
 <?php
 
-namespace App\\Http\\Responses;
+namespace App\Http\Responses;
 
-use Illuminate\\Http\\JsonResponse;
-use Laravel\\Fortify\\Contracts\\VerifyEmailResponse as VerifyEmailResponseContract;
-use Symfony\\Component\\HttpFoundation\\Response;
+use Illuminate\Http\JsonResponse;
+use Laravel\Fortify\Contracts\VerifyEmailResponse as VerifyEmailResponseContract;
+use Symfony\Component\HttpFoundation\Response;
 
 class VerifyEmailResponse implements VerifyEmailResponseContract
 {
