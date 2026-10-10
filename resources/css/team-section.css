@@ -15,20 +15,19 @@
     z-index: -2;
     inset: 0;
     background:
-        radial-gradient(ellipse 67% 66% at -8% 69%, #5368d8 0 59%, transparent 59.5%),
-        radial-gradient(ellipse 57% 62% at 108% 62%, #ffb21b 0 57%, transparent 57.5%),
-        radial-gradient(ellipse 52% 60% at 83% 49%, #ff6530 0 49%, transparent 49.5%),
-        radial-gradient(ellipse 84% 48% at 52% 105%, #08c8e8 0 64%, transparent 64.5%),
-        linear-gradient(to bottom, #fff 0 35%, transparent 35%);
+        radial-gradient(ellipse 53% 40% at 109% 82%, #ffb638 0 99%, transparent 100%),
+        radial-gradient(ellipse 55% 36% at 83% 73%, #ff5939 0 99%, transparent 100%),
+        radial-gradient(ellipse 44% 31% at 0% 89%, #456ed2 0 99%, transparent 100%),
+        radial-gradient(ellipse 80% 31% at 50% 110%, #08c8d8 0 99%, transparent 100%);
     content: '';
 }
 .team-section::after {
     position: absolute;
     z-index: -1;
     right: 42%;
-    bottom: 16%;
-    width: clamp(170px, 24vw, 330px);
-    height: clamp(170px, 24vw, 330px);
+    bottom: -1%;
+    width: clamp(200px, 25vw, 350px);
+    height: 44%;
     background: #f44355;
     clip-path: polygon(0 0, 100% 0, 50% 100%);
     content: '';
@@ -274,17 +273,16 @@
     }
     .team-section::before {
         background:
-            radial-gradient(ellipse 95% 48% at -10% 72%, #5368d8 0 59%, transparent 59.5%),
-            radial-gradient(ellipse 92% 48% at 112% 64%, #ffb21b 0 57%, transparent 57.5%),
-            radial-gradient(ellipse 82% 46% at 88% 53%, #ff6530 0 49%, transparent 49.5%),
-            radial-gradient(ellipse 110% 35% at 48% 104%, #08c8e8 0 64%, transparent 64.5%),
-            linear-gradient(to bottom, #fff 0 28%, transparent 28%);
+            radial-gradient(ellipse 83% 28% at 112% 83%, #ffb638 0 99%, transparent 100%),
+            radial-gradient(ellipse 76% 28% at 91% 72%, #ff5939 0 99%, transparent 100%),
+            radial-gradient(ellipse 60% 27% at -2% 88%, #456ed2 0 99%, transparent 100%),
+            radial-gradient(ellipse 115% 25% at 50% 109%, #08c8d8 0 99%, transparent 100%);
     }
     .team-section::after {
-        right: 35%;
-        bottom: 14%;
+        right: 34%;
+        bottom: -1%;
         width: 190px;
-        height: 190px;
+        height: 34%;
     }
     .team-reference-heading {
         margin-bottom: 92px;
