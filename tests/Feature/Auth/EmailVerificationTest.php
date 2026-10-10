@@ -79,6 +79,7 @@ test('verified administrator is redirected to the admin dashboard', function () 
 });
 
 test('regular users cannot access admin routes after email verification', function () {
+    Role::findOrCreate('administrator', 'web');
     Role::findOrCreate('user', 'web');
     $user = User::factory()->create();
     $user->assignRole('user');
