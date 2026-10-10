@@ -244,7 +244,7 @@ class AdminBookingController extends Controller
             ]);
 
             return back()->withErrors(['refund' => 'Midtrans menolak refund. Pembayaran tetap tercatat lunas.']);
-        } catch (MidtransRefundUncertainException|ConnectionException $exception) {
+        } catch (MidtransRefundUncertainException $exception) {
             $refund->update(['error_message' => 'Respons gateway belum dapat dipastikan; menunggu rekonsiliasi.']);
 
             Log::warning('Midtrans refund outcome is uncertain', [
@@ -257,6 +257,18 @@ class AdminBookingController extends Controller
                 'success',
                 'Respons refund belum dapat dipastikan. Permintaan tidak diulang agar tidak terjadi refund ganda; periksa status transaksi Midtrans.',
             );
+        } catch (ConnectionException $exception) {
+            // The refund endpoint was not called yet; failure to verify status is safe to retry.
+            $this->markRefundFailed($refund, $exception->getMessage());
+
+            Log::warning('Unable to verify Midtrans transaction before refund', [
+                'booking_id' => $booking->id,
+                'refund_key' => $refund->refund_key,
+            ]);
+
+            return back()->withErrors([
+                'refund' => 'Status transaksi tidak dapat diverifikasi. Tidak ada permintaan refund yang dikirim; silakan coba lagi nanti.',
+            ]);
         } catch (\Throwable $exception) {
             if ($gatewayRequestStarted) {
                 $refund->update(['error_message' => 'Respons gateway belum dapat dipastikan; menunggu rekonsiliasi.']);

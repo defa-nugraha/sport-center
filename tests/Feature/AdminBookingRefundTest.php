@@ -90,14 +90,14 @@ test('administrator can request full refund but booking remains blocked pending 
     ]);
 
     Http::fake([
-        'midtrans.test/v2/*/status' => Http::response([
+        '*midtrans.test/v2/*/status' => Http::response([
             'order_id' => $payment->order_id,
             'transaction_id' => $payment->transaction_id,
             'transaction_status' => 'settlement',
             'gross_amount' => '200000.00',
             'currency' => 'IDR',
         ], 200),
-        'midtrans.test/v2/*/refund' => Http::response([
+        '*midtrans.test/v2/*/refund' => Http::response([
             'status_code' => '200',
             'status_message' => 'Success, refund request is being processed',
             'order_id' => $payment->order_id,
