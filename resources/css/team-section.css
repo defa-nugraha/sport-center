@@ -260,7 +260,10 @@
     .team-section {
         padding: 54px 22px 68px;
     }
-    
+    .team-section::before {
+        top: 38%;
+    }
+}
 @media (prefers-reduced-motion: reduce) {
     .team-reference-card > img {
         transition: none;
