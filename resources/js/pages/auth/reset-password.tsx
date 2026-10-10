@@ -17,7 +17,7 @@ type Props = {
 export default function ResetPassword({ token, email, passwordRules }: Props) {
     return (
         <>
-            <Head title="Buat password baru" />
+            <Head title="Buat kata sandi baru" />
 
             <div className="space-y-5">
                 <div className="flex items-start gap-3 rounded-lg border border-[#dce5ef] bg-[#f5f8fc] p-4">
@@ -27,7 +27,7 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                     <div>
                         <h2 className="mb-1 text-base font-bold text-[#14243f]">Buat password baru</h2>
                         <p className="mb-0 text-sm leading-5 text-[#66758a]">
-                            Gunakan password yang kuat dan jangan bagikan kepada siapa pun.
+                            Gunakan kata sandi yang kuat dan jangan bagikan kepada siapa pun.
                         </p>
                     </div>
                 </div>
@@ -54,7 +54,7 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password">Password baru</Label>
+                                <Label htmlFor="password">Kata sandi baru</Label>
                                 <PasswordInput
                                     id="password"
                                     name="password"
@@ -62,7 +62,7 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                                     className="w-full"
                                     required
                                     autoFocus
-                                    placeholder="Masukkan password baru"
+                                    placeholder="Masukkan kata sandi baru"
                                     passwordrules={passwordRules}
                                     aria-invalid={Boolean(errors.password)}
                                 />
@@ -70,7 +70,7 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">Konfirmasi password baru</Label>
+                                <Label htmlFor="password_confirmation">Konfirmasi kata sandi baru</Label>
                                 <PasswordInput
                                     id="password_confirmation"
                                     name="password_confirmation"
