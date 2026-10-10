@@ -22,9 +22,10 @@ class LoginResponse implements LoginResponseContract
                 : redirect('/login')->withErrors(['email' => 'Akun Anda sedang ditangguhkan. Hubungi administrator untuk bantuan.']);
         }
 
-        $redirect = $request->user() instanceof User && $request->user()->hasRole('administrator')
-            ? '/admin'
-            : '/dashboard';
+        $isAdministrator = $request->user() instanceof User
+            && $request->user()->roles()->where('name', 'administrator')->where('guard_name', 'web')->exists();
+
+        $redirect = $isAdministrator ? '/admin' : '/dashboard';
 
         return $request->wantsJson()
             ? new JsonResponse(['two_factor' => false, 'redirect' => $redirect], 200)
