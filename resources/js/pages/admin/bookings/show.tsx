@@ -32,6 +32,7 @@ export default function Show({ booking, refunds = [], canRefund = false }: { boo
     const status = booking.status;
     const paymentStatus = booking.payment?.payment_status;
     const refundForm = useForm({ reason: '' });
+    const refundErrors = refundForm.errors as Record<string, string | undefined>;
 
     const submitRefund = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -246,7 +247,7 @@ export default function Show({ booking, refunds = [], canRefund = false }: { boo
                                     />
                                 </label>
                                 {refundForm.errors.reason && <small className="field-error">{refundForm.errors.reason}</small>}
-                                {refundForm.errors.refund && <p className="booking-refund-error">{refundForm.errors.refund}</p>}
+                                {refundErrors.refund && <p className="booking-refund-error">{refundErrors.refund}</p>}
                                 <button className="button danger" type="submit" disabled={refundForm.processing}>
                                     <RotateCcw size={16} aria-hidden="true" />
                                     {refundForm.processing ? 'Mengirim permintaan…' : `Ajukan refund penuh · ${formatCurrency(booking.payment?.gross_amount || booking.total)}`}
