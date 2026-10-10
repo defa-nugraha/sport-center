@@ -19,11 +19,7 @@ use Inertia\Inertia;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
-<<<<<<< HEAD
-
-=======
 //use Throwable;
->>>>>>> 953eed5 (refactor: delete use ...)
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
