@@ -28,10 +28,10 @@ export default function ForgotPassword({ status }: { status?: string }) {
                                 SPORT CENTER
                             </p>
                             <h1 className="text-xl font-bold leading-tight tracking-[-0.02em] text-[#14243f] sm:text-2xl">
-                                Lupa password?
+                                Lupa kata sandi?
                             </h1>
                             <p className="mt-4 max-w-[34ch] text-[14px] leading-6 text-[#5b687b]">
-                                Tidak masalah. Masukkan email akunmu dan kami akan mengirimkan tautan untuk membuat password baru.
+                                Tidak masalah. Masukkan email akunmu dan kami akan mengirimkan tautan untuk membuat kata sandi baru.
                             </p>
                         </header>
 
@@ -83,7 +83,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                                                 Mengirim tautan...
                                             </>
                                         ) : (
-                                            'Kirim tautan reset'
+                                            'Kirim tautan pemulihan kata sandi'
                                         )}
                                     </Button>
                                 </div>
