@@ -471,9 +471,19 @@ export default function Home({
                 </div>
             </section>
 
+
+
+            <section className="page-section booking-section">
+                <CTA illustrated eyebrow={section('booking', {}).eyebrow} title={section('booking', {}).title} copy={section('booking', {}).description} buttonLabel={section('booking', {}).button_label} />
+            </section>
+
             {teamMembers.length > 0 && (
                 <section className="page-section team-section">
-                    <h2 className="team-reference-sr-only">Kenali Tim Kami</h2>
+                    <div className="team-reference-heading">
+                        <span>TIM KAMI</span>
+                        <h2>KENALAN DENGAN TIM KAMI, YUK!</h2>
+                        <p>Orang-orang kreatif di balik pengalaman olahraga digital yang lebih mudah dan menyenangkan di GGM Majalengka.</p>
+                    </div>
                     <div className={`team-reference-grid team-reference-grid-count-${Math.min(teamMembers.length, 3)}`}>
                         {teamMembers.map((member: any, index: number) => (
                             <article
@@ -482,7 +492,6 @@ export default function Home({
                             >
                                 <div className="team-reference-bubble">
                                     <h3>{member.name}</h3>
-                                    <span>TIM GGM MAJALENGKA</span>
                                     {member.description && <p>{member.description}</p>}
                                 </div>
                                 <div className="team-reference-socials" aria-hidden="true">
@@ -499,16 +508,12 @@ export default function Home({
                         ))}
                     </div>
                     <div className="team-reference-cta">
-                        <strong>JADI BAGIAN DARI GGM</strong>
-                        <span>Temukan aktivitas olahraga favoritmu</span>
+                        <strong>YUK, MULAI AKTIF!</strong>
+                        <span>Temukan tempat untuk olahraga favoritmu.</span>
                         <Link href="/facilities">JELAJAHI FASILITAS <ChevronRight size={15} aria-hidden="true" /></Link>
                     </div>
                 </section>
             )}
-
-            <section className="page-section booking-section">
-                <CTA illustrated eyebrow={section('booking', {}).eyebrow} title={section('booking', {}).title} copy={section('booking', {}).description} buttonLabel={section('booking', {}).button_label} />
-            </section>
         </Shell>
     );
 }
