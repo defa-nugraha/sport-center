@@ -470,24 +470,30 @@ export default function Home({
                 </div>
             </section>
 
-            {teamMembers.length > 0 && <section className="page-section team-section">
-                <SectionTitle
-                    eyebrow="KENALI KAMI"
-                    title="Tim Kami"
-                    copy="Orang-orang di balik pengalaman olahraga yang lebih baik di GGM Majalengka."
-                />
-                <div className="team-marquee" aria-label="Anggota tim GGM Majalengka">
-                    <div className="team-marquee-track">
-                        {[...teamMembers, ...teamMembers].map((member: any, index: number) => (
-                            <article className={`team-card team-card-tone-${index % 4}`} key={`${member.id}-${index}`} aria-hidden={index >= teamMembers.length}>
-                                <div className="team-card-photo"><img src={asset(member.photo)} alt={index < teamMembers.length ? member.name : ''} loading="lazy" /></div>
-                                <h3>{member.name}</h3>
-                                {member.description && <p>{member.description}</p>}
+            {teamMembers.length > 0 && (
+                <section className="page-section team-section">
+                    <div className="team-reference-heading">
+                        <span>KENALI KAMI</span>
+                        <h2>KENALI TIM KAMI</h2>
+                        <p>Orang-orang di balik pengalaman olahraga yang lebih baik di GGM Majalengka.</p>
+                    </div>
+                    <div className="team-reference-grid">
+                        {teamMembers.map((member: any) => (
+                            <article className="team-reference-card" key={member.id}>
+                                <img
+                                    src={asset(member.photo)}
+                                    alt={member.name}
+                                    loading="lazy"
+                                />
+                                <div className="team-reference-overlay">
+                                    <h3>{member.name}</h3>
+                                    {member.description && <p>{member.description}</p>}
+                                </div>
                             </article>
                         ))}
                     </div>
-                </div>
-            </section>}
+                </section>
+            )}
 
             <section className="page-section booking-section">
                 <CTA illustrated eyebrow={section('booking', {}).eyebrow} title={section('booking', {}).title} copy={section('booking', {}).description} buttonLabel={section('booking', {}).button_label} />
