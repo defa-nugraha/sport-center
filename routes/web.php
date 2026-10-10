@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminBlogController;
+use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminTestimonialController;
 use App\Http\Controllers\BlogController;
@@ -28,6 +29,8 @@ Route::middleware('track.public.visit')->group(function () {
     Route::get('/kabar', [BlogController::class, 'index'])->name('blog.index');
     Route::get('/kabar/{blogPost:slug}', [BlogController::class, 'show'])->name('blog.show');
 });
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 Route::post('/inquiries', [PublicController::class, 'inquiry'])->name('inquiries.store');
 Route::post('/testimonials', [PublicController::class, 'testimonial'])->name('testimonials.store');
 Route::get('/booking', [BookingController::class, 'index'])->middleware(['auth', 'verified'])->name('booking.index');
