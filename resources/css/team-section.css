@@ -13,11 +13,11 @@
 .team-section::before {
     position: absolute;
     z-index: -2;
-    top: 52%;
+    top: 43%;
     right: 0;
     bottom: 0;
     left: 0;
-    background: url('/assets/ggm/team-section-background-v2.svg') center bottom / 100% 100% no-repeat;
+    background: url('/assets/ggm/team-section-background.webp') center bottom / 100% 100% no-repeat;
     content: '';
 }
 
