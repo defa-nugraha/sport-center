@@ -13,11 +13,8 @@
 .team-section::before {
     position: absolute;
     z-index: -2;
-    top: 43%;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: url('/assets/ggm/team-section-background.webp') center bottom / 100% 100% no-repeat;
+    inset: 0;
+    background: url('/assets/backgrounds/Minimalist%20Color%20Wave%20Landscape.svg') center center / 100% 100% no-repeat;
     content: '';
 }
 
