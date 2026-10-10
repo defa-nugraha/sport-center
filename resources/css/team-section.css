@@ -6,9 +6,22 @@
     width: 100vw;
     max-width: none;
     margin-left: calc(50% - 50vw);
-    padding: 70px max(24px, calc((100vw - 1080px) / 2)) 86px;
+    padding: 70px max(24px, calc((100vw - 1080px) / 2)) 28px;
     overflow: hidden;
     background: #fff;
+}
+.team-section::before {
+    position: absolute;
+    z-index: -1;
+    right: auto;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    height: min(100%, max(390px, 35.11vw));
+    transform: translateX(-50%);
+    background: url('/assets/backgrounds/Minimalist%20Color%20Wave%20Landscape.svg') center bottom / 100% 100% no-repeat;
+    content: '';
+    pointer-events: none;
 }
 .team-reference-heading {
     max-width: 720px;
@@ -39,9 +52,7 @@
     line-height: 1.65;
 }
 .team-reference-grid {
-    --team-background-height: clamp(350px, 40vw, 440px);
     position: relative;
-    isolation: isolate;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: end;
@@ -49,18 +60,6 @@
     width: 100%;
     max-width: 1080px;
     margin: 0 auto;
-}
-.team-reference-grid::before {
-    position: absolute;
-    z-index: -1;
-    top: 50%;
-    left: 50%;
-    width: calc(var(--team-background-height) * 2.847);
-    height: var(--team-background-height);
-    transform: translate(-50%, -50%);
-    background: url('/assets/backgrounds/Minimalist%20Color%20Wave%20Landscape.svg') center / 100% 100% no-repeat;
-    content: '';
-    pointer-events: none;
 }
 .team-reference-grid-count-2 {
     max-width: 760px;
@@ -230,13 +229,12 @@
 }
 @media (max-width: 760px) {
     .team-section {
-        padding: 60px 24px 76px;
+        padding: 60px 24px 24px;
     }
     .team-reference-heading {
         margin-bottom: 94px;
     }
     .team-reference-grid {
-        --team-background-height: clamp(300px, 54vw, 390px);
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 78px 18px;
         max-width: 560px;
@@ -262,7 +260,7 @@
 }
 @media (max-width: 480px) {
     .team-section {
-        padding: 54px 22px 68px;
+        padding: 54px 22px 20px;
     }
 }
 @media (prefers-reduced-motion: reduce) {
