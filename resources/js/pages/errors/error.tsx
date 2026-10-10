@@ -14,17 +14,17 @@ const errorContent: Record<number, { title: string; description: string; eyebrow
     401: {
         title: 'Silakan masuk terlebih dahulu',
         description: 'Kamu perlu masuk ke akun Sport Center untuk mengakses halaman ini.',
-        eyebrow: 'Unauthorized',
+        eyebrow: 'Tidak terautentikasi',
     },
     403: {
         title: 'Akses tidak diizinkan',
         description: 'Maaf, akun kamu tidak memiliki izin untuk membuka halaman ini.',
-        eyebrow: 'Forbidden',
+        eyebrow: 'Akses ditolak',
     },
     404: {
         title: 'Halaman tidak ditemukan',
         description: 'Sepertinya halaman yang kamu cari sudah pindah, tidak tersedia, atau alamatnya salah.',
-        eyebrow: 'Page Not Found',
+        eyebrow: 'Halaman tidak ditemukan',
     },
     419: {
         title: 'Sesi kamu telah berakhir',
@@ -44,7 +44,7 @@ const errorContent: Record<number, { title: string; description: string; eyebrow
     500: {
         title: 'Ada kendala di sisi kami',
         description: 'Maaf, terjadi kesalahan pada server. Tim kami perlu memeriksanya. Silakan coba lagi beberapa saat lagi.',
-        eyebrow: 'Internal Server Error',
+        eyebrow: 'Kesalahan server',
     },
     502: {
         title: 'Server sedang tidak merespons',
