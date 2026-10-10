@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import '../../../css/team-section.css';
 import {
     ChevronRight,
     BicepsFlexed,
