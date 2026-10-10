@@ -10,7 +10,10 @@ class VerifyEmailResponse implements VerifyEmailResponseContract
 {
     public function toResponse($request): Response
     {
-        $redirect = $request->user() && (\n            $request->user()->roles()->where('name', 'administrator')->where('guard_name', 'web')->exists()\n            || $request->user()->getAllPermissions()->isNotEmpty()\n        )
+        $redirect = $request->user() && (
+            $request->user()->roles()->where('name', 'administrator')->where('guard_name', 'web')->exists()
+            || $request->user()->getAllPermissions()->isNotEmpty()
+        )
             ? '/admin?verified=1'
             : '/dashboard?verified=1';
 
