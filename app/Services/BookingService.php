@@ -508,6 +508,5 @@ class BookingService
 
             $lockedPayment->save();
         });
-    }:dispatch($booking->id);
     }
 }
