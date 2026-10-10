@@ -6,7 +6,7 @@ import { asset } from '@/components/public-site';
 import { NotificationBell } from '@/components/notification-bell';
 
 const menuItems = [
-    { key: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { key: 'dashboard', label: 'Dasbor', href: '/dashboard', icon: LayoutDashboard },
     { key: 'booking', label: 'Booking', href: '/booking', icon: CalendarCheck },
     { key: 'bookings', label: 'Riwayat', href: '/bookings', icon: CalendarDays },
     { key: 'notifications', label: 'Notifikasi', href: '/notifications', icon: Bell },
@@ -46,7 +46,7 @@ export function UserShell({
         <>
             {title && <Head title={title} />}
             <header className="user-mobile-bar">
-                <Link href="/dashboard" aria-label="Dashboard pelanggan">
+                <Link href="/dashboard" aria-label="Dasbor pelanggan">
                     <img src={asset('/assets/ilustrasi/logo-ggm.png')} alt="GGM Majalengka" />
                 </Link>
                 <button type="button" onClick={() => setMobileOpen((open) => !open)} aria-label={mobileOpen ? 'Tutup menu pelanggan' : 'Buka menu pelanggan'} aria-expanded={mobileOpen} aria-controls="user-navigation">
