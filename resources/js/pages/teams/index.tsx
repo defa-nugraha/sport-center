@@ -30,7 +30,7 @@ export default function TeamsIndex({ teams }: Props) {
 
     return (
         <>
-            <Head title="Teams" />
+            <Head title="Tim" />
 
             <h1 className="sr-only">Teams</h1>
 
@@ -39,12 +39,12 @@ export default function TeamsIndex({ teams }: Props) {
                     <Heading
                         variant="small"
                         title="Teams"
-                        description="Manage your teams and team memberships"
+                        description="Kelola tim dan keanggotaan tim kamu"
                     />
 
                     <CreateTeamModal>
                         <Button data-test="teams-new-team-button">
-                            <Plus /> New team
+                            <Plus /> Tim baru
                         </Button>
                     </CreateTeamModal>
                 </div>
@@ -52,7 +52,7 @@ export default function TeamsIndex({ teams }: Props) {
                 <div className="account-list-items">
                     {teams.map((team) => {
                         const canLeaveTeam =
-                            !team.isPersonal && team.role !== 'owner';
+                            !team.isPribadi && team.role !== 'owner';
 
                         return (
                             <div
@@ -97,7 +97,7 @@ export default function TeamsIndex({ teams }: Props) {
                                                     </Button>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
-                                                    <p>Leave team</p>
+                                                    <p>Keluar dari tim</p>
                                                 </TooltipContent>
                                             </Tooltip>
                                         ) : null}
@@ -121,7 +121,7 @@ export default function TeamsIndex({ teams }: Props) {
                                                     </Button>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
-                                                    <p>View team</p>
+                                                    <p>Lihat tim</p>
                                                 </TooltipContent>
                                             </Tooltip>
                                         ) : (
@@ -143,7 +143,7 @@ export default function TeamsIndex({ teams }: Props) {
                                                     </Button>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
-                                                    <p>Edit team</p>
+                                                    <p>Edit tim</p>
                                                 </TooltipContent>
                                             </Tooltip>
                                         )}
@@ -155,7 +155,7 @@ export default function TeamsIndex({ teams }: Props) {
 
                     {teams.length === 0 ? (
                         <p className="account-empty">
-                            You don't belong to any teams yet.
+                            Kamu belum tergabung dalam tim mana pun.
                         </p>
                     ) : null}
                 </div>
@@ -173,7 +173,7 @@ export default function TeamsIndex({ teams }: Props) {
 TeamsIndex.layout = {
     breadcrumbs: [
         {
-            title: 'Teams',
+            title: 'Tim',
             href: index(),
         },
     ],
