@@ -6,7 +6,7 @@
     width: 100vw;
     max-width: none;
     margin-left: calc(50% - 50vw);
-    padding: 78px max(24px, calc((100vw - 1080px) / 2)) 90px;
+    padding: 158px max(24px, calc((100vw - 1080px) / 2)) 90px;
     overflow: hidden;
     background: #fff;
 }
@@ -38,6 +38,17 @@
     background: #f44355;
     content: '';
     opacity: .9;
+}
+.team-reference-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 .team-section > * {
     position: relative;
@@ -95,7 +106,10 @@
 .team-reference-card:nth-child(3n + 2) {
     --team-primary: #079de9;
     --team-secondary: #04d0e8;
-    margin-top: 90px;
+    margin-top: 0;
+}
+.team-reference-card:nth-child(3n + 2) .team-reference-bubble {
+    top: -73px;
 }
 .team-reference-card:nth-child(3n) {
     --team-primary: #ff6a00;
@@ -124,7 +138,7 @@
 .team-reference-bubble {
     position: absolute;
     z-index: 3;
-    top: -86px;
+    top: -114px;
     left: 50%;
     display: flex;
     width: min(82%, 230px);
@@ -236,10 +250,7 @@
 }
 @media (max-width: 760px) {
     .team-section {
-        padding: 70px 24px 78px;
-    }
-    .team-reference-heading {
-        margin-bottom: 42px;
+        padding: 145px 24px 78px;
     }
     .team-reference-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -252,10 +263,13 @@
         border-radius: 27px;
     }
     .team-reference-card:nth-child(3n + 2) {
-        margin-top: 38px;
+        margin-top: 0;
+    }
+    .team-reference-card:nth-child(3n + 2) .team-reference-bubble {
+        top: -60px;
     }
     .team-reference-bubble {
-        top: -65px;
+        top: -88px;
         min-height: 122px;
         padding: 18px 12px;
     }
@@ -268,7 +282,7 @@
 }
 @media (max-width: 480px) {
     .team-section {
-        padding: 60px 22px 70px;
+        padding: 135px 22px 70px;
     }
     .team-reference-heading {
         margin-bottom: 36px;
@@ -290,8 +304,11 @@
         margin-top: 36px;
         border-radius: 30px;
     }
+    .team-reference-card:nth-child(3n + 2) .team-reference-bubble {
+        top: -66px;
+    }
     .team-reference-bubble {
-        top: -75px;
+        top: -96px;
         width: 78%;
         min-height: 132px;
     }
