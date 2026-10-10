@@ -475,23 +475,37 @@ export default function Home({
                 <section className="page-section team-section">
                     <div className="team-reference-heading">
                         <span>KENALI KAMI</span>
-                        <h2>KENALI TIM KAMI</h2>
-                        <p>Orang-orang di balik pengalaman olahraga yang lebih baik di GGM Majalengka.</p>
+                        <h2>ORANG DI BALIK GGM</h2>
+                        <p>Kenali tim yang menghadirkan pengalaman olahraga lebih nyaman dan menyenangkan di GGM Majalengka.</p>
                     </div>
                     <div className="team-reference-grid">
-                        {teamMembers.map((member: any) => (
-                            <article className="team-reference-card" key={member.id}>
+                        {teamMembers.map((member: any, index: number) => (
+                            <article
+                                className={`team-reference-card team-reference-card-${(index % 3) + 1}`}
+                                key={member.id}
+                            >
+                                <div className="team-reference-bubble">
+                                    <h3>{member.name}</h3>
+                                    <span>TIM GGM MAJALENGKA</span>
+                                    {member.description && <p>{member.description}</p>}
+                                </div>
+                                <div className="team-reference-socials" aria-hidden="true">
+                                    <Activity />
+                                    <Users />
+                                    <MapPin />
+                                </div>
                                 <img
                                     src={asset(member.photo)}
                                     alt={member.name}
                                     loading="lazy"
                                 />
-                                <div className="team-reference-overlay">
-                                    <h3>{member.name}</h3>
-                                    {member.description && <p>{member.description}</p>}
-                                </div>
                             </article>
                         ))}
+                    </div>
+                    <div className="team-reference-cta">
+                        <strong>JADI BAGIAN DARI GGM</strong>
+                        <span>Temukan aktivitas olahraga favoritmu</span>
+                        <Link href="/facilities">JELAJAHI FASILITAS <ChevronRight size={15} aria-hidden="true" /></Link>
                     </div>
                 </section>
             )}
