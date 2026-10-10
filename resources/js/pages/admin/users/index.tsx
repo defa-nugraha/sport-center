@@ -3,7 +3,7 @@ import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { CheckCircle2, CircleSlash, LockKeyhole, Pencil, Plus, Search, ShieldCheck, Trash2, UserRound, Users, X } from 'lucide-react';
-import '../../../css/admin-users.css';
+import '../../../../css/admin-users.css';
 
 type ManagedUser = {
     id: number;
