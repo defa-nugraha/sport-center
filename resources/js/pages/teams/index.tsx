@@ -52,7 +52,7 @@ export default function TeamsIndex({ teams }: Props) {
                 <div className="account-list-items">
                     {teams.map((team) => {
                         const canLeaveTeam =
-                            !team.isPribadi && team.role !== 'owner';
+                            !team.isPersonal && team.role !== 'owner';
 
                         return (
                             <div
