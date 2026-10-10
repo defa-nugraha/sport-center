@@ -10,6 +10,7 @@ type ManagedUser = {
     encrypted_id: string;
     name: string;
     email: string;
+    role: 'admin' | 'user';
     roles: string[];
     is_suspended: boolean;
     suspended_at?: string | null;
@@ -173,7 +174,7 @@ export default function AdminUsers({
                                             <i aria-hidden="true" /> {user.is_suspended ? 'Suspend' : 'Aktif'}
                                         </span>
                                         {user.is_suspended && user.suspension_reason && <small title={user.suspension_reason}>{user.suspension_reason}</small>}
-                                        <small>Peran: {user.roles.join(', ') || 'user'}</small>
+                                        <small>Jenis akun: {user.role === 'admin' ? 'Administrator' : 'Pengguna'} · Peran akses: {user.roles.join(', ') || 'user'}</small>
                                     </div>
                                     <div className="admin-user-actions">
                                         {user.can_manage ? (
