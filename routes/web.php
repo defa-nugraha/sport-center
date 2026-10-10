@@ -30,11 +30,11 @@ Route::middleware('track.public.visit')->group(function () {
 });
 Route::post('/inquiries', [PublicController::class, 'inquiry'])->name('inquiries.store');
 Route::post('/testimonials', [PublicController::class, 'testimonial'])->name('testimonials.store');
-Route::get('/booking', [BookingController::class, 'index'])->middleware('auth')->name('booking.index');
+Route::get('/booking', [BookingController::class, 'index'])->middleware(['auth', 'verified'])->name('booking.index');
 Route::get('/booking/{facility:slug}', [BookingController::class, 'create'])->name('booking.create');
-Route::get('/booking/{facility:slug}/availability', [BookingController::class, 'availability'])->middleware('auth')->name('booking.availability');
-Route::post('/booking/{facility:slug}', [BookingController::class, 'store'])->middleware('auth')->name('booking.store');
-Route::get('/booking/{booking}/status', [BookingController::class, 'show'])->middleware('auth')->name('booking.show');
+Route::get('/booking/{facility:slug}/availability', [BookingController::class, 'availability'])->middleware(['auth', 'verified'])->name('booking.availability');
+Route::post('/booking/{facility:slug}', [BookingController::class, 'store'])->middleware(['auth', 'verified'])->name('booking.store');
+Route::get('/booking/{booking}/status', [BookingController::class, 'show'])->middleware(['auth', 'verified'])->name('booking.show');
 
 Route::middleware('auth')->group(function () {
     Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
@@ -47,7 +47,7 @@ Route::middleware('auth')->group(function () {
 Route::post('/payments/midtrans/notification', [PaymentController::class, 'notification'])->name('payments.midtrans.notification');
 Route::get('/invoices/{invoice:uuid}/pdf', [InvoiceController::class, 'show'])->middleware('signed')->name('invoices.public');
 
-Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/content', [AdminController::class, 'content'])->name('content');
     Route::get('/pages', [AdminController::class, 'pagesIndex'])->middleware('permission:kelola halaman')->name('pages');
