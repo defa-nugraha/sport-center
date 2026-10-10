@@ -272,7 +272,10 @@ class BookingService
     {
         $q = Booking::where('status', BookingStatus::PENDING_PAYMENT)->where('expires_at', '<=', now());
         if ($facilityId) $q->where('facility_id', $facilityId);
-        return $q->update(['status' => Boo    public function processPaymentNotification(array $n, MidtransService $midtrans): void
+        return $q->update(['status' => BookingStatus::EXPIRED]);
+    }
+
+    public function processPaymentNotification(array $n, MidtransService $midtrans): void
     {
         $payment = Payment::where('order_id', $n['order_id'] ?? '')->firstOrFail();
 
