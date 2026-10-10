@@ -151,7 +151,7 @@
 }
 .team-reference-bubble::after {
     position: absolute;
-    z-index: -1;
+    z-index: 0;
     right: 24%;
     bottom: -19px;
     width: 32px;
@@ -161,6 +161,8 @@
     content: '';
 }
 .team-reference-bubble h3 {
+    position: relative;
+    z-index: 1;
     margin: 0;
     color: #fff;
     font-size: clamp(12px, 1.1vw, 15px);
@@ -171,6 +173,8 @@
     text-shadow: 0 1px 5px rgb(0 0 0 / 8%);
 }
 .team-reference-bubble p {
+    position: relative;
+    z-index: 1;
     display: -webkit-box;
     max-width: 100%;
     margin: 10px 0 0;
