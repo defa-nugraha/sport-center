@@ -37,7 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'track.public.visit' => TrackPublicVisit::class,
             'admin.access' => EnsureAdminAccess::class,
         ]);
-        $middleware->redirectUsersTo('/admin');
+        $middleware->redirectUsersTo(fn (Request $request) => $request->user()?->role === 'admin' ? '/admin' : '/dashboard');
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
         $middleware->web(append: [
