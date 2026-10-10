@@ -1,35 +1,35 @@
 /* Reference-inspired public homepage team cards */
 .team-section {
     max-width: none;
-    background: #f0f0ff;
-    padding: clamp(48px, 7vw, 92px) max(24px, calc((100vw - 1260px) / 2));
+    background: #f0f1eb;
+    padding: 72px max(24px, calc((100vw - 1180px) / 2));
     overflow: hidden;
 }
 .team-reference-heading {
-    margin: 0 auto clamp(34px, 5vw, 64px);
+    margin: 0 auto 25px;
     text-align: center;
 }
 .team-reference-heading > span {
     display: block;
-    margin-bottom: 22px;
+    margin-bottom: 10px;
     color: #c32b61;
-    font-size: 13px;
+    font-size: 10px;
     font-weight: 800;
     letter-spacing: .12em;
 }
 .team-reference-heading h2 {
     margin: 0;
     color: #17123f;
-    font-size: clamp(34px, 5.5vw, 76px);
-    font-weight: 950;
+    font-size: clamp(28px, 3vw, 44px);
+    font-weight: 800;
     line-height: 1;
-    letter-spacing: -.045em;
+    letter-spacing: -.04em;
 }
 .team-reference-heading p {
     max-width: 620px;
     margin: 18px auto 0;
     color: #65657d;
-    font-size: 15px;
+    font-size: 14px;
 }
 .team-reference-grid {
     display: grid;
