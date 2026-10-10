@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, ArrowRight, CircleHelp, House, RefreshCw, ShieldAlert } from 'lucide-react';
+import { ArrowRight, CircleHelp, House, RefreshCw, ShieldAlert } from 'lucide-react';
 
 type ErrorPageProps = {
     status: number;
@@ -168,4 +168,3 @@ export default function ErrorPage({ status = 500 }: ErrorPageProps) {
     );
 }
 
-ErrorPage.layout = (page: React.ReactNode) => page;
