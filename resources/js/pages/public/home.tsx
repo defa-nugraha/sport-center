@@ -473,11 +473,7 @@ export default function Home({
 
             {teamMembers.length > 0 && (
                 <section className="page-section team-section">
-                    <div className="team-reference-heading">
-                        <span>KENALI KAMI</span>
-                        <h2>ORANG DI BALIK GGM</h2>
-                        <p>Kenali tim yang menghadirkan pengalaman olahraga lebih nyaman dan menyenangkan di GGM Majalengka.</p>
-                    </div>
+                    <h2 className="team-reference-sr-only">Kenali Tim Kami</h2>
                     <div className="team-reference-grid">
                         {teamMembers.map((member: any, index: number) => (
                             <article
