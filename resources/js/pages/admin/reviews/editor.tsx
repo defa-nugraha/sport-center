@@ -18,11 +18,13 @@ export default function ReviewEditor({ review }: any) {
     });
     useEffect(() => {
         if (flash?.success) setStatus({ type: 'success', message: flash.success });
-    }, [flash?.success]);
+        if (flash?.error) setStatus({ type: 'error', message: flash.error });
+    }, [flash?.success, flash?.error]);
     const submit = (event: FormEvent) => {
         event.preventDefault();
         const options = {
             preserveScroll: true,
+            onSuccess: () => setStatus({ type: 'success', message: review ? 'Ulasan berhasil diperbarui.' : 'Ulasan berhasil ditambahkan.' }),
             onError: (errors: Record<string, string>) => setStatus({ type: 'error' as const, message: Object.values(errors)[0] || 'Periksa kembali data ulasan.' }),
         };
         if (review) {
