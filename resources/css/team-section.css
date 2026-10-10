@@ -13,17 +13,13 @@
 .team-section::before {
     position: absolute;
     z-index: -2;
-    right: -3%;
-    bottom: -2px;
-    left: -3%;
-    height: 48%;
-    min-height: 370px;
+    inset: 0;
     background:
-        radial-gradient(ellipse 58% 115% at 1% 20%, #5368d8 0 58%, transparent 58.5%),
-        radial-gradient(ellipse 64% 105% at 103% 18%, #ffb21b 0 53%, transparent 53.5%),
-        radial-gradient(ellipse 53% 105% at 77% 3%, #ff6530 0 47%, transparent 47.5%),
-        radial-gradient(ellipse 53% 80% at 54% 100%, #08c8e8 0 62%, transparent 62.5%),
-        linear-gradient(110deg, #5368d8 0%, #08c8e8 53%, #00b99b 100%);
+        radial-gradient(ellipse 67% 66% at -8% 69%, #5368d8 0 59%, transparent 59.5%),
+        radial-gradient(ellipse 57% 62% at 108% 62%, #ffb21b 0 57%, transparent 57.5%),
+        radial-gradient(ellipse 52% 60% at 83% 49%, #ff6530 0 49%, transparent 49.5%),
+        radial-gradient(ellipse 84% 48% at 52% 105%, #08c8e8 0 64%, transparent 64.5%),
+        linear-gradient(to bottom, #fff 0 35%, transparent 35%);
     content: '';
 }
 .team-section::after {
@@ -277,14 +273,12 @@
         padding: 54px 22px 68px;
     }
     .team-section::before {
-        height: 42%;
-        min-height: 310px;
         background:
-            radial-gradient(ellipse 80% 100% at 0% 18%, #5368d8 0 57%, transparent 57.5%),
-            radial-gradient(ellipse 80% 100% at 110% 16%, #ffb21b 0 52%, transparent 52.5%),
-            radial-gradient(ellipse 65% 90% at 82% 0%, #ff6530 0 47%, transparent 47.5%),
-            radial-gradient(ellipse 90% 75% at 48% 105%, #08c8e8 0 62%, transparent 62.5%),
-            linear-gradient(110deg, #5368d8 0%, #08c8e8 53%, #00b99b 100%);
+            radial-gradient(ellipse 95% 48% at -10% 72%, #5368d8 0 59%, transparent 59.5%),
+            radial-gradient(ellipse 92% 48% at 112% 64%, #ffb21b 0 57%, transparent 57.5%),
+            radial-gradient(ellipse 82% 46% at 88% 53%, #ff6530 0 49%, transparent 49.5%),
+            radial-gradient(ellipse 110% 35% at 48% 104%, #08c8e8 0 64%, transparent 64.5%),
+            linear-gradient(to bottom, #fff 0 28%, transparent 28%);
     }
     .team-section::after {
         right: 35%;
