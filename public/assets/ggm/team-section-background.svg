@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1850" height="650" viewBox="0 0 1850 650" preserveAspectRatio="none">
-  <!-- Continuous cyan base wave: only the area below this curved edge is filled. -->
-  <path d="M0 475 C220 504 440 558 690 565 C985 574 1225 610 1515 650 L1850 650 L1850 650 L0 650 Z" fill="#00c8df"/>
-  <!-- Coral/red field sweeps behind the cards and curves down near the center. -->
-  <path d="M610 0 C820 0 1005 31 1210 84 C1410 136 1570 188 1645 252 C1700 301 1590 373 1450 445 C1298 523 1153 601 1040 650 L810 650 C884 569 883 498 817 425 C751 352 637 302 610 222 C585 149 579 63 610 0 Z" fill="#ff563f"/>
-  <!-- Golden field enters from the right with a single broad curve. -->
-  <path d="M1850 74 C1652 105 1478 157 1375 229 C1294 286 1297 364 1368 431 C1452 510 1601 585 1754 626 L1850 650 Z" fill="#ffad35"/>
-  <!-- Blue field stays anchored to the left edge and overlaps coral, avoiding white seams. -->
+  <!-- Cyan base wave: its curved upper edge never terminates in a straight-sided oval. -->
+  <path d="M0 520 C170 530 260 555 380 570 C520 590 640 570 760 585 C1000 600 1180 630 1320 650 L1850 650 L0 650 Z" fill="#00c8df"/>
+  <!-- Coral field overlaps the blue and cyan layers so no white seams appear between them. -->
+  <path d="M480 0 C760 -5 1040 25 1280 100 C1500 165 1700 238 1850 300 L1850 650 L880 650 C770 600 700 530 620 455 C560 380 460 320 410 260 C370 190 375 80 480 0 Z" fill="#ff563f"/>
+  <!-- Golden field enters from the right and follows one broad continuous curve. -->
+  <path d="M1850 80 C1640 112 1460 166 1350 250 C1270 312 1298 386 1375 450 C1460 522 1595 582 1735 624 L1850 650 Z" fill="#ffad35"/>
+  <!-- Blue left field overlaps the coral edge and flows into the bottom wave. -->
   <path d="M0 236 C208 257 397 298 546 362 C653 408 718 461 713 505 C706 571 547 613 360 625 C227 633 96 607 0 571 Z" fill="#4d70d3"/>
-  <!-- Hot-pink pointed accent between the middle cards. -->
-  <path d="M631 0 C733 17 802 62 850 133 L949 650 L812 650 L720 356 C689 263 640 158 631 0 Z" fill="#f32960"/>
+  <!-- Pink pointer accents the space below the middle profiles. -->
+  <path d="M650 0 L1050 0 L850 650 Z" fill="#f32960"/>
 </svg>
