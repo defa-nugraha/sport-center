@@ -51,7 +51,7 @@ return Application::configure(basePath: dirname(__DIR__))
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
 
-        $exceptions->render(function (\\Throwable $exception, Request $request) {
+        $exceptions->render(function (\Throwable $exception, Request $request) {
             // Keep API responses and Laravel's normal validation flow unchanged.
             if ($request->is('api/*') || $request->expectsJson() || $exception instanceof ValidationException || $exception instanceof AuthenticationException) {
                 return null;
