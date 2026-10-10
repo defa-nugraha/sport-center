@@ -144,12 +144,18 @@ export function ConfirmDialog({
     itemName,
     onConfirm,
     processing,
+    title = 'Hapus data ini?',
+    description,
+    confirmLabel = 'Ya, hapus',
 }: {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     itemName?: string;
     onConfirm: () => void;
     processing?: boolean;
+    title?: string;
+    description?: string;
+    confirmLabel?: string;
 }) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -158,12 +164,11 @@ export function ConfirmDialog({
                     <div className="modal-icon danger">
                         <Trash2 aria-hidden="true" />
                     </div>
-                    <DialogTitle>Hapus data ini?</DialogTitle>
+                    <DialogTitle>{title}</DialogTitle>
                     <DialogDescription>
-                        {itemName
-                            ? `“${itemName}” akan dihapus`
-                            : 'Data ini akan dihapus'}{' '}
-                        dan tidak lagi tampil di situs.
+                        {description || (itemName
+                            ? `“${itemName}” akan dihapus dan tidak lagi tampil di situs.`
+                            : 'Data ini akan dihapus dan tidak lagi tampil di situs.')}
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
@@ -176,7 +181,7 @@ export function ConfirmDialog({
                         onClick={onConfirm}
                         disabled={processing}
                     >
-                        {processing ? 'Menghapus...' : 'Ya, hapus'}
+                        {processing ? 'Memproses...' : confirmLabel}
                     </button>
                 </DialogFooter>
             </DialogContent>
