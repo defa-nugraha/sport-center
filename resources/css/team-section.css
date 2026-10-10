@@ -91,6 +91,12 @@
     max-width: 1080px;
     margin: 0 auto;
 }
+.team-reference-grid-count-2 {
+    max-width: 760px;
+}
+.team-reference-grid-count-1 {
+    max-width: 360px;
+}
 .team-reference-card {
     --team-primary: #00dca0;
     --team-secondary: #a5ed37;
