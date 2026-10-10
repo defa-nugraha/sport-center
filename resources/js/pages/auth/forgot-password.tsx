@@ -1,9 +1,5 @@
 import { Form, Head } from '@inertiajs/react';
-import {
-    ArrowLeft,
-    CheckCircle2,
-    Mail,
-} from 'lucide-react';
+import { ArrowLeft, CheckCircle2 } from 'lucide-react';
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
@@ -17,36 +13,44 @@ export default function ForgotPassword({ status }: { status?: string }) {
         <>
             <Head title="Lupa password" />
 
-            <main className="flex min-h-[calc(100svh-3rem)] w-full items-center justify-center px-4 py-10 sm:px-6">
-                <section className="w-full max-w-md rounded-2xl border border-[#dce5ef] bg-white p-6 shadow-xl shadow-[#14243f]/8 sm:p-8">
-                    <header className="mb-7">
-                        <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[#2f74bd]">Sport Center</p>
-                        <h1 className="text-2xl font-extrabold tracking-tight text-[#14243f] sm:text-3xl">
-                            Lupa password?
-                        </h1>
-                        <p className="mt-3 text-sm leading-6 text-[#52637a]">
-                            Masukkan alamat email yang terdaftar. Kami akan mengirimkan tautan untuk membuat password baru.
-                        </p>
-                    </header>
+            <main className="relative isolate flex min-h-svh w-full items-center justify-center overflow-hidden bg-[#f4f7fb] px-4 py-10 sm:px-6">
+                <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
+                    <div className="absolute -left-32 -top-36 size-[28rem] rounded-full bg-[#dceaff]/70 blur-3xl" />
+                    <div className="absolute -bottom-48 -right-24 size-[30rem] rounded-full bg-[#e3eaf5]/80 blur-3xl" />
+                    <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.72),transparent_55%)]" />
+                </div>
 
-                    {status && (
-                        <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-800" role="status">
-                            <div className="flex items-start gap-3">
-                                <CheckCircle2 className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
-                                <p className="m-0">{status}</p>
+                <section className="w-full max-w-[440px] overflow-hidden rounded-[24px] border border-white/90 bg-white/95 shadow-[0_24px_80px_-32px_rgba(20,36,63,0.24)] ring-1 ring-[#14243f]/[0.04]">
+                    <div className="h-1.5 w-full bg-gradient-to-r from-[#14243f] via-[#2f74bd] to-[#83b8ed]" />
+                    <div className="px-6 py-8 sm:px-10 sm:py-10">
+                        <header className="mb-8">
+                            <p className="mb-8 text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#2f74bd]">
+                                SPORT CENTER
+                            </p>
+                            <h1 className="text-[32px] font-bold leading-[1.12] tracking-[-0.045em] text-[#14243f] sm:text-[36px]">
+                                Lupa password?
+                            </h1>
+                            <p className="mt-4 max-w-[34ch] text-[14px] leading-6 text-[#5b687b]">
+                                Tidak masalah. Masukkan email akunmu dan kami akan mengirimkan tautan untuk membuat password baru.
+                            </p>
+                        </header>
+
+                        {status && (
+                            <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3.5 text-sm leading-6 text-emerald-800" role="status">
+                                <div className="flex items-start gap-3">
+                                    <CheckCircle2 className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
+                                    <p className="m-0">{status}</p>
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )}
 
-                    <Form {...email.form()} resetOnSuccess={['email']}>
-                        {({ processing, errors }) => (
-                            <div className="space-y-5">
-                                <div className="space-y-2">
-                                    <Label htmlFor="email" className="text-sm font-semibold text-[#14243f]">
-                                        Email yang terdaftar
-                                    </Label>
-                                    <div className="relative">
-                                        <Mail className="pointer-events-none absolute left-4 top-1/2 z-10 size-4 -translate-y-1/2 text-[#8291a6]" aria-hidden="true" />
+                        <Form {...email.form()} resetOnSuccess={['email']}>
+                            {({ processing, errors }) => (
+                                <div className="space-y-5">
+                                    <div className="space-y-2.5">
+                                        <Label htmlFor="email" className="text-[13px] font-semibold text-[#263750]">
+                                            Alamat email
+                                        </Label>
                                         <Input
                                             id="email"
                                             type="email"
@@ -55,47 +59,44 @@ export default function ForgotPassword({ status }: { status?: string }) {
                                             autoComplete="email"
                                             autoFocus
                                             placeholder="nama@email.com"
-                                            className="h-12 w-full rounded-xl border-[#cbd8e6] bg-white pl-11 pr-4 text-[#14243f] shadow-sm placeholder:text-[#8291a6] focus-visible:border-[#2f74bd] focus-visible:ring-[#2f74bd]/25"
+                                            className="h-[52px] w-full rounded-xl border-[#d7e0eb] bg-[#fbfcfe] px-4 text-[15px] text-[#14243f] shadow-none transition placeholder:text-[#98a4b5] hover:border-[#b9c9dc] focus-visible:border-[#2f74bd] focus-visible:bg-white focus-visible:ring-4 focus-visible:ring-[#2f74bd]/10"
                                             aria-invalid={Boolean(errors.email)}
                                             aria-describedby={errors.email ? 'email-error' : 'email-hint'}
                                         />
+                                        <InputError message={errors.email} />
+                                        {!errors.email && (
+                                            <p id="email-hint" className="m-0 pt-0.5 text-xs leading-5 text-[#778397]">
+                                                Gunakan email yang kamu pakai saat mendaftar.
+                                            </p>
+                                        )}
                                     </div>
-                                    <InputError message={errors.email} />
-                                    {!errors.email && (
-                                        <p id="email-hint" className="m-0 text-xs leading-5 text-[#66758a]">
-                                            Pastikan kamu masih bisa membuka inbox email tersebut.
-                                        </p>
-                                    )}
+
+                                    <Button
+                                        type="submit"
+                                        className="h-[52px] w-full rounded-xl bg-[#14243f] text-sm font-semibold text-white shadow-[0_8px_18px_-8px_rgba(20,36,63,0.55)] transition duration-200 hover:-translate-y-px hover:bg-[#20395f] hover:text-white focus-visible:ring-4 focus-visible:ring-[#2f74bd]/25"
+                                        disabled={processing}
+                                        data-test="email-password-reset-link-button"
+                                    >
+                                        {processing ? (
+                                            <>
+                                                <span className="mr-2 inline-block size-4 animate-spin rounded-full border-2 border-white/40 border-t-white" aria-hidden="true" />
+                                                Mengirim tautan...
+                                            </>
+                                        ) : (
+                                            'Kirim tautan reset'
+                                        )}
+                                    </Button>
                                 </div>
+                            )}
+                        </Form>
 
-                                <Button
-                                    type="submit"
-                                    className="h-12 w-full rounded-xl bg-[#14243f] font-semibold text-white shadow-md shadow-[#14243f]/15 transition hover:bg-[#20395f] hover:text-white"
-                                    disabled={processing}
-                                    data-test="email-password-reset-link-button"
-                                >
-                                    {processing ? (
-                                        <>
-                                            <span className="mr-2 inline-block size-4 animate-spin rounded-full border-2 border-white/40 border-t-white" aria-hidden="true" />
-                                            Mengirim tautan...
-                                        </>
-                                    ) : (
-                                        <>
-                                            Kirim tautan reset password
-                                            <Mail className="ml-2 size-4" aria-hidden="true" />
-                                        </>
-                                    )}
-                                </Button>
-                            </div>
-                        )}
-                    </Form>
-
-                    <footer className="mt-7 border-t border-[#e5ebf2] pt-5 text-center">
-                        <TextLink href={login()} className="inline-flex items-center gap-2 text-sm font-semibold text-[#2f74bd] transition hover:text-[#14243f]">
-                            <ArrowLeft className="size-4" aria-hidden="true" />
-                            Kembali ke halaman masuk
-                        </TextLink>
-                    </footer>
+                        <footer className="mt-7 border-t border-[#edf0f5] pt-6 text-center">
+                            <TextLink href={login()} className="inline-flex items-center gap-2 text-[13px] font-semibold text-[#526782] transition hover:text-[#2f74bd]">
+                                <ArrowLeft className="size-4" aria-hidden="true" />
+                                Kembali ke halaman masuk
+                            </TextLink>
+                        </footer>
+                    </div>
                 </section>
             </main>
         </>
