@@ -113,7 +113,7 @@ export default function Security(props: Props) {
                                     disabled={processing}
                                     data-test="update-password-button"
                                 >
-                                    Save
+                                    Simpan perubahan
                                 </Button>
                             </div>
                         </>
