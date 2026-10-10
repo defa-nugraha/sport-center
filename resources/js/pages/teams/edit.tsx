@@ -1,8 +1,8 @@
 import { Form, Head, router } from '@inertiajs/react';
 import { ChevronDown, Mail, UserPlus, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import BatalInvitationModal from '@/components/cancel-invitation-modal';
-import HapusTeamModal from '@/components/delete-team-modal';
+import CancelInvitationModal from '@/components/cancel-invitation-modal';
+import DeleteTeamModal from '@/components/delete-team-modal';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import InviteMemberModal from '@/components/invite-member-modal';
@@ -52,12 +52,12 @@ export default function TeamUbah({
     const getInitials = useInitials();
 
     const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
-    const [deleteDialogOpen, setHapusDialogOpen] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [removeMemberDialogOpen, setRemoveMemberDialogOpen] = useState(false);
     const [memberToRemove, setMemberToRemove] = useState<TeamMember | null>(
         null,
     );
-    const [cancelInvitationDialogOpen, setBatalInvitationDialogOpen] =
+    const [cancelInvitationDialogOpen, setCancelInvitationDialogOpen] =
         useState(false);
     const [invitationToBatal, setInvitationToBatal] =
         useState<TeamInvitation | null>(null);
@@ -83,9 +83,9 @@ export default function TeamUbah({
         setRemoveMemberDialogOpen(true);
     };
 
-    const confirmBatalInvitation = (invitation: TeamInvitation) => {
+    const confirmCancelInvitation = (invitation: TeamInvitation) => {
         setInvitationToBatal(invitation);
-        setBatalInvitationDialogOpen(true);
+        setCancelInvitationDialogOpen(true);
     };
 
     return (
@@ -291,7 +291,7 @@ export default function TeamUbah({
                                         </div>
                                     </div>
 
-                                    {permissions.canBatalInvitation ? (
+                                    {permissions.canCancelInvitation ? (
                                         <TooltipProvider>
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
@@ -300,7 +300,7 @@ export default function TeamUbah({
                                                         size="sm"
                                                         data-test="invitation-cancel-button"
                                                         onClick={() =>
-                                                            confirmBatalInvitation(
+                                                            confirmCancelInvitation(
                                                                 invitation,
                                                             )
                                                         }
@@ -320,7 +320,7 @@ export default function TeamUbah({
                     </div>
                 ) : null}
 
-                {permissions.canHapusTeam && !team.isPribadi ? (
+                {permissions.canDeleteTeam && !team.isPersonal ? (
                     <div className="account-section-block">
                         <Heading
                             variant="small"
@@ -338,7 +338,7 @@ export default function TeamUbah({
                             <Button
                                 variant="destructive"
                                 data-test="delete-team-button"
-                                onClick={() => setHapusDialogOpen(true)}
+                                onClick={() => setDeleteDialogOpen(true)}
                             >
                                 Hapus tim
                             </Button>
@@ -363,18 +363,18 @@ export default function TeamUbah({
                 onOpenChange={setRemoveMemberDialogOpen}
             />
 
-            <BatalInvitationModal
+            <CancelInvitationModal
                 team={team}
                 invitation={invitationToBatal}
                 open={cancelInvitationDialogOpen}
-                onOpenChange={setBatalInvitationDialogOpen}
+                onOpenChange={setCancelInvitationDialogOpen}
             />
 
-            {permissions.canHapusTeam && !team.isPribadi ? (
-                <HapusTeamModal
+            {permissions.canDeleteTeam && !team.isPersonal ? (
+                <DeleteTeamModal
                     team={team}
                     open={deleteDialogOpen}
-                    onOpenChange={setHapusDialogOpen}
+                    onOpenChange={setDeleteDialogOpen}
                 />
             ) : null}
         </>
