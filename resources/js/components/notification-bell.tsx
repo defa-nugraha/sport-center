@@ -58,7 +58,7 @@ export function NotificationBell({ className = '' }: { className?: string }) {
             <DropdownMenuContent
                 align="end"
                 sideOffset={8}
-                className="w-[min(360px,calc(100vw-24px))] p-0"
+                className="w-[min(360px,calc(100vw-24px))] border border-border bg-background p-0 opacity-100 shadow-xl backdrop-blur-none"
                 onMouseLeave={() => setOpen(false)}
             >
                 <div className="flex items-center justify-between border-b px-4 py-3">
@@ -85,7 +85,7 @@ export function NotificationBell({ className = '' }: { className?: string }) {
                             type="button"
                             key={item.id}
                             onClick={() => visitNotification(item)}
-                            className={'flex w-full gap-3 border-b px-4 py-3 text-left transition-colors hover:bg-muted/70 ' + (!item.read_at ? 'bg-primary/5' : '')}
+                            className={'flex w-full gap-3 border-b px-4 py-3 text-left transition-colors hover:bg-muted ' + (!item.read_at ? 'bg-primary/5' : '')}
                         >
                             <span className={'mt-1 size-2 shrink-0 rounded-full ' + (!item.read_at ? 'bg-red-600' : 'bg-transparent')} />
                             <span className="min-w-0 flex-1">
@@ -97,8 +97,8 @@ export function NotificationBell({ className = '' }: { className?: string }) {
                     ))}
                 </div>
                 <div className="border-t px-4 py-2">
-                    <Link href="/bookings" className="text-xs font-medium text-primary hover:underline" onClick={() => setOpen(false)}>
-                        Lihat riwayat transaksi
+                    <Link href="/notifications" className="text-xs font-medium text-primary hover:underline" onClick={() => setOpen(false)}>
+                        Lihat semua notifikasi
                     </Link>
                 </div>
             </DropdownMenuContent>
