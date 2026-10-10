@@ -1,0 +1,447 @@
+/* Public homepage team section — speech-bubble profile cards inspired by the supplied reference */
+.team-section {
+    position: relative;
+    isolation: isolate;
+    display: block;
+    width: 100vw;
+    max-width: none;
+    margin-left: calc(50% - 50vw);
+    padding: 70px max(24px, calc((100vw - 1080px) / 2)) 28px;
+    overflow: hidden;
+    background: #fff;
+}
+.team-section::before {
+    position: absolute;
+    z-index: -1;
+    right: auto;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    height: min(100%, max(390px, 35.11vw));
+    transform: translateX(-50%);
+    background: url('/assets/backgrounds/Minimalist%20Color%20Wave%20Landscape.svg') center bottom / 100% 100% no-repeat;
+    content: '';
+    pointer-events: none;
+}
+.team-reference-heading {
+    max-width: 720px;
+    margin: 0 auto 104px;
+    text-align: center;
+}
+.team-reference-heading > span {
+    display: inline-block;
+    margin-bottom: 12px;
+    color: #f15a3c;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .18em;
+}
+.team-reference-heading h2 {
+    margin: 0;
+    color: #17203d;
+    font-size: clamp(30px, 4.4vw, 48px);
+    font-weight: 850;
+    line-height: 1.08;
+    letter-spacing: -.045em;
+}
+.team-reference-heading p {
+    max-width: 590px;
+    margin: 14px auto 0;
+    color: #6c7280;
+    font-size: 15px;
+    line-height: 1.65;
+}
+.team-reference-carousel {
+    position: relative;
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+}
+.team-reference-grid {
+    --team-card-gap: clamp(16px, 2vw, 22px);
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: end;
+    gap: var(--team-card-gap);
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+}
+.team-reference-grid-count-1 {
+    max-width: 360px;
+    grid-template-columns: minmax(0, 1fr);
+}
+.team-reference-grid-count-2 {
+    max-width: 760px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.team-reference-grid-count-3 {
+    max-width: 980px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.team-reference-grid-count-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.team-reference-grid.is-scrollable {
+    display: grid;
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 22%;
+    align-items: end;
+    max-width: 1180px;
+    padding: 116px 0 18px;
+    margin-top: -116px;
+    margin-bottom: -18px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(255 255 255 / 62%) rgb(20 32 61 / 18%);
+}
+.team-reference-grid.is-scrollable .team-reference-card {
+    width: 100%;
+    min-width: 0;
+    margin-top: 0;
+    scroll-snap-align: start;
+}
+.team-reference-grid.is-scrollable .team-reference-card:nth-child(3n + 2) {
+    margin-top: 0;
+}
+.team-reference-grid.is-scrollable:focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 4px;
+}
+.team-reference-scroll-cue {
+    display: grid;
+    justify-items: center;
+    gap: 11px;
+    margin: 14px auto 0;
+    color: #fff;
+    text-align: center;
+}
+.team-reference-scroll-cue > span {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-shadow: 0 1px 5px rgb(0 0 0 / 16%);
+}
+.team-reference-scroll-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+}
+.team-reference-scroll-dots button {
+    display: block;
+    width: 8px;
+    height: 8px;
+    flex: 0 0 auto;
+    padding: 0;
+    border: 1px solid rgb(255 255 255 / 92%);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 48%);
+    box-shadow: 0 1px 5px rgb(20 32 61 / 16%);
+    cursor: pointer;
+    transition: width .2s ease, background-color .2s ease, transform .2s ease;
+}
+.team-reference-scroll-dots button.is-active {
+    width: 23px;
+    background: #fff;
+}
+.team-reference-scroll-dots button:hover {
+    transform: scale(1.12);
+}
+.team-reference-scroll-dots button:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 4px;
+}
+.team-reference-grid.is-scrollable,
+.team-reference-grid-count-3,
+.team-reference-grid-count-4 {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.team-reference-grid.is-scrollable::-webkit-scrollbar,
+.team-reference-grid-count-3::-webkit-scrollbar,
+.team-reference-grid-count-4::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+.team-reference-card {
+    --team-primary: #00dca0;
+    --team-secondary: #a5ed37;
+    position: relative;
+    isolation: isolate;
+    min-width: 0;
+    height: clamp(350px, 40vw, 440px);
+    margin-top: 0;
+    overflow: visible;
+    border-radius: 34px;
+    background: linear-gradient(180deg, var(--team-primary) 0%, var(--team-primary) 52%, var(--team-secondary) 100%);
+    box-shadow: 0 18px 30px rgb(25 34 76 / 18%);
+}
+.team-reference-card:nth-child(3n + 2) {
+    --team-primary: #079de9;
+    --team-secondary: #04d0e8;
+    margin-top: 38px;
+}
+.team-reference-card:nth-child(3n + 3) {
+    --team-primary: #ff6a00;
+    --team-secondary: #ffb21b;
+}
+.team-reference-card > img {
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 82%;
+    border-radius: 0 0 34px 34px;
+    object-fit: contain;
+    object-position: center bottom;
+    transition: transform .35s ease;
+}
+.team-reference-card:hover > img {
+    transform: scale(1.025);
+    transform-origin: center bottom;
+}
+.team-reference-bubble {
+    position: absolute;
+    z-index: 3;
+    top: -112px;
+    left: 50%;
+    display: flex;
+    width: min(88%, 230px);
+    min-height: 142px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 22px 18px 24px;
+    border-radius: 50% 50% 48% 48% / 48% 48% 45% 45%;
+    background: linear-gradient(145deg, color-mix(in srgb, var(--team-primary), white 12%) 0%, var(--team-primary) 43%, var(--team-secondary) 100%);
+    box-shadow: 0 12px 24px rgb(20 34 70 / 13%);
+    color: #fff;
+    text-align: center;
+    transform: translateX(-50%);
+}
+.team-reference-bubble::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgb(255 255 255 / 12%), transparent 54%, rgb(0 0 0 / 7%));
+    content: '';
+}
+.team-reference-bubble::after {
+    position: absolute;
+    z-index: 0;
+    right: 24%;
+    bottom: -19px;
+    width: 32px;
+    height: 36px;
+    background: var(--team-secondary);
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+    content: '';
+}
+.team-reference-bubble h3 {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    color: #fff;
+    font-size: clamp(12px, 1.1vw, 15px);
+    font-weight: 850;
+    line-height: 1.25;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+    text-shadow: 0 1px 5px rgb(0 0 0 / 8%);
+}
+.team-reference-bubble p {
+    position: relative;
+    z-index: 1;
+    display: -webkit-box;
+    max-width: 100%;
+    margin: 10px 0 0;
+    overflow: hidden;
+    color: rgb(255 255 255 / 97%);
+    font-size: clamp(9px, .78vw, 11px);
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+.team-reference-socials {
+    position: absolute;
+    z-index: 2;
+    top: 48px;
+    left: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: #fff;
+}
+.team-reference-socials svg {
+    width: 15px;
+    height: 15px;
+    stroke-width: 2.6;
+}
+.team-reference-cta {
+    display: flex;
+    width: min(100%, 340px);
+    min-height: 80px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    margin: 48px auto 0;
+    padding: 12px 22px;
+    border-radius: 26px;
+    background: #403d3e;
+    box-shadow: 0 14px 24px rgb(0 0 0 / 24%);
+    color: #fff;
+    text-align: center;
+}
+.team-reference-cta strong {
+    color: #fff;
+    font-size: clamp(17px, 2vw, 21px);
+    font-weight: 850;
+    line-height: 1.15;
+}
+.team-reference-cta > span {
+    color: rgb(255 255 255 / 76%);
+    font-size: 10px;
+}
+.team-reference-cta a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 4px;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: .12em;
+    text-decoration: none;
+}
+.team-reference-cta a:hover {
+    color: #ffd1e0;
+}
+@media (max-width: 760px) {
+    .team-section {
+        padding: 60px 24px 24px;
+    }
+    .team-reference-heading {
+        margin-bottom: 94px;
+    }
+    .team-reference-grid {
+        --team-card-gap: 18px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 78px var(--team-card-gap);
+        max-width: 560px;
+    }
+    .team-reference-grid-count-1 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .team-reference-grid-count-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-width: 560px;
+    }
+    .team-reference-grid-count-3,
+    .team-reference-grid-count-4,
+    .team-reference-grid.is-scrollable {
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: 42%;
+        gap: 18px;
+        max-width: none;
+        padding: 108px 0 18px;
+        margin-top: -108px;
+        margin-bottom: -18px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    .team-reference-grid-count-3 .team-reference-card,
+    .team-reference-grid-count-4 .team-reference-card,
+    .team-reference-grid.is-scrollable .team-reference-card {
+        scroll-snap-align: start;
+    }
+    .team-reference-grid-count-3 .team-reference-card:nth-child(3n + 2),
+    .team-reference-grid-count-4 .team-reference-card:nth-child(3n + 2),
+    .team-reference-grid.is-scrollable .team-reference-card:nth-child(3n + 2) {
+        margin-top: 0;
+    }
+    .team-reference-scroll-cue {
+        justify-content: space-between;
+    }
+    .team-reference-card {
+        height: clamp(300px, 54vw, 390px);
+        border-radius: 27px;
+    }
+    .team-reference-card:nth-child(3n + 2) {
+        margin-top: 28px;
+    }
+    .team-reference-bubble {
+        top: -86px;
+        min-height: 122px;
+        padding: 18px 12px 20px;
+    }
+    .team-reference-card > img {
+        border-radius: 0 0 27px 27px;
+    }
+    .team-reference-cta {
+        margin-top: 42px;
+    }
+}
+@media (max-width: 480px) {
+    .team-section {
+        padding: 54px 22px 20px;
+    }
+    .team-reference-grid-count-1 {
+        max-width: 300px;
+    }
+    .team-reference-grid-count-2,
+    .team-reference-grid-count-3,
+    .team-reference-grid-count-4,
+    .team-reference-grid.is-scrollable {
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: 72%;
+        gap: 16px;
+        max-width: none;
+        padding: 100px 2px 18px;
+        margin-top: -100px;
+        margin-bottom: -18px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x mandatory;
+    }
+    .team-reference-grid-count-2 .team-reference-card:nth-child(3n + 2),
+    .team-reference-grid-count-3 .team-reference-card:nth-child(3n + 2),
+    .team-reference-grid-count-4 .team-reference-card:nth-child(3n + 2),
+    .team-reference-grid.is-scrollable .team-reference-card:nth-child(3n + 2) {
+        margin-top: 0;
+    }
+    .team-reference-scroll-cue > span {
+        max-width: 190px;
+        font-size: 9px;
+        line-height: 1.4;
+    }
+    .team-reference-scroll-actions button {
+        width: 32px;
+        height: 32px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .team-reference-card > img {
+        transition: none;
+    }
+}

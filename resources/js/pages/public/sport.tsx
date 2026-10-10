@@ -26,7 +26,7 @@ export default function Sport({ sport, otherSports, sections = {} }: any) {
           : [];
 
     return (
-        <Shell active="Sports">
+        <Shell active="Sports" showBookingPrompt={false}>
             <Head title={sport.name} />
             <section className="page-section">
                 <Breadcrumb items={['Sports', sport.name]} />
@@ -45,6 +45,9 @@ export default function Sport({ sport, otherSports, sections = {} }: any) {
                             <span>{sport.surface}</span>
                             <span>Majalengka, Jawa Barat</span>
                         </div>
+                        <Link className="booking-context-link" href={`/facilities?sport=${sport.id}`}>
+                            Cari venue untuk {sport.name} <ChevronRight size={16} aria-hidden="true" />
+                        </Link>
                     </div>
                 </div>
             </section>
@@ -68,7 +71,7 @@ export default function Sport({ sport, otherSports, sections = {} }: any) {
                                 className="button"
                                 href={`/facilities/${facility.slug}`}
                             >
-                                Lihat fasilitas{' '}
+                                Lihat venue &amp; opsi booking{' '}
                                 <ChevronRight size={14} aria-hidden="true" />
                             </Link>
                         </div>
@@ -76,7 +79,9 @@ export default function Sport({ sport, otherSports, sections = {} }: any) {
                 ) : (
                     <EmptyState
                         title="Fasilitas belum terhubung"
-                        copy="Hubungi pengelola GGM untuk mengetahui tempat olahraga ini tersedia."
+                        copy="Jelajahi venue dan cek jadwal yang tersedia untuk olahraga ini."
+                        href={`/facilities?sport=${sport.id}`}
+                        action="Cari venue & cek jadwal"
                     />
                 )}
             </section>

@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import '../../../css/team-section.css';
 import {
     ChevronRight,
     BicepsFlexed,
@@ -16,7 +17,7 @@ import {
     Trophy,
     Users,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { HomeSkeleton, usePageLoading } from '@/components/page-skeletons';
 import {
     EmptyState,
@@ -53,6 +54,41 @@ export default function Home({
     const loading = usePageLoading();
     const [heroSlide, setHeroSlide] = useState(0);
     const [activePost, setActivePost] = useState(0);
+    const teamGridRef = useRef<HTMLDivElement | null>(null);
+    const [teamScrollPage, setTeamScrollPage] = useState(0);
+    const [teamScrollPages, setTeamScrollPages] = useState(1);
+
+    useEffect(() => {
+        const grid = teamGridRef.current;
+        if (!grid || teamMembers.length <= 4) {
+            setTeamScrollPage(0);
+            setTeamScrollPages(1);
+            return;
+        }
+
+        const updateTeamScrollState = () => {
+            const maxScroll = Math.max(0, grid.scrollWidth - grid.clientWidth);
+            const pageStep = Math.max(1, grid.clientWidth * 0.8);
+            const pageCount = maxScroll > 1
+                ? Math.ceil(maxScroll / pageStep) + 1
+                : 1;
+            const progress = maxScroll > 0 ? grid.scrollLeft / maxScroll : 0;
+
+            setTeamScrollPages(pageCount);
+            setTeamScrollPage(
+                Math.min(pageCount - 1, Math.max(0, Math.round(progress * (pageCount - 1)))),
+            );
+        };
+
+        updateTeamScrollState();
+        grid.addEventListener('scroll', updateTeamScrollState, { passive: true });
+        window.addEventListener('resize', updateTeamScrollState);
+
+        return () => {
+            grid.removeEventListener('scroll', updateTeamScrollState);
+            window.removeEventListener('resize', updateTeamScrollState);
+        };
+    }, [teamMembers.length]);
     const fallbackHeroSlides: HeroSlide[] = [
         {
             image: '/assets/ggm/Panggung GGM 1.png',
@@ -115,7 +151,7 @@ export default function Home({
     const hero = section('hero', { eyebrow: 'Pusat Aktivitas Olahraga Majalengka', title: 'Temukan Olahragamu.', title_accent: 'Temukan Tempatmu.', description: 'Yuk, jelajahi fasilitas, acara, dan tempat olahraga seru di Majalengka.', button_label: 'Jelajahi fasilitas' });
 
     return (
-        <Shell active="Home">
+        <Shell active="Home" showBookingPrompt={false}>
             <Head title="Temukan Olahragamu, Temukan Tempatmu" />
             <section className="home-hero">
                 <div className="hero-content">
@@ -165,10 +201,26 @@ export default function Home({
                             />
                         </div>
                         <button type="submit">
-                            {hero.button_label}
+                            Cari venue &amp; cek jadwal
                             <ChevronRight size={18} aria-hidden="true" />
                         </button>
                     </form>
+                    <div className="booking-flow-strip" aria-label="Cara booking venue">
+                        <div className="booking-flow-step">
+                            <span className="booking-flow-number">1</span>
+                            <strong>Pilih venue</strong>
+                        </div>
+                        <span className="booking-flow-arrow" aria-hidden="true">→</span>
+                        <div className="booking-flow-step">
+                            <span className="booking-flow-number">2</span>
+                            <strong>Cek jadwal</strong>
+                        </div>
+                        <span className="booking-flow-arrow" aria-hidden="true">→</span>
+                        <div className="booking-flow-step">
+                            <span className="booking-flow-number">3</span>
+                            <strong>Pesan &amp; bayar</strong>
+                        </div>
+                    </div>
                     <div className="popular-sports">
                         <span>Olahraga populer:</span>
                         {sports.slice(0, 3).map((sport: any) => {
@@ -470,28 +522,80 @@ export default function Home({
                 </div>
             </section>
 
-            {teamMembers.length > 0 && <section className="page-section team-section">
-                <SectionTitle
-                    eyebrow="KENALI KAMI"
-                    title="Tim Kami"
-                    copy="Orang-orang di balik pengalaman olahraga yang lebih baik di GGM Majalengka."
-                />
-                <div className="team-marquee" aria-label="Anggota tim GGM Majalengka">
-                    <div className="team-marquee-track">
-                        {[...teamMembers, ...teamMembers].map((member: any, index: number) => (
-                            <article className={`team-card team-card-tone-${index % 4}`} key={`${member.id}-${index}`} aria-hidden={index >= teamMembers.length}>
-                                <div className="team-card-photo"><img src={asset(member.photo)} alt={index < teamMembers.length ? member.name : ''} loading="lazy" /></div>
-                                <h3>{member.name}</h3>
-                                {member.description && <p>{member.description}</p>}
-                            </article>
-                        ))}
-                    </div>
-                </div>
-            </section>}
+
 
             <section className="page-section booking-section">
                 <CTA illustrated eyebrow={section('booking', {}).eyebrow} title={section('booking', {}).title} copy={section('booking', {}).description} buttonLabel={section('booking', {}).button_label} />
             </section>
+
+            {teamMembers.length > 0 && (
+                <section className="page-section team-section">
+                    <div className="team-reference-heading">
+                        <span>TIM KAMI</span>
+                        <h2>KENALAN DENGAN TIM KAMI, YUK!</h2>
+                        <p>Orang-orang kreatif di balik pengalaman olahraga digital yang lebih mudah dan menyenangkan di GGM Majalengka.</p>
+                    </div>
+                    <div className="team-reference-carousel">
+                        <div
+                            ref={teamGridRef}
+                            className={`team-reference-grid team-reference-grid-count-${Math.min(teamMembers.length, 4)}${teamMembers.length > 4 ? ' is-scrollable' : ''}`}
+                            role={teamMembers.length > 4 ? 'region' : undefined}
+                            aria-label={teamMembers.length > 4 ? 'Daftar anggota tim. Geser untuk melihat anggota lainnya.' : undefined}
+                            tabIndex={teamMembers.length > 4 ? 0 : undefined}
+                        >
+                            {teamMembers.map((member: any, index: number) => (
+                                <article
+                                    className={`team-reference-card team-reference-card-${(index % 3) + 1}`}
+                                    key={member.id}
+                                >
+                                    <div className="team-reference-bubble">
+                                        <h3>{member.name}</h3>
+                                        {member.description && <p>{member.description}</p>}
+                                    </div>
+                                    <div className="team-reference-socials" aria-hidden="true">
+                                        <Activity />
+                                        <Users />
+                                        <MapPin />
+                                    </div>
+                                    <img
+                                        src={asset(member.photo)}
+                                        alt={member.name}
+                                        loading="lazy"
+                                    />
+                                </article>
+                            ))}
+                        </div>
+                        {teamMembers.length > 4 && (
+                            <div className="team-reference-scroll-cue">
+                                <span>GESER UNTUK MELIHAT ANGGOTA LAINNYA</span>
+                                <div className="team-reference-scroll-dots" role="group" aria-label="Navigasi daftar anggota tim">
+                                    {Array.from({ length: teamScrollPages }, (_, index) => (
+                                        <button
+                                            key={index}
+                                            type="button"
+                                            className={teamScrollPage === index ? 'is-active' : ''}
+                                            aria-label={`Tampilkan bagian anggota tim ${index + 1}`}
+                                            aria-pressed={teamScrollPage === index}
+                                            onClick={() => {
+                                                const grid = teamGridRef.current;
+                                                if (!grid) return;
+                                                const maxScroll = Math.max(0, grid.scrollWidth - grid.clientWidth);
+                                                const progress = teamScrollPages > 1 ? index / (teamScrollPages - 1) : 0;
+                                                grid.scrollTo({ left: maxScroll * progress, behavior: 'smooth' });
+                                            }}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <div className="team-reference-cta">
+                        <strong>YUK, MULAI AKTIF!</strong>
+                        <span>Temukan tempat untuk olahraga favoritmu.</span>
+                        <Link href="/facilities">JELAJAHI FASILITAS <ChevronRight size={15} aria-hidden="true" /></Link>
+                    </div>
+                </section>
+            )}
         </Shell>
     );
 }

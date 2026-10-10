@@ -37,7 +37,7 @@ export default function Facility({ facility, sections = {} }: any) {
         facility.galleries?.[0]?.image ||
         facility.hero_image;
     return (
-        <Shell active="Facilities">
+        <Shell active="Facilities" showBookingPrompt={false}>
             <Head title={facility.name} />
             <section className="page-section">
                 <Breadcrumb items={['Facilities', facility.name]} />
@@ -54,7 +54,7 @@ export default function Facility({ facility, sections = {} }: any) {
                         <RichText html={facility.description} />
                         {facility.booking_enabled ? (
                             <Link className="button lime" href={'/booking/' + facility.slug}>
-                                Pesan fasilitas ini{' '}
+                                Cek jadwal &amp; pesan venue{' '}
                                 <ChevronRight size={15} aria-hidden="true" />
                             </Link>
                         ) : (
@@ -63,6 +63,11 @@ export default function Facility({ facility, sections = {} }: any) {
                                 <ChevronRight size={15} aria-hidden="true" />
                             </BookingLink>
                         )}
+                        <p className="booking-helper-copy">
+                            {facility.booking_enabled
+                                ? 'Pilih tanggal dan waktu, cek ketersediaan venue, lalu lanjutkan pembayaran online.'
+                                : 'Ingin reservasi? Hubungi pengelola melalui WhatsApp untuk mengecek jadwal dan opsi pemesanan.'}
+                        </p>
                     </div>
                 </div>
             </section>
@@ -180,11 +185,19 @@ export default function Facility({ facility, sections = {} }: any) {
                             <div>
                                 <div>
                                     <h2>{sections.booking?.title || 'Pesan venue sekarang'}</h2>
-                                    <RichText html={sections.booking?.description || 'Pilih tanggal dan jam yang Anda inginkan, lalu lanjutkan pembayaran.'} />
+                                    <RichText html={sections.booking?.description || (facility.booking_enabled
+                                        ? 'Pilih tanggal dan waktu, cek jadwal yang tersedia, lalu lanjutkan pembayaran online.'
+                                        : 'Hubungi pengelola untuk mengecek jadwal dan opsi reservasi venue ini.')} />
                                 </div>
-                                <Link className="button lime" href={'/booking/' + facility.slug}>
-                                    Mulai booking <ChevronRight size={16} aria-hidden="true" />
-                                </Link>
+                                {facility.booking_enabled ? (
+                                    <Link className="button lime" href={'/booking/' + facility.slug}>
+                                        Cek jadwal &amp; pesan <ChevronRight size={16} aria-hidden="true" />
+                                    </Link>
+                                ) : (
+                                    <BookingLink className="button lime">
+                                        Tanya reservasi via WhatsApp <ChevronRight size={16} aria-hidden="true" />
+                                    </BookingLink>
+                                )}
                             </div>
                         </div>
                 </section>
