@@ -146,7 +146,6 @@ export function PublicSelect({
 
 export function SiteHeader({ active = '' }: { active?: string }) {
     const [open, setOpen] = useState(false);
-    const settings = usePublicSettings();
     const links = [
         ['Home', 'Beranda', '/'],
         ['Sports', 'Olahraga', '/sports'],

@@ -28,7 +28,7 @@ export default function Event({ event, moreEvents, sections = {} }: any) {
     });
     const googleCalendarUrl = `https://calendar.google.com/calendar/render?${calendarParams.toString()}`;
     return (
-        <Shell active="Events">
+        <Shell active="Events" showBookingPrompt={!event.facility?.booking_enabled}>
             <Head title={event.title} />
             <section className="page-section">
                 <Breadcrumb items={['Events', event.title]} />
