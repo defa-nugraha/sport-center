@@ -55,7 +55,7 @@
     z-index: -1;
     top: 50%;
     left: 50%;
-    width: max(100vw, calc(var(--team-background-height) * 2.847));
+    width: calc(var(--team-background-height) * 2.847);
     height: var(--team-background-height);
     transform: translate(-50%, -50%);
     background: url('/assets/backgrounds/Minimalist%20Color%20Wave%20Landscape.svg') center / 100% 100% no-repeat;
