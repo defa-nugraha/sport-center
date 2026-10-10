@@ -51,7 +51,7 @@ class BookingNotificationObserver
 
     private function notifyAdministrators(string $type, string $title, string $message, string $url, Booking $booking): void
     {
-        User::role('administrator')->get()->each(
+        User::whereHas('roles', fn ($query) => $query->where('name', 'administrator')->where('guard_name', 'web'))->get()->each(
             fn (User $admin) => $this->notify($admin, $type, $title, $message, $url, $booking)
         );
     }
