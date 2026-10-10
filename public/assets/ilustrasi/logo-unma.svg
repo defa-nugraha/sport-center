@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 426 427" role="img" aria-labelledby="title">
+  <title id="title">Lambang Universitas Majalengka (UNMA)</title>
+  <path d="M213 4 356 80 423 157 401 271 340 373 213 424 86 373 25 271 3 157 70 80Z" fill="#078fd0" stroke="#252525" stroke-width="5"/>
+  <path d="M213 27 335 91 395 160 375 263 322 354 213 401 104 354 51 263 31 160 91 91Z" fill="none" stroke="#252525" stroke-width="3"/>
+  <text x="213" y="92" fill="#252525" font-family="Arial,sans-serif" font-size="24" font-weight="700" text-anchor="middle">UNIVERSITAS MAJALENGKA</text>
+  <g fill="#ffd400" stroke="#ffd400" stroke-width="3">
+    <path d="M110 140 Q72 178 117 226 Q86 202 96 173 Q103 154 110 140Z"/>
+    <path d="M145 130 Q112 176 146 219 Q123 197 130 165Z"/>
+    <path d="M316 140 Q354 178 309 226 Q340 202 330 173 Q323 154 316 140Z"/>
+    <path d="M281 130 Q314 176 280 219 Q303 197 296 165Z"/>
+    <path d="M213 112 220 139 241 126 227 147 253 154 226 157 213 181 207 157 180 154 201 147 187 126 207 139Z"/>
+  </g>
+  <path d="M202 178 Q180 204 194 229 L213 246 232 229 Q246 204 224 178 L213 192Z" fill="#ed1c24"/>
+  <path d="M193 233 Q213 246 233 233 L226 258 200 258Z" fill="#222"/>
+  <path d="M201 258 225 258 238 302 213 329 188 302Z" fill="#222"/>
+  <g fill="#fff"><path d="M177 286h18l-7 8h-17Z"/><path d="M190 300h20l-8 8h-18Z"/><path d="M218 300h20l6 8h-18Z"/><path d="M231 286h18l6 8h-17Z"/></g>
+  <g fill="#252525"><circle cx="62" cy="281" r="10"/><circle cx="364" cy="281" r="10"/></g>
+  <text x="213" y="372" fill="#252525" font-family="Arial,sans-serif" font-size="38" font-weight="800" text-anchor="middle" letter-spacing="5">UNMA</text>
+</svg>
