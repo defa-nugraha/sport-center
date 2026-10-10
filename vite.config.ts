@@ -29,6 +29,11 @@ export default defineConfig({
         }),
     ]),
     server: {
+        // Keep the Vite dev server reachable for local and containerized development.
+        // Laravel's @vite directive will use public/hot while this server is running.
+        host: '0.0.0.0',
+        port: 5173,
+        strictPort: true,
         watch: {
             ignored: [
                 '**/.agents/**',
