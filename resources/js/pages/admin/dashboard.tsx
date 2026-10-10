@@ -42,7 +42,7 @@ export default function AdminDashboard({ stats, recentEvents, visitors }: any) {
             <AdminSidebar active="dashboard" />
             <main className="admin-main">
                 <AdminTopbar
-                    title="Dashboard Admin"
+                    title="Dasbor Admin"
                     description="Pantau konten dan aktivitas pengunjung GGM Majalengka."
                     action={
                         <Link className="button" href="/admin/content">
