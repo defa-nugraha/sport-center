@@ -34,7 +34,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'permission' => PermissionMiddleware::class,
             'role' => RoleMiddleware::class,
-            'track.public.visit' => TrackPublicVisit::class,\n            'admin.access' => EnsureAdminAccess::class,
+            'track.public.visit' => TrackPublicVisit::class,
+            'admin.access' => EnsureAdminAccess::class,
         ]);
         $middleware->redirectUsersTo('/admin');
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
