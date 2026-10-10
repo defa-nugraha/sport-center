@@ -9,7 +9,7 @@ const errorContent: Record<number, { title: string; description: string; eyebrow
     400: {
         title: 'Permintaan tidak valid',
         description: 'Permintaan yang dikirim tidak dapat kami proses. Periksa kembali informasi yang kamu masukkan, lalu coba lagi.',
-        eyebrow: 'Bad Request',
+        eyebrow: 'Permintaan tidak valid',
     },
     401: {
         title: 'Silakan masuk terlebih dahulu',
@@ -29,17 +29,17 @@ const errorContent: Record<number, { title: string; description: string; eyebrow
     419: {
         title: 'Sesi kamu telah berakhir',
         description: 'Untuk menjaga keamanan akun, sesi ini sudah tidak berlaku. Muat ulang halaman dan coba kembali.',
-        eyebrow: 'Page Expired',
+        eyebrow: 'Sesi berakhir',
     },
     422: {
         title: 'Data belum dapat diproses',
         description: 'Ada informasi yang belum sesuai. Periksa kembali data yang dikirim dan coba lagi.',
-        eyebrow: 'Unprocessable Content',
+        eyebrow: 'Data tidak dapat diproses',
     },
     429: {
         title: 'Terlalu banyak permintaan',
         description: 'Kamu melakukan permintaan terlalu cepat. Tunggu sebentar sebelum mencoba kembali.',
-        eyebrow: 'Too Many Requests',
+        eyebrow: 'Terlalu banyak permintaan',
     },
     500: {
         title: 'Ada kendala di sisi kami',
@@ -49,17 +49,17 @@ const errorContent: Record<number, { title: string; description: string; eyebrow
     502: {
         title: 'Server sedang tidak merespons',
         description: 'Koneksi ke layanan sedang mengalami gangguan. Coba kembali beberapa saat lagi.',
-        eyebrow: 'Bad Gateway',
+        eyebrow: 'Gangguan koneksi server',
     },
     503: {
         title: 'Layanan sedang beristirahat',
         description: 'Sport Center sedang tidak dapat diakses sementara. Silakan kembali beberapa saat lagi.',
-        eyebrow: 'Service Unavailable',
+        eyebrow: 'Layanan tidak tersedia',
     },
     504: {
         title: 'Waktu tunggu habis',
         description: 'Server membutuhkan waktu terlalu lama untuk merespons. Periksa koneksi kamu lalu coba lagi.',
-        eyebrow: 'Gateway Timeout',
+        eyebrow: 'Waktu tunggu server habis',
     },
 };
 
@@ -67,7 +67,7 @@ export default function ErrorPage({ status }: ErrorPageProps) {
     const content = errorContent[status] ?? {
         title: 'Terjadi kesalahan',
         description: 'Maaf, permintaan kamu belum dapat diselesaikan. Coba kembali atau kembali ke halaman utama.',
-        eyebrow: 'Unexpected Error',
+        eyebrow: 'Kesalahan tidak terduga',
     };
     const isServerError = status >= 500;
 
