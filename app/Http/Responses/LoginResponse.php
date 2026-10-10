@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Responses;
+namespace App\\Http\\Responses;
 
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\JsonResponse;
-use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
-use Symfony\Component\HttpFoundation\Response;
+use App\\Models\\User;
+use Illuminate\\Support\\Facades\\Auth;
+use Illuminate\\Http\\JsonResponse;
+use Laravel\\Fortify\\Contracts\\LoginResponse as LoginResponseContract;
+use Symfony\\Component\\HttpFoundation\\Response;
 
 class LoginResponse implements LoginResponseContract
 {
@@ -22,9 +22,9 @@ class LoginResponse implements LoginResponseContract
                 : redirect('/login')->withErrors(['email' => 'Akun Anda sedang ditangguhkan. Hubungi administrator untuk bantuan.']);
         }
 
-        $redirect = $request->user() instanceof User && $request->user()->hasRole('user')
-            ? '/dashboard'
-            : '/admin';
+        $redirect = $request->user() instanceof User && $request->user()->hasRole('administrator')
+            ? '/admin'
+            : '/dashboard';
 
         return $request->wantsJson()
             ? new JsonResponse(['two_factor' => false, 'redirect' => $redirect], 200)
