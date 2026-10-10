@@ -16,12 +16,12 @@ test('login screen can be rendered', function () {
     $response->assertOk();
 });
 
-test('authenticated users visiting login are redirected to admin dashboard', function () {
+test('authenticated regular users visiting login are redirected to user dashboard', function () {
     $user = User::factory()->create();
 
     $this->actingAs($user)
         ->get('/login')
-        ->assertRedirect('/admin');
+        ->assertRedirect('/dashboard');
 });
 
 test('login screen includes team invitation context', function () {
@@ -54,10 +54,10 @@ test('users can authenticate using the login screen', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect('/admin');
+    $response->assertRedirect('/dashboard');
 });
 
-test('passkey login response redirects to the admin dashboard', function () {
+test('passkey login response redirects regular users to the user dashboard', function () {
     $user = User::factory()->create();
 
     $request = Request::create(route('login', absolute: false), 'GET', server: [
@@ -68,7 +68,7 @@ test('passkey login response redirects to the admin dashboard', function () {
 
     $jsonResponse = app(PasskeyLoginResponse::class)->toResponse($request);
 
-    expect($jsonResponse->getData()->redirect)->toBe('/admin');
+    expect($jsonResponse->getData()->redirect)->toBe('/dashboard');
 });
 
 test('users with two factor enabled are redirected to two factor challenge', function () {
