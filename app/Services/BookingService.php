@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\BookingStatus;
 use App\Enums\PaymentStatus;
 use App\Models\Booking;
+use App\Models\BookingRefund;
 use App\Models\Facility;
 use App\Models\Payment;
 use App\Jobs\DispatchBookingNotifications;
@@ -277,34 +278,235 @@ class BookingService
     public function processPaymentNotification(array $n, MidtransService $midtrans): void
     {
         $payment = Payment::where('order_id', $n['order_id'] ?? '')->firstOrFail();
-        if (! $midtrans->verifySignature($n)) throw new RuntimeException('Invalid Midtrans signature.');
-        if ($payment->payment_status === PaymentStatus::PAID && $payment->booking?->status === BookingStatus::CONFIRMED) return;
-        $status = $midtrans->getStatus($payment->order_id) ?: $n;
-        if (($status['order_id'] ?? null) !== $payment->order_id) throw new RuntimeException('Midtrans order ID mismatch.');
-        if (strtoupper((string) ($status['currency'] ?? 'IDR')) !== 'IDR') throw new RuntimeException('Midtrans currency mismatch.');
-        if ((int) round((float) ($status['gross_amount'] ?? -1)) !== $payment->gross_amount) throw new RuntimeException('Midtrans gross amount mismatch.');
+
+        if (! $midtrans->verifySignature($n)) {
+            throw new RuntimeException('Invalid Midtrans signature.');
+        }
+
+        $gatewayStatus = $midtrans->getStatus($payment->order_id);
+        $status = $gatewayStatus ?: $n;
+
+        if (($status['order_id'] ?? null) !== $payment->order_id) {
+            throw new RuntimeException('Midtrans order ID mismatch.');
+        }
+        if (strtoupper((string) ($status['currency'] ?? 'IDR')) !== 'IDR') {
+            throw new RuntimeException('Midtrans currency mismatch.');
+        }
+        if ((int) round((float) ($status['gross_amount'] ?? -1)) !== $payment->gross_amount) {
+            throw new RuntimeException('Midtrans gross amount mismatch.');
+        }
+
+        $notificationTransactionStatus = strtolower((string) ($n['transaction_status'] ?? ''));
+        if (in_array($notificationTransactionStatus, ['refund', 'partial_refund'], true)) {
+            // A signed refund notification may include bank-confirmation details
+            // not included in the status endpoint response, so merge its fields.
+            $status = array_merge($status, $n);
+        }
+
+        $transactionStatus = strtolower((string) ($status['transaction_status'] ?? ''));
+        if (in_array($transactionStatus, ['refund', 'partial_refund'], true)) {
+            $this->syncRefundStatus($payment, $status);
+
+            return;
+        }
+
+        // A delayed settlement notification must never undo an active/completed refund.
+        if (in_array($payment->payment_status, [
+            PaymentStatus::REFUND_PENDING,
+            PaymentStatus::PARTIALLY_REFUNDED,
+            PaymentStatus::REFUNDED,
+        ], true)) {
+            return;
+        }
+
+        if ($payment->payment_status === PaymentStatus::PAID
+            && $payment->booking?->status === BookingStatus::CONFIRMED) {
+            return;
+        }
 
         DB::transaction(function () use ($payment, $status, $midtrans) {
             $payment = Payment::lockForUpdate()->findOrFail($payment->id);
             $booking = Booking::lockForUpdate()->findOrFail($payment->booking_id);
-            $payment->fill(['transaction_id'=>$status['transaction_id']??$payment->transaction_id,'payment_type'=>$status['payment_type']??$payment->payment_type,'transaction_status'=>$status['transaction_status']??null,'fraud_status'=>$status['fraud_status']??null,'metadata'=>$status]);
+            $payment->fill([
+                'transaction_id' => $status['transaction_id'] ?? $payment->transaction_id,
+                'payment_type' => $status['payment_type'] ?? $payment->payment_type,
+                'transaction_status' => $status['transaction_status'] ?? null,
+                'fraud_status' => $status['fraud_status'] ?? null,
+                'metadata' => $status,
+            ]);
 
             if ($midtrans->isSuccessful($status)) {
-                if ($booking->status === BookingStatus::CONFIRMED) { $payment->payment_status=PaymentStatus::PAID; $payment->paid_at??=now(); $payment->save(); return; }
-                if ($booking->expires_at?->isPast()) { $booking->update(['status'=>BookingStatus::EXPIRED,'failure_reason'=>'Pembayaran diterima setelah hold booking berakhir.']); $payment->payment_status=PaymentStatus::EXPIRED; $payment->save(); return; }
-                $booking->update(['status'=>BookingStatus::CONFIRMED,'paid_at'=>now(),'expires_at'=>null]);
-                $payment->payment_status=PaymentStatus::PAID; $payment->paid_at=now(); $payment->save();
-            } elseif (strtolower((string) ($status['transaction_status']??'')) === 'expire') {
-                $booking->update(['status'=>BookingStatus::EXPIRED]); $payment->payment_status=PaymentStatus::EXPIRED; $payment->expired_at=now(); $payment->save();
-            } elseif (in_array(strtolower((string) ($status['transaction_status']??'')), ['deny','cancel','failure'], true)) {
-                $booking->update(['status'=>BookingStatus::FAILED,'failure_reason'=>$status['status_message']??'Pembayaran gagal.']); $payment->payment_status=PaymentStatus::FAILED; $payment->save();
+                if ($booking->status === BookingStatus::CONFIRMED) {
+                    $payment->payment_status = PaymentStatus::PAID;
+                    $payment->paid_at ??= now();
+                    $payment->save();
+
+                    return;
+                }
+
+                if ($booking->expires_at?->isPast()) {
+                    $booking->update([
+                        'status' => BookingStatus::EXPIRED,
+                        'failure_reason' => 'Pembayaran diterima setelah hold booking berakhir.',
+                    ]);
+                    $payment->payment_status = PaymentStatus::EXPIRED;
+                    $payment->save();
+
+                    return;
+                }
+
+                $booking->update([
+                    'status' => BookingStatus::CONFIRMED,
+                    'paid_at' => now(),
+                    'expires_at' => null,
+                ]);
+                $payment->payment_status = PaymentStatus::PAID;
+                $payment->paid_at = now();
+                $payment->save();
+            } elseif (strtolower((string) ($status['transaction_status'] ?? '')) === 'expire') {
+                $booking->update(['status' => BookingStatus::EXPIRED]);
+                $payment->payment_status = PaymentStatus::EXPIRED;
+                $payment->expired_at = now();
+                $payment->save();
+            } elseif (in_array(strtolower((string) ($status['transaction_status'] ?? '')), ['deny', 'cancel', 'failure'], true)) {
+                $booking->update([
+                    'status' => BookingStatus::FAILED,
+                    'failure_reason' => $status['status_message'] ?? 'Pembayaran gagal.',
+                ]);
+                $payment->payment_status = PaymentStatus::FAILED;
+                $payment->save();
             } else {
-                $payment->payment_status=PaymentStatus::PENDING; $payment->save();
+                $payment->payment_status = PaymentStatus::PENDING;
+                $payment->save();
             }
         });
 
-        $booking=Booking::with(['facility','payment','invoice'])->find($payment->booking_id);
-        if($booking?->status===BookingStatus::CONFIRMED&&!$booking->invoice)app(InvoiceService::class)->create($booking);
-        if($booking?->invoice&&$booking->status===BookingStatus::CONFIRMED)DispatchBookingNotifications::dispatch($booking->id);
+        $booking = Booking::with(['facility', 'payment', 'invoice'])->find($payment->booking_id);
+
+        if ($booking?->status === BookingStatus::CONFIRMED && ! $booking->invoice) {
+            app(InvoiceService::class)->create($booking);
+        }
+        if ($booking?->invoice && $booking->status === BookingStatus::CONFIRMED) {
+            DispatchBookingNotifications::dispatch($booking->id);
+        }
+    }
+
+    /**
+     * Only release the booked slot when the gateway sends bank confirmation.
+     */
+    public function syncRefundStatus(Payment $payment, array $status): void
+    {
+        $transactionStatus = strtolower((string) ($status['transaction_status'] ?? ''));
+        if (! in_array($transactionStatus, ['refund', 'partial_refund'], true)) {
+            return;
+        }
+
+        $entries = collect(is_array($status['refunds'] ?? null) ? $status['refunds'] : []);
+        $confirmedEntries = $entries
+            ->filter(fn (array $entry) => ! empty($entry['bank_confirmed_at']))
+            ->values();
+
+        if ($confirmedEntries->isEmpty() && ! empty($status['bank_confirmed_at'])) {
+            $confirmedEntries = collect([$status]);
+        }
+
+        if ($confirmedEntries->isEmpty()) {
+            DB::transaction(function () use ($payment, $status) {
+                $lockedPayment = Payment::lockForUpdate()->findOrFail($payment->id);
+                $lockedPayment->payment_status = PaymentStatus::REFUND_PENDING;
+                $lockedPayment->transaction_status = $status['transaction_status'] ?? $lockedPayment->transaction_status;
+                $lockedPayment->metadata = array_merge(
+                    (array) $lockedPayment->metadata,
+                    ['latest_refund_status' => $status],
+                );
+                $lockedPayment->save();
+
+                $pendingRefund = BookingRefund::query()
+                    ->where('payment_id', $lockedPayment->id)
+                    ->where('status', 'requested')
+                    ->latest('id')
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($pendingRefund) {
+                    $pendingRefund->gateway_response = $status;
+                    $pendingRefund->save();
+                }
+            });
+
+            return;
+        }
+
+        DB::transaction(function () use ($payment, $status, $confirmedEntries, $transactionStatus) {
+            $lockedPayment = Payment::lockForUpdate()->findOrFail($payment->id);
+            $booking = Booking::lockForUpdate()->findOrFail($lockedPayment->booking_id);
+
+            foreach ($confirmedEntries as $entry) {
+                $refundKey = (string) ($entry['refund_key'] ?? $status['refund_key'] ?? '');
+                $refundQuery = BookingRefund::query()->where('payment_id', $lockedPayment->id);
+
+                if ($refundKey !== '') {
+                    $refundQuery->where('refund_key', $refundKey);
+                }
+
+                $refund = $refundQuery->lockForUpdate()->first();
+                if (! $refund) {
+                    $refund = BookingRefund::query()
+                        ->where('payment_id', $lockedPayment->id)
+                        ->where('status', 'requested')
+                        ->latest('id')
+                        ->lockForUpdate()
+                        ->first();
+                }
+
+                $confirmedAmount = (int) round((float) ($entry['refund_amount'] ?? $status['refund_amount'] ?? 0));
+
+                if (! $refund) {
+                    $generatedKey = $refundKey !== ''
+                        ? $refundKey
+                        : 'MIDTRANS-'.strtoupper(\Illuminate\Support\Str::random(16));
+                    $refund = BookingRefund::create([
+                        'booking_id' => $booking->id,
+                        'payment_id' => $lockedPayment->id,
+                        'admin_user_id' => null,
+                        'refund_key' => $generatedKey,
+                        'amount' => $confirmedAmount > 0 ? $confirmedAmount : $lockedPayment->gross_amount,
+                        'reason' => 'Refund dikonfirmasi langsung oleh Midtrans.',
+                        'status' => 'requested',
+                        'requested_at' => now(),
+                    ]);
+                }
+
+                $refund->update([
+                    'amount' => $confirmedAmount > 0 ? $confirmedAmount : $refund->amount,
+                    'status' => 'confirmed',
+                    'gateway_response' => $status,
+                    'error_message' => null,
+                    'confirmed_at' => ! empty($entry['bank_confirmed_at'])
+                        ? Carbon::parse($entry['bank_confirmed_at'])
+                        : Carbon::parse($status['bank_confirmed_at']),
+                ]);
+            }
+
+            $confirmedTotal = (int) BookingRefund::query()
+                ->where('payment_id', $lockedPayment->id)
+                ->where('status', 'confirmed')
+                ->sum('amount');
+
+            $lockedPayment->transaction_status = $status['transaction_status'] ?? $lockedPayment->transaction_status;
+            $lockedPayment->metadata = array_merge(
+                (array) $lockedPayment->metadata,
+                ['latest_refund_status' => $status],
+            );
+
+            if ($confirmedTotal >= $lockedPayment->gross_amount) {
+                $lockedPayment->payment_status = PaymentStatus::REFUNDED;
+                $booking->update(['status' => BookingStatus::REFUNDED, 'expires_at' => null]);
+            } else {
+                $lockedPayment->payment_status = PaymentStatus::PARTIALLY_REFUNDED;
+            }
+
+            $lockedPayment->save();
+        });
     }
 }

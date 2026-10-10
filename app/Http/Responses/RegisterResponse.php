@@ -12,6 +12,10 @@ class RegisterResponse implements RegisterResponseContract
     {
         $redirect = $request->session()->pull('url.intended', '/dashboard');
 
+        if ($request->user() && ! $request->user()->hasVerifiedEmail()) {
+            $redirect = route('verification.notice');
+        }
+
         return $request->wantsJson()
             ? new JsonResponse(['redirect' => $redirect], 201)
             : redirect($redirect);

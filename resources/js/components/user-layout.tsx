@@ -3,6 +3,7 @@ import { CalendarCheck, CalendarDays, LayoutDashboard, LogOut, Menu, UserRound, 
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { asset } from '@/components/public-site';
+import { NotificationBell } from '@/components/notification-bell';
 
 const menuItems = [
     { key: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -83,7 +84,7 @@ export function UserShell({
                 <div className="user-workspace">
                     <header className="user-topbar">
                         <div><span>Area pelanggan</span><strong>{title || 'GGM Majalengka'}</strong></div>
-                        <div className="user-topbar-account"><span>{user?.name || 'Pengguna'}</span><UserRound aria-hidden="true" /></div>
+                        <div className="user-topbar-account"><NotificationBell /><span>{user?.name || 'Pengguna'}</span><UserRound aria-hidden="true" /></div>
                     </header>
                     <main className="user-main">
                         <div className="user-container">

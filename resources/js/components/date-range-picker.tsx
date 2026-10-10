@@ -37,6 +37,7 @@ export function DateRangePicker({
     end,
     mode = 'range',
     minDate,
+    initialDate,
     onChange,
     disabled = false,
 }: {
@@ -44,13 +45,15 @@ export function DateRangePicker({
     end: string;
     mode?: 'range' | 'single';
     minDate?: string;
+    initialDate?: string;
     onChange: (start: string, end: string) => void;
     disabled?: boolean;
 }) {
     const today = startOfDay(new Date());
     const minimum = minDate ? startOfDay(localDate(minDate)) : today;
+    const initialViewDate = initialDate ? startOfDay(localDate(initialDate)) : minimum;
     const [open, setOpen] = useState(false);
-    const [viewDate, setViewDate] = useState(() => (start ? localDate(start) : minimum));
+    const [viewDate, setViewDate] = useState(() => (start ? localDate(start) : initialViewDate));
     const ref = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -113,7 +116,7 @@ export function DateRangePicker({
 
     const reset = () => {
         onChange('', '');
-        setViewDate(minimum);
+        setViewDate(initialViewDate);
     };
 
     return (

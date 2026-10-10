@@ -13,7 +13,14 @@ export default function AuthLayout({
 }) {
     const { url } = usePage();
 
-    if (url.startsWith('/login') || url.startsWith('/register')) {
+    const usesBrandedLayout =
+        url.startsWith('/login') ||
+        url.startsWith('/register') ||
+        url.startsWith('/forgot-password') ||
+        url.startsWith('/reset-password') ||
+        url.startsWith('/email/verify');
+
+    if (usesBrandedLayout) {
         return (
             <AuthLoginLayout title={title} description={description}>
                 {children}

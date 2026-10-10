@@ -1,6 +1,8 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
-import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, CalendarDays, CreditCard, FileText, UserRound } from 'lucide-react';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { ArrowLeft, CalendarDays, CreditCard, FileText, UserRound, RotateCcw } from 'lucide-react';
+import type { FormEvent } from 'react';
+import '../../../../css/admin-booking-refunds.css';
 
 const statusLabels: Record<string, string> = {
     PENDING_PAYMENT: 'Menunggu pembayaran',
@@ -9,6 +11,7 @@ const statusLabels: Record<string, string> = {
     EXPIRED: 'Kedaluwarsa',
     CANCELLED: 'Dibatalkan',
     COMPLETED: 'Selesai',
+    REFUNDED: 'Refund selesai',
 };
 
 const statusClasses: Record<string, string> = {
@@ -18,15 +21,38 @@ const statusClasses: Record<string, string> = {
     EXPIRED: 'expired',
     CANCELLED: 'cancelled',
     COMPLETED: 'completed',
+    REFUNDED: 'refunded',
 };
 
 function formatCurrency(value: number | string) {
     return `Rp ${Number(value || 0).toLocaleString('id-ID')}`;
 }
 
-export default function Show({ booking }: { booking: any }) {
+export default function Show({ booking, refunds = [], canRefund = false }: { booking: any; refunds?: any[]; canRefund?: boolean }) {
     const status = booking.status;
     const paymentStatus = booking.payment?.payment_status;
+    const refundForm = useForm({ reason: '' });
+    const refundErrors = refundForm.errors as Record<string, string | undefined>;
+
+    const submitRefund = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (!window.confirm('Ajukan refund penuh ke Midtrans? Permintaan yang diterima gateway tidak dapat dibatalkan dari aplikasi.')) return;
+        refundForm.post(`/admin/bookings/${booking.encrypted_id}/refund`, {
+            preserveScroll: true,
+            onSuccess: () => refundForm.reset(),
+        });
+    };
+
+    const paymentStatusLabels: Record<string, string> = {
+        PENDING: 'Menunggu pembayaran',
+        PAID: 'Lunas',
+        FAILED: 'Gagal',
+        EXPIRED: 'Kedaluwarsa',
+        CANCELLED: 'Dibatalkan',
+        REFUND_PENDING: 'Menunggu konfirmasi refund',
+        PARTIALLY_REFUNDED: 'Refund sebagian',
+        REFUNDED: 'Refund selesai',
+    };
 
     return (
         <div className="admin-shell">
@@ -120,7 +146,7 @@ export default function Show({ booking }: { booking: any }) {
                             </div>
                             <div>
                                 <span>Status pembayaran</span>
-                                <strong>{paymentStatus || 'Belum tersedia'}</strong>
+                                <strong>{paymentStatusLabels[paymentStatus] || paymentStatus || 'Belum tersedia'}</strong>
                             </div>
                             <div>
                                 <span>Order ID Midtrans</span>
@@ -166,6 +192,69 @@ export default function Show({ booking }: { booking: any }) {
                             <strong>{booking.invoice?.invoice_number || 'Belum dibuat'}</strong>
                         </div>
                     </section>
+
+                    {refunds.length > 0 && (
+                        <section className="admin-panel booking-refund-history">
+                            <div className="panel-head">
+                                <div>
+                                    <h2>Riwayat refund</h2>
+                                    <p>Permintaan refund dan konfirmasi dari Midtrans.</p>
+                                </div>
+                                <RotateCcw aria-hidden="true" />
+                            </div>
+                            <div className="booking-refund-list">
+                                {refunds.map((refund: any) => (
+                                    <article className="booking-refund-record" key={refund.id}>
+                                        <div>
+                                            <strong>{formatCurrency(refund.amount)}</strong>
+                                            <span>{refund.reason}</span>
+                                            <small>Referensi: {refund.refund_key}</small>
+                                            {refund.error_message && <small className="booking-refund-error">{refund.error_message}</small>}
+                                        </div>
+                                        <div className={`booking-refund-state is-${refund.status}`}>
+                                            {refund.status === 'confirmed' ? 'Dikonfirmasi' : refund.status === 'failed' ? 'Gagal' : 'Menunggu konfirmasi'}
+                                        </div>
+                                    </article>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {canRefund && (
+                        <section className="admin-panel booking-refund-action">
+                            <div className="panel-head">
+                                <div>
+                                    <h2>Refund booking</h2>
+                                    <p>Refund penuh hanya tersedia untuk pembayaran Midtrans yang settlement/capture.</p>
+                                </div>
+                                <RotateCcw aria-hidden="true" />
+                            </div>
+                            <div className="booking-refund-warning">
+                                <strong>Perhatian</strong>
+                                <p>Jadwal tetap diblokir sampai Midtrans mengonfirmasi refund penuh. Jika respons gateway tidak pasti, permintaan tidak akan otomatis dikirim ulang.</p>
+                            </div>
+                            <form onSubmit={submitRefund}>
+                                <label>
+                                    Alasan refund
+                                    <textarea
+                                        name="reason"
+                                        value={refundForm.data.reason}
+                                        onChange={(event) => refundForm.setData('reason', event.target.value)}
+                                        maxLength={255}
+                                        rows={3}
+                                        required
+                                        placeholder="Tuliskan alasan untuk jejak audit."
+                                    />
+                                </label>
+                                {refundForm.errors.reason && <small className="field-error">{refundForm.errors.reason}</small>}
+                                {refundErrors.refund && <p className="booking-refund-error">{refundErrors.refund}</p>}
+                                <button className="button danger" type="submit" disabled={refundForm.processing}>
+                                    <RotateCcw size={16} aria-hidden="true" />
+                                    {refundForm.processing ? 'Mengirim permintaan…' : `Ajukan refund penuh · ${formatCurrency(booking.payment?.gross_amount || booking.total)}`}
+                                </button>
+                            </form>
+                        </section>
+                    )}
                 </div>
             </main>
         </div>

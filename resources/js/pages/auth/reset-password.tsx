@@ -1,4 +1,5 @@
 import { Form, Head } from '@inertiajs/react';
+import { KeyRound, ShieldCheck } from 'lucide-react';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import { Button } from '@/components/ui/button';
@@ -16,81 +17,90 @@ type Props = {
 export default function ResetPassword({ token, email, passwordRules }: Props) {
     return (
         <>
-            <Head title="Reset password" />
+            <Head title="Buat password baru" />
 
-            <Form
-                {...update.form()}
-                transform={(data) => ({ ...data, token, email })}
-                resetOnSuccess={['password', 'password_confirmation']}
-            >
-                {({ processing, errors }) => (
-                    <div className="grid gap-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                name="email"
-                                autoComplete="email"
-                                value={email}
-                                className="mt-1 block w-full"
-                                readOnly
-                            />
-                            <InputError
-                                message={errors.email}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
-                            <PasswordInput
-                                id="password"
-                                name="password"
-                                autoComplete="new-password"
-                                className="mt-1 block w-full"
-                                autoFocus
-                                placeholder="Password"
-                                passwordrules={passwordRules}
-                            />
-                            <InputError message={errors.password} />
-                        </div>
-
-                        <div className="grid gap-2">
-                            <Label htmlFor="password_confirmation">
-                                Confirm password
-                            </Label>
-                            <PasswordInput
-                                id="password_confirmation"
-                                name="password_confirmation"
-                                autoComplete="new-password"
-                                className="mt-1 block w-full"
-                                placeholder="Confirm password"
-                                passwordrules={passwordRules}
-                            />
-                            <InputError
-                                message={errors.password_confirmation}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <Button
-                            type="submit"
-                            className="mt-4 w-full"
-                            disabled={processing}
-                            data-test="reset-password-button"
-                        >
-                            {processing && <Spinner />}
-                            Reset password
-                        </Button>
+            <div className="space-y-5">
+                <div className="flex items-start gap-3 rounded-lg border border-[#dce5ef] bg-[#f5f8fc] p-4">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-[#eaf4ff] text-[#2f74bd]">
+                        <KeyRound className="size-5" aria-hidden="true" />
                     </div>
-                )}
-            </Form>
+                    <div>
+                        <h2 className="mb-1 text-base font-bold text-[#14243f]">Buat password baru</h2>
+                        <p className="mb-0 text-sm leading-5 text-[#66758a]">
+                            Gunakan password yang kuat dan jangan bagikan kepada siapa pun.
+                        </p>
+                    </div>
+                </div>
+
+                <Form
+                    {...update.form()}
+                    transform={(data) => ({ ...data, token, email })}
+                    resetOnSuccess={['password', 'password_confirmation']}
+                >
+                    {({ processing, errors }) => (
+                        <div className="grid gap-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="email">Alamat email</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    name="email"
+                                    autoComplete="email"
+                                    value={email}
+                                    className="w-full"
+                                    readOnly
+                                />
+                                <InputError message={errors.email} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="password">Password baru</Label>
+                                <PasswordInput
+                                    id="password"
+                                    name="password"
+                                    autoComplete="new-password"
+                                    className="w-full"
+                                    required
+                                    autoFocus
+                                    placeholder="Masukkan password baru"
+                                    passwordrules={passwordRules}
+                                    aria-invalid={Boolean(errors.password)}
+                                />
+                                <InputError message={errors.password} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="password_confirmation">Konfirmasi password baru</Label>
+                                <PasswordInput
+                                    id="password_confirmation"
+                                    name="password_confirmation"
+                                    autoComplete="new-password"
+                                    className="w-full"
+                                    required
+                                    placeholder="Ulangi password baru"
+                                    passwordrules={passwordRules}
+                                    aria-invalid={Boolean(errors.password_confirmation)}
+                                />
+                                <InputError message={errors.password_confirmation} />
+                            </div>
+
+                            <div className="flex items-start gap-2 text-xs leading-5 text-[#66758a]">
+                                <ShieldCheck className="mt-0.5 size-4 shrink-0 text-[#2f74bd]" aria-hidden="true" />
+                                Pastikan password konfirmasi sama dengan password baru.
+                            </div>
+
+                            <Button type="submit" className="mt-1 w-full" disabled={processing} data-test="reset-password-button">
+                                {processing ? <Spinner /> : 'Simpan password baru'}
+                            </Button>
+                        </div>
+                    )}
+                </Form>
+            </div>
         </>
     );
 }
 
 ResetPassword.layout = {
-    title: 'Reset password',
-    description: 'Please enter your new password below',
+    title: 'Atur ulang password',
+    description: 'Kembalikan akses ke akun Sport Center kamu.',
 };

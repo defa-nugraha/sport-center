@@ -8,9 +8,11 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\AdminBookingController;
+use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminTeamMemberController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Teams\TeamInvitationController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,13 +30,15 @@ Route::middleware('track.public.visit')->group(function () {
 });
 Route::post('/inquiries', [PublicController::class, 'inquiry'])->name('inquiries.store');
 Route::post('/testimonials', [PublicController::class, 'testimonial'])->name('testimonials.store');
-Route::get('/booking', [BookingController::class, 'index'])->middleware('auth')->name('booking.index');
+Route::get('/booking', [BookingController::class, 'index'])->middleware(['auth', 'verified'])->name('booking.index');
 Route::get('/booking/{facility:slug}', [BookingController::class, 'create'])->name('booking.create');
-Route::get('/booking/{facility:slug}/availability', [BookingController::class, 'availability'])->middleware('auth')->name('booking.availability');
-Route::post('/booking/{facility:slug}', [BookingController::class, 'store'])->middleware('auth')->name('booking.store');
-Route::get('/booking/{booking}/status', [BookingController::class, 'show'])->middleware('auth')->name('booking.show');
+Route::get('/booking/{facility:slug}/availability', [BookingController::class, 'availability'])->middleware(['auth', 'verified'])->name('booking.availability');
+Route::post('/booking/{facility:slug}', [BookingController::class, 'store'])->middleware(['auth', 'verified'])->name('booking.store');
+Route::get('/booking/{booking}/status', [BookingController::class, 'show'])->middleware(['auth', 'verified'])->name('booking.show');
 
 Route::middleware('auth')->group(function () {
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
     Route::get('/bookings', [UserController::class, 'history'])->name('user.bookings');
     Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
@@ -43,7 +47,7 @@ Route::middleware('auth')->group(function () {
 Route::post('/payments/midtrans/notification', [PaymentController::class, 'notification'])->name('payments.midtrans.notification');
 Route::get('/invoices/{invoice:uuid}/pdf', [InvoiceController::class, 'show'])->middleware('signed')->name('invoices.public');
 
-Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/content', [AdminController::class, 'content'])->name('content');
     Route::get('/pages', [AdminController::class, 'pagesIndex'])->middleware('permission:kelola halaman')->name('pages');
@@ -55,6 +59,15 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         ->middleware('permission:kelola halaman')
         ->whereIn('section', ['sections', 'banners', 'highlights', 'partners', 'settings'])
         ->name('pages.section');
+    Route::prefix('users')->name('users.')->middleware('role:administrator')->group(function () {
+        Route::get('/', [AdminUserController::class, 'index'])->name('index');
+        Route::get('/create', [AdminUserController::class, 'create'])->name('create');
+        Route::post('/', [AdminUserController::class, 'store'])->name('store');
+        Route::get('/{user}/edit', [AdminUserController::class, 'edit'])->name('edit');
+        Route::put('/{user}', [AdminUserController::class, 'update'])->name('update');
+        Route::patch('/{user}/suspension', [AdminUserController::class, 'setSuspension'])->name('suspension');
+        Route::delete('/{user}', [AdminUserController::class, 'destroy'])->name('destroy');
+    });
     Route::get('/account', [AdminController::class, 'account'])->name('account');
     Route::patch('/account', [AdminController::class, 'updateAccount'])->name('account.update');
     Route::put('/account/password', [AdminController::class, 'updateAccountPassword'])->middleware('throttle:6,1')->name('account.password.update');
@@ -62,6 +75,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         Route::get('/bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
         Route::get('/bookings/settings', [AdminBookingController::class, 'settings'])->name('bookings.settings');
         Route::get('/bookings/{booking}', [AdminBookingController::class, 'show'])->name('bookings.show');
+        Route::post('/bookings/{booking}/refund', [AdminBookingController::class, 'refund'])->middleware('role:administrator')->name('bookings.refund');
         Route::put('/bookings/facilities/{facility}', [AdminBookingController::class, 'updateFacility'])->name('bookings.facilities.update');
     });
     Route::middleware('permission:kelola fasilitas')->group(function () {

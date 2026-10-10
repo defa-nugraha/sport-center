@@ -33,4 +33,5 @@ class Booking extends Model
     public function facility() { return $this->belongsTo(Facility::class); }
     public function payment() { return $this->hasOne(Payment::class); }
     public function invoice() { return $this->hasOne(Invoice::class); }
+    public function refunds() { return $this->hasMany(BookingRefund::class); }
 }

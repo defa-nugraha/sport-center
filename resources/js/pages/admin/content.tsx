@@ -61,6 +61,18 @@ function Submit({
         </div>
     );
 }
+function ListPagination({ page, total, perPage, onChange, label }: any) {
+    const pages = Math.ceil(total / perPage);
+    if (pages <= 1) return null;
+    return <nav aria-label={`Pagination ${label}`} className="pagination" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginTop: 16 }}>
+        <small>Halaman {page} dari {pages} · {total} data</small>
+        <div style={{ display: 'flex', gap: 6 }}>
+            <button type="button" className="button small" disabled={page <= 1} onClick={() => onChange(page - 1)}>Sebelumnya</button>
+            <button type="button" className="button small" disabled={page >= pages} onClick={() => onChange(page + 1)}>Berikutnya</button>
+        </div>
+    </nav>;
+}
+
 function ContentRow({ image, title, meta, onEdit, onDelete }: any) {
     return (
         <div className="admin-row admin-row-media">
@@ -127,6 +139,10 @@ export default function Content({
         type: 'success' | 'error';
         message: string;
     } | null>(null);
+    const [listPages, setListPages] = useState<Record<string, number>>({});
+    const pageSize = 8;
+    const pageItems = (key: string, items: any[]) => items.slice(((listPages[key] || 1) - 1) * pageSize, (listPages[key] || 1) * pageSize);
+    const listPager = (key: string, items: any[]) => <ListPagination label={key} page={listPages[key] || 1} total={items.length} perPage={pageSize} onChange={(next: number) => setListPages(current => ({ ...current, [key]: next }))} />;
     const [taxonomy, setTaxonomy] = useState<'category' | 'tag' | null>(null);
     const [editingTaxonomy, setEditingTaxonomy] = useState<any>(null);
     const sport = useForm(initialSport);
@@ -327,7 +343,7 @@ export default function Content({
                                 <Plus /> Tambah fasilitas
                             </Link>
                         </div>
-                        {facilities.map((x: any) => (
+                        {pageItems('facilities', facilities).map((x: any) => (
                             <ContentRow
                                 key={x.id}
                                 image={x.thumbnail || x.hero_image}
@@ -342,6 +358,7 @@ export default function Content({
                                 }
                             />
                         ))}
+                        {listPager('facilities', facilities)}
                     </section>
                 )}
                 {tab === 'sports' && (
@@ -358,7 +375,7 @@ export default function Content({
                                 <Plus /> Tambah olahraga
                             </button>
                         </div>
-                        {sports.map((x: any) => (
+                        {pageItems('sports', sports).map((x: any) => (
                             <ContentRow
                                 key={x.id}
                                 image={x.image}
@@ -375,6 +392,7 @@ export default function Content({
                                 }
                             />
                         ))}
+                        {listPager('sports', sports)}
                     </section>
                 )}
                 {tab === 'events' && (
@@ -391,7 +409,7 @@ export default function Content({
                                 <Plus /> Tambah acara
                             </button>
                         </div>
-                        {events.map((x: any) => (
+                        {pageItems('events', events).map((x: any) => (
                             <ContentRow
                                 key={x.id}
                                 image={x.image}
@@ -406,6 +424,7 @@ export default function Content({
                                 }
                             />
                         ))}
+                        {listPager('events', events)}
                     </section>
                 )}
                 {tab === 'blog' && (
@@ -424,7 +443,7 @@ export default function Content({
                                 </Link>
                             </div>
                             {blogPosts.length ? (
-                                blogPosts.map((x: any) => (
+                                pageItems('blogPosts', blogPosts).map((x: any) => (
                                     <ContentRow
                                         key={x.id}
                                         image={x.featured_image}
@@ -452,6 +471,7 @@ export default function Content({
                                     </span>
                                 </div>
                             )}
+                            {listPager('blogPosts', blogPosts)}
                         </section>
                         {permissions.includes('kelola taksonomi artikel') && (
                             <>
@@ -467,7 +487,7 @@ export default function Content({
                                             <Plus />
                                         </button>
                                     </div>
-                                    {blogCategories.map((x: any) => (
+                                    {pageItems('blogCategories', blogCategories).map((x: any) => (
                                         <ContentRow
                                             key={x.id}
                                             title={x.name}
@@ -483,6 +503,7 @@ export default function Content({
                                             }
                                         />
                                     ))}
+                                    {listPager('blogCategories', blogCategories)}
                                 </section>
                                 <section className="admin-panel">
                                     <div className="panel-head">
@@ -494,7 +515,7 @@ export default function Content({
                                             <Plus />
                                         </button>
                                     </div>
-                                    {blogTags.map((x: any) => (
+                                    {pageItems('blogTags', blogTags).map((x: any) => (
                                         <ContentRow
                                             key={x.id}
                                             title={x.name}
@@ -510,6 +531,7 @@ export default function Content({
                                             }
                                         />
                                     ))}
+                                    {listPager('blogTags', blogTags)}
                                 </section>
                             </>
                         )}

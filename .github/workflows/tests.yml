@@ -35,6 +35,10 @@ jobs:
       - name: Setup Application
         run: composer setup
 
+      - name: Diagnose Wayfinder if setup fails
+        if: failure()
+        run: php artisan wayfinder:generate --with-form -vvv
+
       - name: Run CI Checks
         run: |
           composer lint:check

@@ -14,6 +14,10 @@ export default function TeamMembers({ members }: any) {
     const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<any>(null);
     const [deleting, setDeleting] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 8;
+    const pageCount = Math.ceil(members.length / pageSize);
+    const visibleMembers = members.slice((currentPage - 1) * pageSize, currentPage * pageSize);
     useEffect(() => {
         if (flash?.success) setStatus({ type: 'success', message: flash.success });
         if (flash?.error) setStatus({ type: 'error', message: flash.error });
@@ -73,7 +77,7 @@ export default function TeamMembers({ members }: any) {
                         <button className="button" type="button" onClick={openCreate}><Plus size={18}/> Tambah anggota</button>
                     </div>
                     <section className="admin-panel team-admin-panel">
-                        {members.length ? <div className="admin-list team-admin-list">{members.map((member: any) => (
+                        {members.length ? <><div className="admin-list team-admin-list">{visibleMembers.map((member: any) => (
                             <div className="admin-row admin-row-media team-admin-row" key={member.id}>
                                 <img className="team-admin-photo" src={asset(member.photo)} alt={member.name} />
                                 <div className="team-admin-member-copy"><strong>{member.name}</strong><small>{member.description || 'Tanpa deskripsi'}</small></div>
@@ -82,7 +86,7 @@ export default function TeamMembers({ members }: any) {
                                     <button className="icon-button danger" type="button" onClick={() => setDeleteTarget(member)} aria-label={`Hapus ${member.name}`}><Trash2 /></button>
                                 </span>
                             </div>
-                        ))}</div> : <div className="user-empty"><Users/><strong>Belum ada anggota tim</strong><p>Tambahkan anggota agar section tim muncul di beranda.</p></div>}
+                        ))}</div>{pageCount > 1 && <nav className="pagination" aria-label="Pagination anggota tim" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginTop: 16 }}><small>Menampilkan {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, members.length)} dari {members.length} anggota</small><div style={{ display: 'flex', gap: 6 }}><button type="button" className="button small" disabled={currentPage <= 1} onClick={() => setCurrentPage(p => p - 1)}>Sebelumnya</button><span style={{ alignSelf: 'center' }}>Halaman {currentPage} dari {pageCount}</span><button type="button" className="button small" disabled={currentPage >= pageCount} onClick={() => setCurrentPage(p => p + 1)}>Berikutnya</button></div></nav>}</> : <div className="user-empty"><Users/><strong>Belum ada anggota tim</strong><p>Tambahkan anggota agar section tim muncul di beranda.</p></div>}
                     </section>
                 </div>
                 </main>
