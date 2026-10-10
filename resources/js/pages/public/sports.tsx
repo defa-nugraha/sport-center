@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import { ChevronRight } from 'lucide-react';
 import {
     EmptyState,
     SectionTitle,
@@ -12,7 +13,7 @@ export default function Sports({ sports, sections = {} }: any) {
     const loading = usePageLoading();
     if (loading) return <SportsSkeleton />;
     return (
-        <Shell active="Sports">
+        <Shell active="Sports" showBookingPrompt={false}>
             <Head title="Olahraga" />
             <section
                 className="listing-hero sports-listing-hero"
@@ -31,6 +32,9 @@ export default function Sports({ sports, sections = {} }: any) {
                     <p>
                         {sections.hero?.description || 'Dari arena kompetisi hingga olahraga santai, temukan tempat yang paling cocok untukmu.'}
                     </p>
+                    <Link className="booking-context-link" href="/facilities">
+                        Cari venue &amp; cek jadwal <ChevronRight size={16} aria-hidden="true" />
+                    </Link>
                 </div>
             </section>
             <section className="page-section">

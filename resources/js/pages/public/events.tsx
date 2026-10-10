@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import { ChevronRight } from 'lucide-react';
 import {
     EmptyState,
     EventCard,
@@ -26,7 +27,7 @@ export default function Events({ events, sports, filters, sections = {} }: any) 
     };
 
     return (
-        <Shell active="Events">
+        <Shell active="Events" showBookingPrompt={false}>
             <Head title="Acara" />
             <section
                 className="listing-hero events-listing-hero"
@@ -45,6 +46,9 @@ export default function Events({ events, sports, filters, sections = {} }: any) 
                     <p>
                         {sections.hero?.description || 'Temukan turnamen, sesi bermain bersama, dan acara komunitas seru di GGM Majalengka.'}
                     </p>
+                    <Link className="booking-context-link" href="/facilities">
+                        Butuh tempat latihan atau acara? Cari venue <ChevronRight size={16} aria-hidden="true" />
+                    </Link>
                 </div>
             </section>
             <section className="page-section">

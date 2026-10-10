@@ -51,10 +51,17 @@ export default function Event({ event, moreEvents, sections = {} }: any) {
                             {event.facility?.name || 'GGM Majalengka'}
                         </p>
                         <RichText html={event.description} />
-                        <BookingLink>
-                            Hubungi / daftar{' '}
-                            <ChevronRight size={15} aria-hidden="true" />
-                        </BookingLink>
+                        <div className="event-booking-actions">
+                            <BookingLink>
+                                Tanya &amp; daftar acara{' '}
+                                <ChevronRight size={15} aria-hidden="true" />
+                            </BookingLink>
+                            {event.facility?.booking_enabled && (
+                                <Link className="button secondary" href={`/facilities/${event.facility.slug}`}>
+                                    Cek &amp; pesan venue <ChevronRight size={15} aria-hidden="true" />
+                                </Link>
+                            )}
+                        </div>
                         <div className="event-calendar-actions">
                             <a className="button secondary" href={googleCalendarUrl} target="_blank" rel="noreferrer">
                                 <CalendarPlus aria-hidden="true" /> Tambahkan ke Google Calendar
