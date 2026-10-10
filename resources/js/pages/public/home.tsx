@@ -17,7 +17,7 @@ import {
     Trophy,
     Users,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { HomeSkeleton, usePageLoading } from '@/components/page-skeletons';
 import {
     EmptyState,
@@ -54,6 +54,15 @@ export default function Home({
     const loading = usePageLoading();
     const [heroSlide, setHeroSlide] = useState(0);
     const [activePost, setActivePost] = useState(0);
+    const teamGridRef = useRef<HTMLDivElement | null>(null);
+    const scrollTeamGrid = (direction: -1 | 1) => {
+        const grid = teamGridRef.current;
+        if (!grid) return;
+        grid.scrollBy({
+            left: direction * grid.clientWidth * 0.8,
+            behavior: 'smooth',
+        });
+    };
     const fallbackHeroSlides: HeroSlide[] = [
         {
             image: '/assets/ggm/Panggung GGM 1.png',
@@ -484,28 +493,49 @@ export default function Home({
                         <h2>KENALAN DENGAN TIM KAMI, YUK!</h2>
                         <p>Orang-orang kreatif di balik pengalaman olahraga digital yang lebih mudah dan menyenangkan di GGM Majalengka.</p>
                     </div>
-                    <div className={`team-reference-grid team-reference-grid-count-${Math.min(teamMembers.length, 3)}`}>
-                        {teamMembers.map((member: any, index: number) => (
-                            <article
-                                className={`team-reference-card team-reference-card-${(index % 3) + 1}`}
-                                key={member.id}
-                            >
-                                <div className="team-reference-bubble">
-                                    <h3>{member.name}</h3>
-                                    {member.description && <p>{member.description}</p>}
+                    <div className="team-reference-carousel">
+                        <div
+                            ref={teamGridRef}
+                            className={`team-reference-grid team-reference-grid-count-${Math.min(teamMembers.length, 4)}${teamMembers.length > 4 ? ' is-scrollable' : ''}`}
+                            role={teamMembers.length > 4 ? 'region' : undefined}
+                            aria-label={teamMembers.length > 4 ? 'Daftar anggota tim. Geser untuk melihat anggota lainnya.' : undefined}
+                            tabIndex={teamMembers.length > 4 ? 0 : undefined}
+                        >
+                            {teamMembers.map((member: any, index: number) => (
+                                <article
+                                    className={`team-reference-card team-reference-card-${(index % 3) + 1}`}
+                                    key={member.id}
+                                >
+                                    <div className="team-reference-bubble">
+                                        <h3>{member.name}</h3>
+                                        {member.description && <p>{member.description}</p>}
+                                    </div>
+                                    <div className="team-reference-socials" aria-hidden="true">
+                                        <Activity />
+                                        <Users />
+                                        <MapPin />
+                                    </div>
+                                    <img
+                                        src={asset(member.photo)}
+                                        alt={member.name}
+                                        loading="lazy"
+                                    />
+                                </article>
+                            ))}
+                        </div>
+                        {teamMembers.length > 4 && (
+                            <div className="team-reference-scroll-cue">
+                                <span>GESER UNTUK MELIHAT ANGGOTA LAINNYA</span>
+                                <div className="team-reference-scroll-actions">
+                                    <button type="button" aria-label="Anggota tim sebelumnya" onClick={() => scrollTeamGrid(-1)}>
+                                        <ChevronRight className="team-reference-arrow-back" aria-hidden="true" />
+                                    </button>
+                                    <button type="button" aria-label="Anggota tim berikutnya" onClick={() => scrollTeamGrid(1)}>
+                                        <ChevronRight aria-hidden="true" />
+                                    </button>
                                 </div>
-                                <div className="team-reference-socials" aria-hidden="true">
-                                    <Activity />
-                                    <Users />
-                                    <MapPin />
-                                </div>
-                                <img
-                                    src={asset(member.photo)}
-                                    alt={member.name}
-                                    loading="lazy"
-                                />
-                            </article>
-                        ))}
+                            </div>
+                        )}
                     </div>
                     <div className="team-reference-cta">
                         <strong>YUK, MULAI AKTIF!</strong>
