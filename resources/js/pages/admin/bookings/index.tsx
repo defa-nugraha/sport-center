@@ -61,17 +61,13 @@ export default function Index({
                     description="Lihat, filter, dan kelola seluruh pemesanan venue pelanggan."
                 />
 
-                <section className="admin-panel booking-list-panel" id="list">
-                    <div className="panel-head booking-list-head">
+                <section className="admin-panel booking-filter-panel" aria-labelledby="booking-filter-title">
+                    <div className="booking-filter-panel-head">
                         <div>
-                            <h2>Daftar booking</h2>
-                            <p>
-                                {bookings.total
-                                    ? `${bookings.total.toLocaleString('id-ID')} booking tercatat.`
-                                    : 'Belum ada booking yang tercatat.'}
-                            </p>
+                            <h2 id="booking-filter-title">Cari &amp; filter booking</h2>
+                            <p>Temukan pesanan berdasarkan pelanggan, jadwal, venue, dan status pembayaran.</p>
                         </div>
-                        <CalendarDays aria-hidden="true" />
+                        <SlidersHorizontal aria-hidden="true" />
                     </div>
 
                     <form className="booking-filter booking-filter-advanced" method="get" action="/admin/bookings">
@@ -203,6 +199,22 @@ export default function Index({
                             </div>
                         </div>
                     </form>
+                </section>
+
+                <section className="admin-panel booking-list-panel" id="list">
+                    <div className="panel-head booking-list-head">
+                        <div>
+                            <h2>Daftar booking</h2>
+                            <p>
+                                {bookings.total
+                                    ? `${bookings.total.toLocaleString('id-ID')} booking tercatat.`
+                                    : 'Belum ada booking yang tercatat.'}
+                            </p>
+                        </div>
+                        <CalendarDays aria-hidden="true" />
+                    </div>
+
+
 
                     {bookings.data.length > 0 ? (
                         <>
