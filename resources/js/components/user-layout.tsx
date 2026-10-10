@@ -1,5 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { CalendarCheck, CalendarDays, LayoutDashboard, LogOut, Menu, UserRound, X } from 'lucide-react';
+import { CalendarCheck, CalendarDays, LayoutDashboard, LogOut, Menu, UserRound, X, Bell } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { asset } from '@/components/public-site';
@@ -9,6 +9,7 @@ const menuItems = [
     { key: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { key: 'booking', label: 'Booking', href: '/booking', icon: CalendarCheck },
     { key: 'bookings', label: 'Riwayat', href: '/bookings', icon: CalendarDays },
+    { key: 'notifications', label: 'Notifikasi', href: '/notifications', icon: Bell },
     { key: 'profile', label: 'Profil', href: '/profile', icon: UserRound },
 ];
 
