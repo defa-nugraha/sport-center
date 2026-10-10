@@ -1,75 +1,95 @@
-/* Reference-inspired public homepage team cards */
+/* Modern public homepage team section */
 .team-section {
-    max-width: none;
     position: relative;
-    background: #eef7ff;
-    padding: 72px max(24px, calc((100vw - 1180px) / 2));
+    isolation: isolate;
+    max-width: none;
     overflow: hidden;
+    padding: clamp(64px, 7vw, 104px) max(24px, calc((100vw - 1180px) / 2));
+    background:
+        radial-gradient(ellipse at 100% 0%, rgb(224 238 255 / 72%), transparent 34%),
+        radial-gradient(ellipse at 0% 100%, rgb(255 229 239 / 48%), transparent 32%),
+        #f8fafc;
 }
 .team-section::before,
 .team-section::after {
     content: '';
     position: absolute;
-    z-index: 0;
-    width: 430px;
-    height: 430px;
-    border: 54px solid #deefff;
+    z-index: -1;
+    width: 360px;
+    height: 360px;
+    border: 1px solid rgb(197 211 235 / 45%);
     border-radius: 50%;
-    opacity: .8;
     pointer-events: none;
 }
 .team-section::before {
-    right: -250px;
-    top: -270px;
+    top: -245px;
+    right: -170px;
+    box-shadow: 0 0 0 36px rgb(221 235 255 / 28%), 0 0 0 72px rgb(221 235 255 / 18%);
 }
 .team-section::after {
-    bottom: -285px;
-    left: -270px;
+    bottom: -260px;
+    left: -190px;
+    box-shadow: 0 0 0 36px rgb(255 226 238 / 25%), 0 0 0 72px rgb(255 226 238 / 16%);
 }
 .team-section > * {
     position: relative;
     z-index: 1;
 }
 .team-reference-heading {
-    margin: 0 auto 25px;
+    max-width: 760px;
+    margin: 0 auto clamp(30px, 4vw, 48px);
     text-align: center;
 }
 .team-reference-heading > span {
-    display: block;
-    margin-bottom: 10px;
-    color: #c32b61;
-    font-size: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding: 7px 12px;
+    border: 1px solid rgb(225 29 102 / 14%);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 78%);
+    color: #d61f63;
+    font-size: 11px;
     font-weight: 800;
-    letter-spacing: .12em;
+    letter-spacing: .14em;
 }
 .team-reference-heading h2 {
     margin: 0;
-    color: #17123f;
-    font-size: clamp(28px, 3vw, 44px);
+    color: #171a3b;
+    font-size: clamp(30px, 4vw, 48px);
     font-weight: 800;
-    line-height: 1;
-    letter-spacing: -.04em;
+    line-height: 1.08;
+    letter-spacing: -.045em;
 }
 .team-reference-heading p {
-    max-width: 620px;
-    margin: 18px auto 0;
-    color: #65657d;
-    font-size: 14px;
+    max-width: 580px;
+    margin: 16px auto 0;
+    color: #687086;
+    font-size: clamp(14px, 1.2vw, 16px);
+    line-height: 1.7;
 }
 .team-reference-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: clamp(12px, 1.5vw, 20px);
+    gap: clamp(14px, 1.8vw, 22px);
 }
 .team-reference-card {
     position: relative;
     isolation: isolate;
     min-width: 0;
-    aspect-ratio: 0.82;
+    aspect-ratio: .82;
     overflow: hidden;
-    border-radius: 16px;
-    background: #d8d8e8;
-    box-shadow: 0 18px 38px rgb(28 20 67 / 12%);
+    border: 1px solid rgb(255 255 255 / 80%);
+    border-radius: 22px;
+    background: #e5e7eb;
+    box-shadow: 0 10px 25px rgb(24 31 60 / 7%), 0 2px 5px rgb(24 31 60 / 4%);
+    transform: translateZ(0);
+    transition: transform .28s ease, box-shadow .28s ease;
+}
+.team-reference-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 22px 42px rgb(24 31 60 / 15%), 0 4px 10px rgb(24 31 60 / 5%);
 }
 .team-reference-card > img {
     position: absolute;
@@ -79,75 +99,97 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center top;
-    transition: transform .45s ease;
+    object-position: center 22%;
+    transition: transform .55s cubic-bezier(.2, .7, .2, 1);
 }
 .team-reference-card:hover > img {
-    transform: scale(1.04);
+    transform: scale(1.055);
 }
 .team-reference-card::after {
     position: absolute;
     z-index: -1;
-    inset: 0;
-    background: linear-gradient(to bottom, rgb(20 16 50 / 0%) 30%, rgb(226 15 92 / 55%) 67%, #e80d68 100%);
+    inset: 25% 0 0;
+    background: linear-gradient(180deg, transparent 0%, rgb(18 19 43 / 22%) 32%, rgb(18 19 43 / 88%) 100%);
     content: '';
+    pointer-events: none;
 }
 .team-reference-overlay {
     position: absolute;
-    right: 12px;
-    bottom: clamp(22px, 3vw, 40px);
-    left: 12px;
-    color: white;
-    text-align: center;
+    right: 20px;
+    bottom: 22px;
+    left: 20px;
+    color: #fff;
+    text-align: left;
 }
 .team-reference-overlay h3 {
-    margin: 0 0 8px;
-    color: white;
-    font-size: clamp(15px, 1.35vw, 22px);
-    font-weight: 850;
-    line-height: 1.15;
-    letter-spacing: -.03em;
+    margin: 0 0 7px;
+    color: #fff;
+    font-size: clamp(16px, 1.4vw, 21px);
+    font-weight: 750;
+    line-height: 1.2;
+    letter-spacing: -.025em;
     overflow-wrap: anywhere;
+    text-shadow: 0 1px 12px rgb(0 0 0 / 12%);
 }
 .team-reference-overlay p {
     margin: 0;
-    color: rgb(255 255 255 / 94%);
-    font-size: clamp(11px, .95vw, 14px);
-    line-height: 1.35;
+    color: rgb(255 255 255 / 84%);
+    font-size: clamp(12px, 1vw, 14px);
+    line-height: 1.5;
+    overflow-wrap: anywhere;
 }
 @media (max-width: 900px) {
     .team-reference-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 14px;
+        gap: 16px;
     }
     .team-reference-card {
-        border-radius: 14px;
+        border-radius: 19px;
     }
-}
-@media (max-width: 760px) {
-    .team-reference-heading > span {
-        margin-bottom: 14px;
+    .team-reference-overlay {
+        right: 17px;
+        bottom: 18px;
+        left: 17px;
     }
 }
 @media (max-width: 480px) {
     .team-section {
-        padding-right: 16px;
-        padding-left: 16px;
+        padding-right: 18px;
+        padding-left: 18px;
+    }
+    .team-reference-heading {
+        margin-bottom: 28px;
+    }
+    .team-reference-heading h2 {
+        font-size: clamp(29px, 8vw, 36px);
+    }
+    .team-reference-heading p {
+        margin-top: 12px;
+        font-size: 14px;
     }
     .team-reference-grid {
         grid-template-columns: minmax(0, 1fr);
         max-width: 360px;
         margin-inline: auto;
+        gap: 18px;
     }
     .team-reference-card {
-        aspect-ratio: .88;
+        aspect-ratio: .9;
+        border-radius: 20px;
     }
     .team-reference-overlay h3 {
-        font-size: 24px;
+        font-size: 22px;
+    }
+    .team-reference-overlay p {
+        font-size: 14px;
     }
 }
 @media (prefers-reduced-motion: reduce) {
+    .team-reference-card,
     .team-reference-card > img {
         transition: none;
+    }
+    .team-reference-card:hover {
+        transform: none;
     }
 }
