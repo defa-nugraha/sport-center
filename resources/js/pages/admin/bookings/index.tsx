@@ -171,6 +171,9 @@ export default function Index({
                                                     FAILED: 'Gagal',
                                                     EXPIRED: 'Kedaluwarsa',
                                                     CANCELLED: 'Dibatalkan',
+                                                    REFUND_PENDING: 'Menunggu konfirmasi refund',
+                                                    PARTIALLY_REFUNDED: 'Refund sebagian',
+                                                    REFUNDED: 'Refund selesai',
                                                 }[paymentOption] || paymentOption}
                                             </SelectItem>
                                         ))}

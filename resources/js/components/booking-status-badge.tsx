@@ -7,6 +7,7 @@ export const bookingStatusLabels: Record<string, string> = {
     EXPIRED: 'Kedaluwarsa',
     CANCELLED: 'Dibatalkan',
     COMPLETED: 'Selesai',
+    REFUNDED: 'Refund selesai',
 };
 
 export const bookingStatusClasses: Record<string, string> = {
@@ -16,6 +17,7 @@ export const bookingStatusClasses: Record<string, string> = {
     EXPIRED: 'expired',
     CANCELLED: 'cancelled',
     COMPLETED: 'completed',
+    REFUNDED: 'refunded',
 };
 
 export function BookingStatusBadge({

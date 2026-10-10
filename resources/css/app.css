@@ -11204,3 +11204,10 @@ canvas {
         grid-column: 1 / -1;
     }
 }
+
+
+.booking-status.refunded {
+    border-color: #c9b7df;
+    background: #f4effb;
+    color: #654c88;
+}
