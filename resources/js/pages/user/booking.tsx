@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { CalendarCheck, CalendarDays, ChevronRight, Clock3, MapPin } from 'lucide-react';
 import { UserShell } from '@/components/user-layout';
+import { asset } from '@/components/public-site';
 
 export default function Booking({ facilities }: any) {
     return (
@@ -10,7 +11,20 @@ export default function Booking({ facilities }: any) {
                     const isDaily = (facility.booking_mode || 'hourly') === 'daily';
                     return (
                         <article className="user-facility-card" key={facility.id}>
-                            <div className="user-facility-image"><img src={facility.thumbnail || facility.hero_image || '/assets/ggm/Lapang Serba Guna (Basket)2 1.png'} alt={facility.name} /></div>
+                            <div className="user-facility-image">
+                                <img
+                                    src={asset(facility.thumbnail || facility.hero_image)}
+                                    alt={facility.name}
+                                    loading="lazy"
+                                    decoding="async"
+                                    onError={(event) => {
+                                        const image = event.currentTarget;
+                                        if (image.dataset.fallbackApplied === 'true') return;
+                                        image.dataset.fallbackApplied = 'true';
+                                        image.src = '/assets/ggm/Lapang Serba Guna (Basket)2 1.png';
+                                    }}
+                                />
+                            </div>
                             <div className="user-facility-content">
                                 <span className="eyebrow"><i /> Venue tersedia</span>
                                 <h2>{facility.name}</h2>
