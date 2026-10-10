@@ -114,12 +114,12 @@
     outline-offset: 4px;
 }
 .team-reference-scroll-cue {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 14px;
-    margin: 12px 0 0;
+    display: grid;
+    justify-items: center;
+    gap: 11px;
+    margin: 14px auto 0;
     color: #fff;
+    text-align: center;
 }
 .team-reference-scroll-cue > span {
     font-size: 10px;
@@ -127,33 +127,48 @@
     letter-spacing: .12em;
     text-shadow: 0 1px 5px rgb(0 0 0 / 16%);
 }
-.team-reference-scroll-actions {
-    display: inline-flex;
-    gap: 8px;
+.team-reference-scroll-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
 }
-.team-reference-scroll-actions button {
-    display: grid;
-    width: 36px;
-    height: 36px;
-    place-items: center;
-    border: 1px solid rgb(255 255 255 / 70%);
-    border-radius: 50%;
-    background: rgb(255 255 255 / 90%);
-    color: #17203d;
-    box-shadow: 0 4px 12px rgb(20 32 61 / 14%);
+.team-reference-scroll-dots button {
+    display: block;
+    width: 8px;
+    height: 8px;
+    flex: 0 0 auto;
+    padding: 0;
+    border: 1px solid rgb(255 255 255 / 92%);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 48%);
+    box-shadow: 0 1px 5px rgb(20 32 61 / 16%);
     cursor: pointer;
-    transition: background-color .2s ease, transform .2s ease;
+    transition: width .2s ease, background-color .2s ease, transform .2s ease;
 }
-.team-reference-scroll-actions button:hover {
+.team-reference-scroll-dots button.is-active {
+    width: 23px;
     background: #fff;
-    transform: translateY(-1px);
 }
-.team-reference-scroll-actions svg {
-    width: 18px;
-    height: 18px;
+.team-reference-scroll-dots button:hover {
+    transform: scale(1.12);
 }
-.team-reference-arrow-back {
-    transform: rotate(180deg);
+.team-reference-scroll-dots button:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 4px;
+}
+.team-reference-grid.is-scrollable,
+.team-reference-grid-count-3,
+.team-reference-grid-count-4 {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.team-reference-grid.is-scrollable::-webkit-scrollbar,
+.team-reference-grid-count-3::-webkit-scrollbar,
+.team-reference-grid-count-4::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
 }
 .team-reference-card {
     --team-primary: #00dca0;
@@ -350,7 +365,8 @@
         overflow-y: hidden;
         overscroll-behavior-x: contain;
         scroll-snap-type: x mandatory;
-        scrollbar-width: thin;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
     }
     .team-reference-grid-count-3 .team-reference-card,
     .team-reference-grid-count-4 .team-reference-card,
