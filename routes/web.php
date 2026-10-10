@@ -47,7 +47,7 @@ Route::middleware('auth')->group(function () {
 Route::post('/payments/midtrans/notification', [PaymentController::class, 'notification'])->name('payments.midtrans.notification');
 Route::get('/invoices/{invoice:uuid}/pdf', [InvoiceController::class, 'show'])->middleware('signed')->name('invoices.public');
 
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:administrator'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin.access'])->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/content', [AdminController::class, 'content'])->name('content');
     Route::get('/pages', [AdminController::class, 'pagesIndex'])->middleware('permission:kelola halaman')->name('pages');
