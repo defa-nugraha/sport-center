@@ -15,6 +15,8 @@ function bookingFacility(): Facility {
 }
 
 test('availability rejects overlapping booking and allows adjacent booking', function () {
+    $this->travelTo(now()->setDate(2026, 10, 10)->setTime(9, 0));
+
     $user=User::factory()->create();
     $facility=bookingFacility();
     Booking::create([
