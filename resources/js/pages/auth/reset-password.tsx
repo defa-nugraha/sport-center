@@ -25,7 +25,7 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                         <KeyRound className="size-5" aria-hidden="true" />
                     </div>
                     <div>
-                        <h2 className="mb-1 text-base font-bold text-[#14243f]">Buat password baru</h2>
+                        <h2 className="mb-1 text-base font-bold text-[#14243f]">Buat kata sandi baru</h2>
                         <p className="mb-0 text-sm leading-5 text-[#66758a]">
                             Gunakan kata sandi yang kuat dan jangan bagikan kepada siapa pun.
                         </p>
@@ -77,7 +77,7 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
                                     autoComplete="new-password"
                                     className="w-full"
                                     required
-                                    placeholder="Ulangi password baru"
+                                    placeholder="Ulangi kata sandi baru"
                                     passwordrules={passwordRules}
                                     aria-invalid={Boolean(errors.password_confirmation)}
                                 />
@@ -86,11 +86,11 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
 
                             <div className="flex items-start gap-2 text-xs leading-5 text-[#66758a]">
                                 <ShieldCheck className="mt-0.5 size-4 shrink-0 text-[#2f74bd]" aria-hidden="true" />
-                                Pastikan password konfirmasi sama dengan password baru.
+                                Pastikan konfirmasi kata sandi sama dengan kata sandi baru.
                             </div>
 
                             <Button type="submit" className="mt-1 w-full" disabled={processing} data-test="reset-password-button">
-                                {processing ? <Spinner /> : 'Simpan password baru'}
+                                {processing ? <Spinner /> : 'Simpan kata sandi baru'}
                             </Button>
                         </div>
                     )}
@@ -101,6 +101,6 @@ export default function ResetPassword({ token, email, passwordRules }: Props) {
 }
 
 ResetPassword.layout = {
-    title: 'Atur ulang password',
+    title: 'Atur ulang kata sandi',
     description: 'Kembalikan akses ke akun Sport Center kamu.',
 };
