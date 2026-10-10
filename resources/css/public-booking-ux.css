@@ -13,13 +13,13 @@
     justify-content: center;
     min-height: 40px;
     border-radius: 8px;
-    background: #0878f9;
+    background: #c92f40;
     color: #fff;
     font-weight: 800;
 }
 .header-contact:hover,
 .header-contact:focus-visible {
-    background: #075fca;
+    background: #ad2535;
     color: #fff;
 }
 .facility-booking-status {
