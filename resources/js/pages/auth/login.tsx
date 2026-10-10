@@ -109,7 +109,7 @@ export default function Login({
                             </div>
                             {canResetPassword && (
                                 <TextLink href={request()} tabIndex={5}>
-                                    Lupa password?
+                                    Lupa kata sandi?
                                 </TextLink>
                             )}
                         </div>
