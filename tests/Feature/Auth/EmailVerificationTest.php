@@ -5,6 +5,7 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 use Laravel\Fortify\Features;
+use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
     $this->skipUnlessFortifyHas(Features::emailVerification());
@@ -87,4 +88,18 @@ test('regular users cannot access admin routes after email verification', functi
     $this->actingAs($user)
         ->get('/admin')
         ->assertForbidden();
+});
+
+
+test('new registrations are assigned the regular user account role', function () {
+    Notification::fake();
+
+    $this->post(route('register'), [
+        'name' => 'Regular User',
+        'email' => 'regular-user@example.com',
+        'password' => 'Password123!',
+        'password_confirmation' => 'Password123!',
+    ]);
+
+    expect(User::where('email', 'regular-user@example.com')->value('role'))->toBe('user');
 });
