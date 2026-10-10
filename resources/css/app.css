@@ -11211,3 +11211,11 @@ canvas {
     background: #f4effb;
     color: #654c88;
 }
+
+
+.login-google { display:flex; min-height:52px; width:100%; align-items:center; justify-content:center; gap:10px; border:1px solid #d3deec; border-radius:14px; background:#fff; color:#263750; font-size:14px; font-weight:700; text-decoration:none; transition:border-color .18s ease, background-color .18s ease, box-shadow .18s ease; }
+.login-google:hover,.login-google:focus-visible { border-color:#9db6d2; background:#f8fbff; color:#14243f; box-shadow:0 0 0 3px rgb(47 116 189 / 10%); }
+.login-google:focus-visible { outline:2px solid #2f74bd; outline-offset:2px; }
+.login-google .google-mark { font-family:Arial,sans-serif; font-size:21px; font-weight:800; color:#4285f4; }
+.login-google-divider { display:flex; align-items:center; gap:12px; margin:16px 0; color:#7a8799; font-size:11px; font-weight:700; }
+.login-google-divider::before,.login-google-divider::after { height:1px; flex:1; background:#e5ebf2; content:''; }
