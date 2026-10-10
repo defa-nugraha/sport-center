@@ -1,4 +1,5 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
+import { ConfirmDialog, StatusDialog } from '@/components/admin-cms';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
@@ -35,12 +36,13 @@ export default function AdminUsers({
     const [search, setSearch] = useState(filters.search || '');
     const [status, setStatus] = useState(filters.status || 'all');
     const [suspendTarget, setSuspendTarget] = useState<ManagedUser | null>(null);
-    const [statusMessage, setStatusMessage] = useState('');
+    const [actionTarget, setActionTarget] = useState<{ user: ManagedUser; action: 'activate' | 'delete' } | null>(null);
+    const [statusDialog, setStatusDialog] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const suspension = useForm({ suspended: true, reason: '' });
 
     useEffect(() => {
-        if (flash?.success) setStatusMessage(flash.success);
-        if (flash?.error) setStatusMessage(flash.error);
+        if (flash?.success) setStatusDialog({ type: 'success', message: flash.success });
+        if (flash?.error) setStatusDialog({ type: 'error', message: flash.error });
     }, [flash?.success, flash?.error]);
 
     const applyFilters = (event: FormEvent<HTMLFormElement>) => {
@@ -64,29 +66,39 @@ export default function AdminUsers({
             preserveScroll: true,
             onSuccess: () => {
                 setSuspendTarget(null);
-                setStatusMessage('Akun ditangguhkan dan sesi aktif dicabut.');
+                setStatusDialog({ type: 'success', message: 'Akun ditangguhkan dan sesi aktif dicabut.' });
                 suspension.reset();
             },
-            onError: (errors) => setStatusMessage(Object.values(errors)[0] || 'Status akun gagal diperbarui.'),
+            onError: (errors) => setStatusDialog({ type: 'error', message: String(Object.values(errors)[0] || 'Status akun gagal diperbarui.') }),
         });
     };
 
-    const activate = (user: ManagedUser) => {
-        if (!window.confirm(`Aktifkan kembali akun ${user.name}?`)) return;
-        router.patch(`/admin/users/${user.encrypted_id}/suspension`, { suspended: false, reason: '' }, {
+    const confirmAction = () => {
+        if (!actionTarget) return;
+        const { user, action } = actionTarget;
+        const options = {
             preserveScroll: true,
-            onSuccess: () => setStatusMessage('Akun pengguna berhasil diaktifkan kembali.'),
-            onError: (errors) => setStatusMessage(Object.values(errors)[0] || 'Akun gagal diaktifkan.'),
-        });
-    };
-
-    const remove = (user: ManagedUser) => {
-        if (!window.confirm(`Hapus akun ${user.name}? Tindakan ini tidak dapat dibatalkan.`)) return;
-        router.delete(`/admin/users/${user.encrypted_id}`, {
-            preserveScroll: true,
-            onSuccess: () => setStatusMessage('Akun pengguna berhasil dihapus.'),
-            onError: (errors) => setStatusMessage(Object.values(errors)[0] || 'Akun gagal dihapus.'),
-        });
+            onSuccess: () => {
+                setActionTarget(null);
+                setStatusDialog({
+                    type: 'success',
+                    message: action === 'activate'
+                        ? 'Akun pengguna berhasil diaktifkan kembali.'
+                        : 'Akun pengguna berhasil dihapus.',
+                });
+            },
+            onError: (errors: Record<string, string>) => setStatusDialog({
+                type: 'error',
+                message: Object.values(errors)[0] || (action === 'activate'
+                    ? 'Akun gagal diaktifkan.'
+                    : 'Akun gagal dihapus.'),
+            }),
+        };
+        if (action === 'activate') {
+            router.patch(`/admin/users/${user.encrypted_id}/suspension`, { suspended: false, reason: '' }, options);
+        } else {
+            router.delete(`/admin/users/${user.encrypted_id}`, options);
+        }
     };
 
     return (
@@ -109,14 +121,6 @@ export default function AdminUsers({
                         <Plus size={17} aria-hidden="true" /> Tambah pengguna
                     </Link>
                 </div>
-
-                {statusMessage && (
-                    <div className="admin-users-flash" role="status">
-                        <CheckCircle2 size={17} aria-hidden="true" />
-                        <span>{statusMessage}</span>
-                        <button type="button" onClick={() => setStatusMessage('')} aria-label="Tutup pesan"><X size={16} /></button>
-                    </div>
-                )}
 
                 <section className="admin-users-summary" aria-label="Ringkasan akun">
                     <article className="admin-panel admin-user-stat">
@@ -181,11 +185,11 @@ export default function AdminUsers({
                                             <>
                                                 <Link className="button secondary small" href={`/admin/users/${user.encrypted_id}/edit`}><Pencil size={14} aria-hidden="true" /> Edit</Link>
                                                 {user.is_suspended ? (
-                                                    <button className="button secondary small" type="button" onClick={() => activate(user)}><CheckCircle2 size={14} aria-hidden="true" /> Aktifkan</button>
+                                                    <button className="button secondary small" type="button" onClick={() => setActionTarget({ user, action: 'activate' })}><CheckCircle2 size={14} aria-hidden="true" /> Aktifkan</button>
                                                 ) : (
                                                     <button className="button secondary small is-warning" type="button" onClick={() => openSuspend(user)}><CircleSlash size={14} aria-hidden="true" /> Suspend</button>
                                                 )}
-                                                <button className="icon-button danger" type="button" aria-label={`Hapus akun ${user.name}`} onClick={() => remove(user)}><Trash2 size={16} aria-hidden="true" /></button>
+                                                <button className="icon-button danger" type="button" aria-label={`Hapus akun ${user.name}`} onClick={() => setActionTarget({ user, action: 'delete' })}><Trash2 size={16} aria-hidden="true" /></button>
                                             </>
                                         ) : (
                                             <span className="admin-user-protected"><LockKeyhole size={14} aria-hidden="true" /> Dilindungi</span>
@@ -229,6 +233,23 @@ export default function AdminUsers({
                         </section>
                     </div>
                 )}
+                <ConfirmDialog
+                    open={Boolean(actionTarget)}
+                    onOpenChange={(open) => !open && setActionTarget(null)}
+                    itemName={actionTarget?.user.name}
+                    title={actionTarget?.action === 'activate' ? 'Aktifkan akun pengguna?' : 'Hapus akun pengguna?'}
+                    description={actionTarget?.action === 'activate'
+                        ? `Akun “${actionTarget?.user.name || ''}” akan dapat digunakan kembali untuk masuk dan melakukan booking.`
+                        : `Akun “${actionTarget?.user.name || ''}” akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.`}
+                    confirmLabel={actionTarget?.action === 'activate' ? 'Ya, aktifkan' : 'Ya, hapus akun'}
+                    onConfirm={confirmAction}
+                />
+                <StatusDialog
+                    open={Boolean(statusDialog)}
+                    onOpenChange={(open) => !open && setStatusDialog(null)}
+                    type={statusDialog?.type || 'success'}
+                    message={statusDialog?.message || ''}
+                />
             </main>
         </div>
     );
