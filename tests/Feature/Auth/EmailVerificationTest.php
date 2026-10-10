@@ -60,3 +60,30 @@ test('invalid verification signature is rejected', function () {
     $response->assertForbidden();
     expect($user->fresh()->hasVerifiedEmail())->toBeFalse();
 });
+
+test('verified administrator is redirected to the admin dashboard', function () {
+    Role::findOrCreate('administrator', 'web');
+    $user = User::factory()->unverified()->create();
+    $user->assignRole('administrator');
+
+    $verificationUrl = URL::temporarySignedRoute(
+        'verification.verify',
+        now()->addMinutes(60),
+        ['id' => $user->getKey(), 'hash' => sha1($user->getEmailForVerification())],
+    );
+
+    $response = $this->actingAs($user)->get($verificationUrl);
+
+    $response->assertRedirect('/admin?verified=1');
+    expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
+});
+
+test('regular users cannot access admin routes after email verification', function () {
+    Role::findOrCreate('user', 'web');
+    $user = User::factory()->create();
+    $user->assignRole('user');
+
+    $this->actingAs($user)
+        ->get('/admin')
+        ->assertForbidden();
+});
