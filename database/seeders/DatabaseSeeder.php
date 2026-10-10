@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'GGM Administrator',
             'email' => 'admin@ggm.test',
             'password' => 'password',
+            'role' => 'admin',
         ]);
         $permissions = collect(['kelola fasilitas', 'kelola booking', 'kelola olahraga', 'kelola acara', 'kelola artikel', 'kelola taksonomi artikel', 'kelola pengaturan', 'kelola halaman', 'kelola ulasan'])
             ->map(fn ($name) => Permission::firstOrCreate(['name' => $name, 'guard_name' => 'web']));
