@@ -46,7 +46,7 @@ export default function Login({
                 <PasskeyVerify
                     label="Masuk menggunakan passkey"
                     loadingLabel="Mengautentikasi..."
-                    separator="Atau lanjutkan dengan email"
+                    separator="Atau lanjutkan dengan Google"
                 />
             </div>
 
