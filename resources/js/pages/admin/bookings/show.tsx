@@ -1,5 +1,7 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { useState } from 'react';
+import { ConfirmDialog, StatusDialog } from '@/components/admin-cms';
 import { ArrowLeft, CalendarDays, CreditCard, FileText, UserRound, RotateCcw } from 'lucide-react';
 import type { FormEvent } from 'react';
 import '../../../../css/admin-booking-refunds.css';
@@ -32,14 +34,24 @@ export default function Show({ booking, refunds = [], canRefund = false }: { boo
     const status = booking.status;
     const paymentStatus = booking.payment?.payment_status;
     const refundForm = useForm({ reason: '' });
+    const [confirmRefund, setConfirmRefund] = useState(false);
+    const [statusDialog, setStatusDialog] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const refundErrors = refundForm.errors as Record<string, string | undefined>;
 
     const submitRefund = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (!window.confirm('Ajukan refund penuh ke Midtrans? Permintaan yang diterima gateway tidak dapat dibatalkan dari aplikasi.')) return;
+        setConfirmRefund(true);
+    };
+
+    const confirmRefundRequest = () => {
+        setConfirmRefund(false);
         refundForm.post(`/admin/bookings/${booking.encrypted_id}/refund`, {
             preserveScroll: true,
-            onSuccess: () => refundForm.reset(),
+            onSuccess: () => {
+                refundForm.reset();
+                setStatusDialog({ type: 'success', message: 'Permintaan refund dikirim. Status akan diperbarui setelah ada konfirmasi dari Midtrans.' });
+            },
+            onError: (errors) => setStatusDialog({ type: 'error', message: Object.values(errors)[0] || 'Permintaan refund belum berhasil dikirim.' }),
         });
     };
 
@@ -257,6 +269,21 @@ export default function Show({ booking, refunds = [], canRefund = false }: { boo
                     )}
                 </div>
             </main>
+            <ConfirmDialog
+                open={confirmRefund}
+                onOpenChange={setConfirmRefund}
+                title="Ajukan refund penuh?"
+                description="Permintaan akan dikirim ke Midtrans. Jika diterima gateway, permintaan tidak dapat dibatalkan dari aplikasi."
+                confirmLabel="Ya, ajukan refund"
+                onConfirm={confirmRefundRequest}
+                processing={refundForm.processing}
+            />
+            <StatusDialog
+                open={Boolean(statusDialog)}
+                onOpenChange={(open) => !open && setStatusDialog(null)}
+                type={statusDialog?.type || 'success'}
+                message={statusDialog?.message || ''}
+            />
         </div>
     );
 }
