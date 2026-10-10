@@ -1,12 +1,12 @@
 <?php
 
-namespace App\\Http\\Responses;
+namespace App\Http\Responses;
 
-use App\\Models\\User;
-use Illuminate\\Support\\Facades\\Auth;
-use Illuminate\\Http\\JsonResponse;
-use Laravel\\Fortify\\Contracts\\LoginResponse as LoginResponseContract;
-use Symfony\\Component\\HttpFoundation\\Response;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\JsonResponse;
+use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
+use Symfony\Component\HttpFoundation\Response;
 
 class LoginResponse implements LoginResponseContract
 {
