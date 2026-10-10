@@ -28,6 +28,11 @@ export default function AuthLoginLayout({
                 <div className="login-panel">
                     <div className="login-partner-logos">
                         <img
+                            className="login-unma-logo"
+                            src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Lambang_Universitas_Majalengka.png"
+                            alt="Universitas Majalengka (UNMA)"
+                        />
+                        <img
                             className="login-pemda-logo"
                             src="/assets/ilustrasi/logo-pemda.jpeg"
                             alt="Pemerintah Kabupaten Majalengka"
