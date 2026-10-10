@@ -12,7 +12,14 @@ class EnsureAdminAccess
     {
         $user = $request->user();
 
-        abort_unless($user && $user->role === 'admin', 403);
+        abort_unless(
+            $user && (
+                $user->role === 'admin'
+                || $user->roles()->where('name', 'administrator')->where('guard_name', 'web')->exists()
+                || $user->getAllPermissions()->isNotEmpty()
+            ),
+            403,
+        );
 
         return $next($request);
     }
