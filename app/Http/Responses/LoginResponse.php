@@ -22,8 +22,10 @@ class LoginResponse implements LoginResponseContract
                 : redirect('/login')->withErrors(['email' => 'Akun Anda sedang ditangguhkan. Hubungi administrator untuk bantuan.']);
         }
 
-        $isAdministrator = $request->user() instanceof User
-            && $request->user()->roles()->where('name', 'administrator')->where('guard_name', 'web')->exists();
+        $isAdministrator = $request->user() instanceof User && (
+            $request->user()->roles()->where('name', 'administrator')->where('guard_name', 'web')->exists()
+            || $request->user()->getAllPermissions()->isNotEmpty()
+        );
 
         $redirect = $isAdministrator ? '/admin' : '/dashboard';
 
