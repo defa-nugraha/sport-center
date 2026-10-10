@@ -17,7 +17,7 @@ import {
     Trophy,
     Users,
 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { HomeSkeleton, usePageLoading } from '@/components/page-skeletons';
 import {
     EmptyState,
@@ -535,13 +535,14 @@ export default function Home({
                         <h2>KENALAN DENGAN TIM KAMI, YUK!</h2>
                         <p>Orang-orang kreatif di balik pengalaman olahraga digital yang lebih mudah dan menyenangkan di GGM Majalengka.</p>
                     </div>
-                    <div className="team-reference-carousel">
+                    <div className={`team-reference-carousel${teamMembers.length > 4 ? ' has-more-members' : ''}`}>
                         <div
                             ref={teamGridRef}
                             className={`team-reference-grid team-reference-grid-count-${Math.min(teamMembers.length, 4)}${teamMembers.length > 4 ? ' is-scrollable' : ''}`}
-                            role={teamMembers.length > 4 ? 'region' : undefined}
-                            aria-label={teamMembers.length > 4 ? 'Daftar anggota tim. Geser untuk melihat anggota lainnya.' : undefined}
-                            tabIndex={teamMembers.length > 4 ? 0 : undefined}
+                            style={{ '--team-member-count': teamMembers.length } as CSSProperties}
+                            role={teamScrollPages > 1 ? 'region' : undefined}
+                            aria-label={teamScrollPages > 1 ? 'Daftar anggota tim. Geser untuk melihat anggota lainnya.' : undefined}
+                            tabIndex={teamScrollPages > 1 ? 0 : undefined}
                         >
                             {teamMembers.map((member: any, index: number) => (
                                 <article
@@ -565,7 +566,7 @@ export default function Home({
                                 </article>
                             ))}
                         </div>
-                        {teamMembers.length > 4 && (
+                        {teamScrollPages > 1 && (
                             <div className="team-reference-scroll-cue">
                                 <span>GESER UNTUK MELIHAT ANGGOTA LAINNYA</span>
                                 <div className="team-reference-scroll-dots" role="group" aria-label="Navigasi daftar anggota tim">

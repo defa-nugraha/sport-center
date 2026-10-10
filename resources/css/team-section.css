@@ -57,6 +57,13 @@
     max-width: 1180px;
     margin: 0 auto;
 }
+.team-reference-carousel.has-more-members {
+    width: 100vw;
+    max-width: none;
+    margin-left: calc(50% - 50vw);
+    padding-inline: clamp(20px, 3vw, 52px);
+    box-sizing: border-box;
+}
 .team-reference-grid {
     --team-card-gap: clamp(16px, 2vw, 22px);
     position: relative;
@@ -85,11 +92,12 @@
 }
 .team-reference-grid.is-scrollable {
     display: grid;
-    grid-template-columns: none;
-    grid-auto-flow: column;
-    grid-auto-columns: 22%;
+    grid-template-columns: repeat(var(--team-member-count), minmax(220px, 1fr));
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
     align-items: end;
-    max-width: 1180px;
+    width: 100%;
+    max-width: none;
     padding: 116px 0 18px;
     margin-top: -116px;
     margin-bottom: -18px;
@@ -97,8 +105,8 @@
     overflow-y: hidden;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
-    scrollbar-width: thin;
-    scrollbar-color: rgb(255 255 255 / 62%) rgb(20 32 61 / 18%);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 .team-reference-grid.is-scrollable .team-reference-card {
     width: 100%;
@@ -355,8 +363,7 @@
         max-width: 560px;
     }
     .team-reference-grid-count-3,
-    .team-reference-grid-count-4,
-    .team-reference-grid.is-scrollable {
+    .team-reference-grid-count-4 {
         grid-template-columns: none;
         grid-auto-flow: column;
         grid-auto-columns: 42%;
@@ -371,6 +378,11 @@
         scroll-snap-type: x mandatory;
         scrollbar-width: none;
         -ms-overflow-style: none;
+    }
+    .team-reference-grid.is-scrollable {
+        grid-template-columns: repeat(var(--team-member-count), minmax(210px, 1fr));
+        grid-auto-flow: row;
+        grid-auto-columns: auto;
     }
     .team-reference-grid-count-3 .team-reference-card,
     .team-reference-grid-count-4 .team-reference-card,
@@ -413,8 +425,7 @@
     }
     .team-reference-grid-count-2,
     .team-reference-grid-count-3,
-    .team-reference-grid-count-4,
-    .team-reference-grid.is-scrollable {
+    .team-reference-grid-count-4 {
         grid-template-columns: none;
         grid-auto-flow: column;
         grid-auto-columns: 72%;
@@ -427,6 +438,18 @@
         overflow-y: hidden;
         overscroll-behavior-x: contain;
         scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    .team-reference-grid.is-scrollable {
+        grid-template-columns: repeat(var(--team-member-count), minmax(240px, 1fr));
+        grid-auto-flow: row;
+        grid-auto-columns: auto;
+        gap: 16px;
+        max-width: none;
+        padding: 100px 2px 18px;
+        margin-top: -100px;
+        margin-bottom: -18px;
     }
     .team-reference-grid-count-2 .team-reference-card:nth-child(4n + 2),
     .team-reference-grid-count-3 .team-reference-card:nth-child(4n + 2),
