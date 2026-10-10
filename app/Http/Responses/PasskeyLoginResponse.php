@@ -22,9 +22,9 @@ class PasskeyLoginResponse implements PasskeyLoginResponseContract
                 : redirect('/login')->withErrors(['email' => 'Akun Anda sedang ditangguhkan. Hubungi administrator untuk bantuan.']);
         }
 
-        $redirect = $request->user() instanceof User && $request->user()->hasRole('user')
-            ? '/dashboard'
-            : '/admin';
+        $redirect = $request->user() instanceof User && $request->user()->role === 'admin'
+            ? '/admin'
+            : '/dashboard';
 
         return $request->wantsJson()
             ? new JsonResponse(['redirect' => $redirect], 200)
