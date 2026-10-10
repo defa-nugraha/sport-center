@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { CalendarDays, ChevronRight } from 'lucide-react';
 import { UserShell } from '@/components/user-layout';
+import { BookingStatusBadge } from '@/components/booking-status-badge';
 
 const formatBookingDate = (value?: string | null) => {
     if (!value) return 'Tanggal belum tersedia';
@@ -12,8 +13,6 @@ const formatBookingDate = (value?: string | null) => {
         year: 'numeric',
     }).format(date);
 };
-
-const statusLabels: Record<string, string> = { PENDING_PAYMENT: 'Menunggu pembayaran', CONFIRMED: 'Dikonfirmasi', FAILED: 'Gagal', EXPIRED: 'Kedaluwarsa', CANCELLED: 'Dibatalkan', COMPLETED: 'Selesai', REFUNDED: 'Refund selesai' };
 
 export default function Bookings({ bookings }: any) {
     return (
@@ -32,7 +31,7 @@ export default function Bookings({ bookings }: any) {
                                 </div>
                             </div>
                             <div className="user-history-side">
-                                <span className={'booking-status ' + String(booking.status).toLowerCase()}>{statusLabels[booking.status] || booking.status}</span>
+                                <BookingStatusBadge status={booking.status} />
                                 <strong>Rp {Number(booking.total).toLocaleString('id-ID')}</strong>
                                 <Link href={'/booking/' + booking.encrypted_id + '/status'} className="text-link">Detail <ChevronRight /></Link>
                             </div>
