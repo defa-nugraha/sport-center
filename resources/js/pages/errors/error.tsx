@@ -150,7 +150,7 @@ export default function ErrorPage({ status }: ErrorPageProps) {
                         </div>
                         <img
                             src="/assets/ilustrasi/error-page.svg"
-                            alt="Ilustrasi seseorang mencari halaman yang tidak ditemukan"
+                            alt="Ilustrasi bantuan dan pemulihan Sport Center"
                             className="mx-auto block h-auto w-full max-w-[460px]"
                         />
                         <div className="mx-auto mt-1 max-w-xs rounded-lg bg-[#f5f8fc] px-4 py-3 text-center">
