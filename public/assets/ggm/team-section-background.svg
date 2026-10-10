@@ -1,7 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="740" height="410" viewBox="0 0 740 410" preserveAspectRatio="none">
-  <path d="M0 290 C77 305 136 350 226 362 C314 374 381 335 459 341 C562 349 641 386 740 393 L740 410 L0 410 Z" fill="#00c8df"/>
-  <path d="M0 104 C116 118 219 151 276 208 C321 253 314 291 272 324 C211 370 95 365 0 340 Z" fill="#4d63d3"/>
-  <path d="M237 -12 C333 -21 431 -7 510 17 C607 45 699 83 755 125 L755 252 C691 239 629 247 566 275 C498 305 459 344 430 397 L346 354 C369 302 358 264 324 226 C281 181 235 145 219 88 C209 52 216 16 237 -12 Z" fill="#ff563d"/>
-  <path d="M740 42 C671 55 610 72 557 99 C501 128 463 164 463 204 C463 249 507 292 554 324 C605 359 672 384 740 399 Z" fill="#ffad1e"/>
-  <path d="M240 0 C299 5 350 21 382 55 L338 315 Z" fill="#f52f5d"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1850" height="650" viewBox="0 0 1850 650" preserveAspectRatio="none">
+  <!-- The cyan base follows one continuous curve to the bottom edge. -->
+  <path d="M0 475 C220 504 440 558 690 565 C985 574 1225 610 1515 650 L1850 650 L1850 0 L0 0 Z" fill="#00c8df"/>
+  <!-- Coral/red mass sweeps behind the cards and down toward the lower center. -->
+  <path d="M610 0 C820 0 1005 31 1210 84 C1410 136 1570 188 1645 252 C1700 301 1590 373 1450 445 C1298 523 1153 601 1040 650 L810 650 C884 569 883 498 817 425 C751 352 637 302 610 222 C585 149 579 63 610 0 Z" fill="#ff563f"/>
+  <!-- Golden field enters from the far right with a single broad, round sweep. -->
+  <path d="M1850 74 C1652 105 1478 157 1375 229 C1294 286 1297 364 1368 431 C1452 510 1601 585 1754 626 L1850 650 Z" fill="#ffad35"/>
+  <!-- Blue organic field remains anchored to the left edge and overlaps coral cleanly. -->
+  <path d="M0 236 C208 257 397 298 546 362 C653 408 718 461 713 505 C706 571 547 613 360 625 C227 633 96 607 0 571 Z" fill="#4d70d3"/>
+  <!-- The hot-pink pointer is an intentional pointed accent, not a gap between fields. -->
+  <path d="M631 0 C733 17 802 62 850 133 L949 650 L812 650 L720 356 C689 263 640 158 631 0 Z" fill="#f32960"/>
 </svg>
