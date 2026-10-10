@@ -168,7 +168,7 @@ class AdminUserController extends Controller
 
     private function isProtectedAccount(User $user): bool
     {
-        return $user->hasRole('administrator') || $user->getAllPermissions()->isNotEmpty();
+        return $user->role === 'admin' || $user->hasRole('administrator') || $user->getAllPermissions()->isNotEmpty();
     }
 
     private function assertManageableAccount(User $user): void
