@@ -61,6 +61,7 @@ export function AdminSidebar({
     const { auth } = usePage().props as any;
     const { url } = usePage();
     const permissions: string[] = auth?.permissions || [];
+    const roles: string[] = auth?.roles || [];
     const visibleContentItems = contentItems.filter((item) => permissions.includes(item.permission));
 
     useEffect(() => {
@@ -112,6 +113,17 @@ export function AdminSidebar({
                         </Link>
                     );
                 })}
+                {roles.includes('administrator') && (
+                    <Link
+                        href="/admin/users"
+                        className={`admin-link ${active === 'users' ? 'active' : ''}`}
+                        aria-current={active === 'users' ? 'page' : undefined}
+                        onClick={() => setMobileOpen(false)}
+                    >
+                        <Users aria-hidden="true" />
+                        <span>Kelola Pengguna</span>
+                    </Link>
+                )}
                 {permissions.includes('kelola booking') && <button
                     type="button"
                     className={`admin-link admin-content-toggle ${active === 'bookings' ? 'active' : ''}`}

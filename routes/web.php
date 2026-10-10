@@ -8,6 +8,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\AdminBookingController;
+use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminTeamMemberController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\UserController;
@@ -55,6 +56,15 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         ->middleware('permission:kelola halaman')
         ->whereIn('section', ['sections', 'banners', 'highlights', 'partners', 'settings'])
         ->name('pages.section');
+    Route::prefix('users')->name('users.')->middleware('role:administrator')->group(function () {
+        Route::get('/', [AdminUserController::class, 'index'])->name('index');
+        Route::get('/create', [AdminUserController::class, 'create'])->name('create');
+        Route::post('/', [AdminUserController::class, 'store'])->name('store');
+        Route::get('/{user}/edit', [AdminUserController::class, 'edit'])->name('edit');
+        Route::put('/{user}', [AdminUserController::class, 'update'])->name('update');
+        Route::patch('/{user}/suspension', [AdminUserController::class, 'setSuspension'])->name('suspension');
+        Route::delete('/{user}', [AdminUserController::class, 'destroy'])->name('destroy');
+    });
     Route::get('/account', [AdminController::class, 'account'])->name('account');
     Route::patch('/account', [AdminController::class, 'updateAccount'])->name('account.update');
     Route::put('/account/password', [AdminController::class, 'updateAccountPassword'])->middleware('throttle:6,1')->name('account.password.update');
@@ -62,6 +72,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         Route::get('/bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
         Route::get('/bookings/settings', [AdminBookingController::class, 'settings'])->name('bookings.settings');
         Route::get('/bookings/{booking}', [AdminBookingController::class, 'show'])->name('bookings.show');
+        Route::post('/bookings/{booking}/refund', [AdminBookingController::class, 'refund'])->middleware('role:administrator')->name('bookings.refund');
         Route::put('/bookings/facilities/{facility}', [AdminBookingController::class, 'updateFacility'])->name('bookings.facilities.update');
     });
     Route::middleware('permission:kelola fasilitas')->group(function () {
