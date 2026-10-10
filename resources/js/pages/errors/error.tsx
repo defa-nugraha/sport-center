@@ -122,7 +122,7 @@ export default function ErrorPage({ status }: ErrorPageProps) {
                     <div className="flex flex-col gap-3 sm:flex-row">
                         <Link
                             href="/"
-                            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-[#14243f] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#20395e] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2f74bd]"
+                            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-[#14243f] px-5 py-3 text-sm font-bold !text-white shadow-sm transition hover:bg-[#20395e] hover:!text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2f74bd]"
                         >
                             <House className="size-4" aria-hidden="true" />
                             Kembali ke beranda
