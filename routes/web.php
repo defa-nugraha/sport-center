@@ -36,6 +36,8 @@ Route::post('/booking/{facility:slug}', [BookingController::class, 'store'])->mi
 Route::get('/booking/{booking}/status', [BookingController::class, 'show'])->middleware('auth')->name('booking.show');
 
 Route::middleware('auth')->group(function () {
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
     Route::get('/bookings', [UserController::class, 'history'])->name('user.bookings');
     Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
