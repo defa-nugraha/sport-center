@@ -1,8 +1,8 @@
 import { Form, Head, router } from '@inertiajs/react';
 import { ChevronDown, Mail, UserPlus, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import CancelInvitationModal from '@/components/cancel-invitation-modal';
-import DeleteTeamModal from '@/components/delete-team-modal';
+import BatalInvitationModal from '@/components/cancel-invitation-modal';
+import HapusTeamModal from '@/components/delete-team-modal';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import InviteMemberModal from '@/components/invite-member-modal';
@@ -42,7 +42,7 @@ type Props = {
     availableRoles: RoleOption[];
 };
 
-export default function TeamEdit({
+export default function TeamUbah({
     team,
     members,
     invitations,
@@ -52,20 +52,20 @@ export default function TeamEdit({
     const getInitials = useInitials();
 
     const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [deleteDialogOpen, setHapusDialogOpen] = useState(false);
     const [removeMemberDialogOpen, setRemoveMemberDialogOpen] = useState(false);
     const [memberToRemove, setMemberToRemove] = useState<TeamMember | null>(
         null,
     );
-    const [cancelInvitationDialogOpen, setCancelInvitationDialogOpen] =
+    const [cancelInvitationDialogOpen, setBatalInvitationDialogOpen] =
         useState(false);
-    const [invitationToCancel, setInvitationToCancel] =
+    const [invitationToBatal, setInvitationToBatal] =
         useState<TeamInvitation | null>(null);
 
     const pageTitle = useMemo(
         () =>
             permissions.canUpdateTeam
-                ? `Edit ${team.name}`
+                ? `Ubah ${team.name}`
                 : `View ${team.name}`,
         [permissions.canUpdateTeam, team.name],
     );
@@ -83,9 +83,9 @@ export default function TeamEdit({
         setRemoveMemberDialogOpen(true);
     };
 
-    const confirmCancelInvitation = (invitation: TeamInvitation) => {
-        setInvitationToCancel(invitation);
-        setCancelInvitationDialogOpen(true);
+    const confirmBatalInvitation = (invitation: TeamInvitation) => {
+        setInvitationToBatal(invitation);
+        setBatalInvitationDialogOpen(true);
     };
 
     return (
@@ -112,7 +112,7 @@ export default function TeamEdit({
                                     <>
                                         <div className="grid gap-2">
                                             <Label htmlFor="name">
-                                                Team name
+                                                Nama tim
                                             </Label>
                                             <Input
                                                 id="name"
@@ -251,7 +251,7 @@ export default function TeamEdit({
                                                     </Button>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
-                                                    <p>Remove member</p>
+                                                    <p>Hapus anggota</p>
                                                 </TooltipContent>
                                             </Tooltip>
                                         </TooltipProvider>
@@ -291,7 +291,7 @@ export default function TeamEdit({
                                         </div>
                                     </div>
 
-                                    {permissions.canCancelInvitation ? (
+                                    {permissions.canBatalInvitation ? (
                                         <TooltipProvider>
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
@@ -300,7 +300,7 @@ export default function TeamEdit({
                                                         size="sm"
                                                         data-test="invitation-cancel-button"
                                                         onClick={() =>
-                                                            confirmCancelInvitation(
+                                                            confirmBatalInvitation(
                                                                 invitation,
                                                             )
                                                         }
@@ -320,7 +320,7 @@ export default function TeamEdit({
                     </div>
                 ) : null}
 
-                {permissions.canDeleteTeam && !team.isPersonal ? (
+                {permissions.canHapusTeam && !team.isPribadi ? (
                     <div className="account-section-block">
                         <Heading
                             variant="small"
@@ -338,7 +338,7 @@ export default function TeamEdit({
                             <Button
                                 variant="destructive"
                                 data-test="delete-team-button"
-                                onClick={() => setDeleteDialogOpen(true)}
+                                onClick={() => setHapusDialogOpen(true)}
                             >
                                 Hapus tim
                             </Button>
@@ -363,25 +363,25 @@ export default function TeamEdit({
                 onOpenChange={setRemoveMemberDialogOpen}
             />
 
-            <CancelInvitationModal
+            <BatalInvitationModal
                 team={team}
-                invitation={invitationToCancel}
+                invitation={invitationToBatal}
                 open={cancelInvitationDialogOpen}
-                onOpenChange={setCancelInvitationDialogOpen}
+                onOpenChange={setBatalInvitationDialogOpen}
             />
 
-            {permissions.canDeleteTeam && !team.isPersonal ? (
-                <DeleteTeamModal
+            {permissions.canHapusTeam && !team.isPribadi ? (
+                <HapusTeamModal
                     team={team}
                     open={deleteDialogOpen}
-                    onOpenChange={setDeleteDialogOpen}
+                    onOpenChange={setHapusDialogOpen}
                 />
             ) : null}
         </>
     );
 }
 
-TeamEdit.layout = (props: { team: { name: string; slug: string } }) => ({
+TeamUbah.layout = (props: { team: { name: string; slug: string } }) => ({
     breadcrumbs: [
         {
             title: 'Tim',
