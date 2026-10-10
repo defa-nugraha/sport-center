@@ -42,6 +42,11 @@ return [
         'snap_url' => env('MIDTRANS_IS_PRODUCTION') ? 'https://app.midtrans.com/snap' : 'https://app.sandbox.midtrans.com/snap',
         'api_url' => env('MIDTRANS_IS_PRODUCTION') ? 'https://api.midtrans.com' : 'https://api.sandbox.midtrans.com',
     ],
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI', rtrim(env('APP_URL', 'http://localhost'), '/').'/auth/google/callback'),
+    ],
     'whatsapp' => [
         'url' => env('WA_GATEWAY_URL', 'https://wa.digitalpelajar.id'),
         'api_key' => env('WA_GATEWAY_API_KEY'),
