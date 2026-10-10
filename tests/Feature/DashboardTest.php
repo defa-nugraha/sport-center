@@ -8,7 +8,7 @@ test('guests are redirected to login from the admin dashboard', function () {
 });
 
 test('authenticated users can visit the admin dashboard', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create(['role' => 'admin']);
 
     $this->actingAs($user)
         ->get(route('admin.dashboard'))
