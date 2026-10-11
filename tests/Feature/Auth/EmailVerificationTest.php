@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Auth\Notifications\VerifyEmail;
+use App\Notifications\VerifyEmailBranded;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 use Laravel\Fortify\Features;
@@ -31,7 +31,7 @@ test('registration sends an email verification notification', function () {
 
     $user = User::where('email', 'test-user@example.com')->firstOrFail();
 
-    Notification::assertSentTo($user, VerifyEmail::class);
+    Notification::assertSentTo($user, VerifyEmailBranded::class);
     $response->assertRedirect(route('verification.notice'));
 });
 
