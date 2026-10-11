@@ -59,8 +59,6 @@ function BookingReviewForm({ booking }: { booking: any }) {
             />
             {form.errors.rating && <p className="booking-review-error">{form.errors.rating}</p>}
             {form.errors.review && <p className="booking-review-error">{form.errors.review}</p>}
-            {form.errors.booking && <p className="booking-review-error">{form.errors.booking}</p>}
-            {form.errors.review && null}
             <button type="submit" className="button booking-review-submit" disabled={form.processing || form.data.review.trim().length < 5}>
                 {form.processing ? 'Mengirim ulasan...' : 'Kirim ulasan'}
             </button>
