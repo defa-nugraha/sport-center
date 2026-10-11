@@ -48,10 +48,10 @@ export default function AdminUserForm({ user, mode }: UserFormProps) {
 
     return (
         <div className="admin-shell">
-            <Head title={editing ? 'Edit Pengguna' : 'Tambah Pengguna'} />
+            <Head title={editing ? 'Ubah Pengguna' : 'Tambah Pengguna'} />
             <AdminSidebar active="users" />
             <main className="admin-main admin-users-page">
-                <AdminTopbar title={editing ? 'Edit Pengguna' : 'Tambah Pengguna'} description="Kelola data dasar akun pelanggan." />
+                <AdminTopbar title={editing ? 'Ubah Pengguna' : 'Tambah Pengguna'} description="Kelola data dasar akun pelanggan." />
                 <Link href="/admin/users" className="booking-back-link"><ArrowLeft aria-hidden="true" /> Kembali ke daftar pengguna</Link>
                 <div className="admin-page-heading admin-users-heading">
                     <div>
