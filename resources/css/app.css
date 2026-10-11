@@ -12083,3 +12083,18 @@ a.admin-overview-card:hover {
     .booking-review-existing { flex-direction: column; gap: 7px; }
     .booking-review-submit { width: 100%; }
 }
+
+
+/* Keep the notification icon readable while hovered, focused, or pressed. */
+.notification-bell-trigger,
+.notification-bell-trigger:hover,
+.notification-bell-trigger:focus-visible,
+.notification-bell-trigger:active,
+.notification-bell-trigger[data-state="open"] {
+    opacity: 1 !important;
+    color: hsl(var(--foreground)) !important;
+    background-color: hsl(var(--muted)) !important;
+}
+.notification-bell-trigger > svg {
+    opacity: 1 !important;
+}
