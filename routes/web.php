@@ -78,6 +78,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin.a
     Route::middleware('permission:kelola booking')->group(function () {
         Route::get('/bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
         Route::get('/bookings/settings', [AdminBookingController::class, 'settings'])->name('bookings.settings');
+        Route::middleware('role:administrator')->group(function () {
+            Route::get('/bookings/whatsapp-settings', [AdminWhatsAppSettingsController::class, 'edit'])->name('bookings.whatsapp-settings.edit');
+            Route::put('/bookings/whatsapp-settings', [AdminWhatsAppSettingsController::class, 'update'])->name('bookings.whatsapp-settings.update');
+        });
         Route::get('/bookings/{booking}', [AdminBookingController::class, 'show'])->name('bookings.show');
         Route::post('/bookings/{booking}/refund', [AdminBookingController::class, 'refund'])->middleware('role:administrator')->name('bookings.refund');
         Route::put('/bookings/facilities/{facility}', [AdminBookingController::class, 'updateFacility'])->name('bookings.facilities.update');
