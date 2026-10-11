@@ -12246,3 +12246,30 @@ a.admin-overview-card:hover {
     backdrop-filter: blur(12px);
     box-shadow: 0 1px 0 rgb(20 36 63 / 12%), 0 4px 14px rgb(20 36 63 / 5%);
 }
+
+
+/*
+ * Public topbar: use fixed positioning instead of sticky. Sticky was already
+ * present but failed to remain visible in the deployed scroll context.
+ * The matching spacer in Shell preserves the original document flow.
+ */
+.site-header {
+    position: fixed !important;
+    inset: 0 0 auto 0 !important;
+    z-index: 1200 !important;
+    width: 100% !important;
+    height: 64px !important;
+    min-height: 64px !important;
+    flex-shrink: 0;
+    background: #fff !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    box-shadow: 0 1px 0 rgb(20 36 63 / 12%), 0 4px 14px rgb(20 36 63 / 5%);
+}
+.site-header-spacer {
+    display: block !important;
+    width: 100%;
+    height: 64px !important;
+    min-height: 64px !important;
+    pointer-events: none;
+}
