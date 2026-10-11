@@ -252,7 +252,7 @@ export function AdminSidebar({
         </aside>
         <ProductTour
             autoStart={active === 'dashboard'}
-            storageKey="ggm-admin-product-tour-v1"
+            storageKey="ggm-admin-product-tour-v2"
             steps={[
                 { target: '[data-tour="admin-navigation"]', title: 'Navigasi pengelolaan', description: 'Buka modul konten dan tampilan halaman dari menu ini.' },
                 { target: '[data-tour="admin-mobile-menu"]', title: 'Buka menu di ponsel', description: 'Pada layar kecil, tombol ini membuka navigasi admin agar Anda dapat berpindah modul.' },
