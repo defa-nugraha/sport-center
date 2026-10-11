@@ -68,7 +68,7 @@ export default function TeamsIndex({ teams }: Props) {
                                             </span>
                                             {team.isPersonal ? (
                                                 <Badge variant="secondary">
-                                                    Personal
+                                                    Pribadi
                                                 </Badge>
                                             ) : null}
                                         </div>
