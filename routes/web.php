@@ -46,6 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
     Route::get('/bookings', [UserController::class, 'history'])->name('user.bookings');
+    Route::post('/bookings/{booking}/review', [UserController::class, 'storeReview'])->middleware('throttle:5,1')->name('user.bookings.review');
     Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
     Route::patch('/profile', [UserController::class, 'updateProfile'])->name('user.profile.update');
 });
