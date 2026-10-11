@@ -21,6 +21,7 @@ export default function WhatsAppSettings({ settings, gateway }: Props) {
         enabled: settings.enabled,
         phone: settings.phone,
     });
+    const testForm = useForm({ phone: settings.phone });
 
     useEffect(() => {
         if (flash?.success) setNotice(flash.success);
@@ -91,7 +92,10 @@ export default function WhatsAppSettings({ settings, gateway }: Props) {
                                     type="tel"
                                     autoComplete="tel"
                                     value={form.data.phone}
-                                    onChange={(event) => form.setData('phone', event.target.value)}
+                                    onChange={(event) => {
+                                        form.setData('phone', event.target.value);
+                                        testForm.setData('phone', event.target.value);
+                                    }}
                                     placeholder="6281234567890"
                                     aria-invalid={Boolean(form.errors.phone)}
                                     aria-describedby="whatsapp-phone-help"
@@ -117,12 +121,30 @@ export default function WhatsAppSettings({ settings, gateway }: Props) {
                             </label>
 
                             {form.errors.enabled && <p className="whatsapp-field-error">{form.errors.enabled}</p>}
+                            {testForm.errors.test && <p role="alert" className="whatsapp-field-error">{testForm.errors.test}</p>}
+                            {testForm.errors.phone && <p role="alert" className="whatsapp-field-error">{testForm.errors.phone}</p>}
 
                             <footer className="whatsapp-settings-footer">
                                 <p>API key tidak ditampilkan di halaman ini dan tetap dikelola melalui environment server.</p>
-                                <button type="submit" disabled={form.processing} className="button whatsapp-save-button">
-                                    {form.processing ? 'Menyimpan...' : 'Simpan pengaturan'}
-                                </button>
+                                <div className="whatsapp-settings-actions">
+                                    <button
+                                        type="button"
+                                        disabled={testForm.processing || !gateway.configured || !form.data.phone.trim()}
+                                        className="button whatsapp-test-button"
+                                        onClick={() => {
+                                            testForm.setData('phone', form.data.phone);
+                                            testForm.post('/admin/bookings/whatsapp-settings/test-message', {
+                                                preserveScroll: true,
+                                                onSuccess: () => setNotice('Pesan uji berhasil dikirim. Periksa WhatsApp penerima.'),
+                                            });
+                                        }}
+                                    >
+                                        {testForm.processing ? 'Mengirim...' : 'Kirim pesan uji'}
+                                    </button>
+                                    <button type="submit" disabled={form.processing} className="button whatsapp-save-button">
+                                        {form.processing ? 'Menyimpan...' : 'Simpan pengaturan'}
+                                    </button>
+                                </div>
                             </footer>
                         </form>
                     </section>
