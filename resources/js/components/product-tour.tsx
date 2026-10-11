@@ -45,7 +45,7 @@ export function ProductTour({
                 const target = document.querySelector(step.target);
                 if (!(target instanceof HTMLElement)) return false;
                 const rect = target.getBoundingClientRect();
-                return rect.width > 0 && rect.height > 0 && rect.right > 0 && rect.bottom > 0 && rect.left < window.innerWidth && rect.top < window.innerHeight;
+                return rect.width > 0 && rect.height > 0 && rect.right > 0 && rect.left < window.innerWidth;
             }),
         [steps],
     );
