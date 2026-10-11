@@ -50,7 +50,7 @@ export function UserShell({
                 <Link href="/dashboard" aria-label="Dasbor pelanggan">
                     <img src={asset('/assets/ilustrasi/logo-ggm.png')} alt="GGM Majalengka" />
                 </Link>
-                <button type="button" onClick={() => setMobileOpen((open) => !open)} aria-label={mobileOpen ? 'Tutup menu pelanggan' : 'Buka menu pelanggan'} aria-expanded={mobileOpen} aria-controls="user-navigation">
+                <button type="button" onClick={() => setMobileOpen((open) => !open)} aria-label={mobileOpen ? 'Tutup menu pelanggan' : 'Buka menu pelanggan'} aria-expanded={mobileOpen} aria-controls="user-navigation" data-tour="user-mobile-menu">
                     {mobileOpen ? <X /> : <Menu />}
                 </button>
             </header>
@@ -101,6 +101,7 @@ export function UserShell({
                 storageKey="ggm-user-product-tour-v2"
                 steps={[
                     { target: '[data-tour="user-navigation"]', title: 'Menu pelanggan', description: 'Gunakan menu ini untuk membuka dasbor, memesan venue, melihat riwayat, notifikasi, dan profil.' },
+                    { target: '[data-tour="user-mobile-menu"]', title: 'Navigasi di ponsel', description: 'Ketuk tombol menu ini untuk membuka navigasi pelanggan pada layar kecil.' },
                     { target: '[data-tour="user-topbar"]', title: 'Informasi akun', description: 'Nama halaman dan notifikasi akun tampil di bagian atas area pelanggan.' },
                     { target: '.user-quick-panel', title: 'Mulai booking', description: 'Dari dasbor, gunakan tombol Booking sekarang untuk mencari venue dan melihat jadwal.' },
                     { target: '.user-facility-grid', title: 'Pilih venue', description: 'Bandingkan fasilitas, mode booking, dan harga sebelum memilih venue.' },
