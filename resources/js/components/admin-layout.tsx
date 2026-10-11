@@ -251,6 +251,7 @@ export function AdminSidebar({
             </div>
         </aside>
         <ProductTour
+            autoStart={active === 'dashboard'}
             storageKey="ggm-admin-product-tour-v1"
             steps={[
                 { target: '[data-tour="admin-navigation"]', title: 'Navigasi pengelolaan', description: 'Buka modul konten dan tampilan halaman dari menu ini.' },
