@@ -37,6 +37,12 @@ class AdminWhatsAppSettingsController extends Controller
             'phone.regex' => 'Masukkan nomor WhatsApp yang valid, termasuk kode negara. Contoh: 6281234567890.',
         ]);
 
+        if ($data['enabled'] && (! filled(config('services.whatsapp.url')) || ! filled(config('services.whatsapp.api_key')) || ! filled(config('services.whatsapp.sender')))) {
+            throw ValidationException::withMessages([
+                'enabled' => 'Lengkapi konfigurasi gateway WhatsApp di environment server sebelum mengaktifkan notifikasi.',
+            ]);
+        }
+
         $phone = preg_replace('/[^0-9]/', '', $data['phone']) ?? '';
         if (str_starts_with($phone, '0')) {
             throw ValidationException::withMessages([
