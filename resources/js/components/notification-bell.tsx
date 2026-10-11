@@ -58,7 +58,7 @@ export function NotificationBell({ className = '' }: { className?: string }) {
             <DropdownMenuContent
                 align="end"
                 sideOffset={8}
-                className="w-[min(360px,calc(100vw-24px))] border border-border bg-background p-0 opacity-100 shadow-xl backdrop-blur-none"
+                className="notification-dropdown-content w-[min(360px,calc(100vw-24px))] border border-border p-0 shadow-xl"
                 onMouseLeave={() => setOpen(false)}
             >
                 <div className="flex items-center justify-between border-b px-4 py-3">
