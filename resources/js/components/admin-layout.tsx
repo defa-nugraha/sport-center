@@ -86,7 +86,7 @@ export function AdminSidebar({
         <>
         <header className="admin-mobile-bar">
             <Link href="/admin" aria-label="Dasbor admin"><img src="/assets/ilustrasi/logo-ggm.png" alt="GGM Majalengka" /></Link>
-            <button type="button" onClick={() => setMobileOpen((open) => !open)} aria-label={mobileOpen ? 'Tutup menu admin' : 'Buka menu admin'} aria-expanded={mobileOpen} aria-controls="admin-mobile-navigation">
+            <button type="button" onClick={() => setMobileOpen((open) => !open)} aria-label={mobileOpen ? 'Tutup menu admin' : 'Buka menu admin'} aria-expanded={mobileOpen} aria-controls="admin-mobile-navigation" data-tour="admin-mobile-menu">
                 {mobileOpen ? <X /> : <Menu />}
             </button>
         </header>
@@ -255,6 +255,7 @@ export function AdminSidebar({
             storageKey="ggm-admin-product-tour-v1"
             steps={[
                 { target: '[data-tour="admin-navigation"]', title: 'Navigasi pengelolaan', description: 'Buka modul konten dan tampilan halaman dari menu ini.' },
+                { target: '[data-tour="admin-mobile-menu"]', title: 'Buka menu di ponsel', description: 'Pada layar kecil, tombol ini membuka navigasi admin agar Anda dapat berpindah modul.' },
                 { target: '[data-tour="admin-topbar"]', title: 'Konteks halaman', description: 'Judul ini membantu Anda memastikan modul yang sedang dikelola.' },
                 { target: '.admin-main > :not(.admin-topbar)', title: 'Area kerja admin', description: 'Data, formulir, serta tindakan tambah dan edit tersedia di area utama ini.' },
                 { target: '[data-tour="admin-account"]', title: 'Akun administrator', description: 'Kelola profil, kata sandi, dan passkey melalui menu akun.' },
