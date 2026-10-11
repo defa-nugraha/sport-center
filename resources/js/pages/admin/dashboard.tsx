@@ -10,10 +10,15 @@ import {
     MessageSquareText,
     Plus,
     Users,
+    Wallet,
+    Clock3,
+    BadgeCheck,
+    RotateCcw,
+    ArrowUpRight,
 } from 'lucide-react';
 import { AdminDashboardSkeleton, usePageLoading } from '@/components/page-skeletons';
 
-export default function AdminDashboard({ stats, recentEvents, visitors }: any) {
+export default function AdminDashboard({ stats, recentEvents, recentBookings = [], visitors }: any) {
     const loading = usePageLoading();
     if (loading) return <AdminDashboardSkeleton />;
     const statusLabels: Record<string, string> = {
@@ -50,6 +55,44 @@ export default function AdminDashboard({ stats, recentEvents, visitors }: any) {
                         </Link>
                     }
                 />
+                <section className="admin-panel admin-overview-panel">
+                    <div className="panel-head">
+                        <div>
+                            <h2>Ringkasan operasional</h2>
+                            <p>Pantau transaksi, booking, dan hal yang perlu segera ditindaklanjuti.</p>
+                        </div>
+                        <Link href="/admin/bookings" className="admin-overview-link">Semua booking <ArrowUpRight aria-hidden="true" /></Link>
+                    </div>
+                    <div className="admin-overview-grid">
+                        <Link href="/admin/bookings" className="admin-overview-card">
+                            <span className="admin-overview-icon blue"><CalendarDays aria-hidden="true" /></span>
+                            <span className="admin-overview-copy"><small>Total booking</small><strong>{Number(stats.bookingsTotal || 0).toLocaleString('id-ID')}</strong><em>{Number(stats.bookingsToday || 0).toLocaleString('id-ID')} booking hari ini</em></span>
+                        </Link>
+                        <Link href="/admin/bookings?status=PENDING_PAYMENT" className="admin-overview-card">
+                            <span className="admin-overview-icon amber"><Clock3 aria-hidden="true" /></span>
+                            <span className="admin-overview-copy"><small>Menunggu pembayaran</small><strong>{Number(stats.bookingsPending || 0).toLocaleString('id-ID')}</strong><em>{Number(stats.paymentsPending || 0).toLocaleString('id-ID')} transaksi pending</em></span>
+                        </Link>
+                        <Link href="/admin/bookings?status=CONFIRMED" className="admin-overview-card">
+                            <span className="admin-overview-icon green"><BadgeCheck aria-hidden="true" /></span>
+                            <span className="admin-overview-copy"><small>Booking terkonfirmasi</small><strong>{Number(stats.bookingsConfirmed || 0).toLocaleString('id-ID')}</strong><em>Siap dipantau</em></span>
+                        </Link>
+                        <div className="admin-overview-card">
+                            <span className="admin-overview-icon violet"><Wallet aria-hidden="true" /></span>
+                            <span className="admin-overview-copy"><small>Pembayaran lunas bulan ini</small><strong className="admin-overview-currency">{Number(stats.revenueThisMonth || 0).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 })}</strong><em>Berdasarkan pembayaran terverifikasi</em></span>
+                        </div>
+                    </div>
+                    <div className="admin-overview-alerts">
+                        <Link href="/admin/bookings?status=PENDING_PAYMENT" className="admin-overview-alert">
+                            <Clock3 aria-hidden="true" /><span><strong>{Number(stats.bookingsPending || 0)}</strong> booking menunggu pembayaran</span><ArrowUpRight aria-hidden="true" />
+                        </Link>
+                        <Link href="/admin/bookings" className="admin-overview-alert">
+                            <RotateCcw aria-hidden="true" /><span><strong>{Number(stats.refundsPending || 0)}</strong> permintaan refund perlu diperiksa</span><ArrowUpRight aria-hidden="true" />
+                        </Link>
+                        <Link href="/admin/reviews" className="admin-overview-alert">
+                            <MessageSquareText aria-hidden="true" /><span><strong>{Number(stats.reviewsPending || 0)}</strong> ulasan menunggu moderasi</span><ArrowUpRight aria-hidden="true" />
+                        </Link>
+                    </div>
+                </section>
                 <div className="admin-stat-grid">
                     {cards.map(([key, label, value, Icon, tone]: any) => (
                         <article
@@ -67,6 +110,40 @@ export default function AdminDashboard({ stats, recentEvents, visitors }: any) {
                     ))}
                 </div>
                 <div className="admin-dashboard-grid">
+                    <section className="admin-panel admin-recent-bookings-panel">
+                        <div className="panel-head">
+                            <div>
+                                <h2>Booking terbaru</h2>
+                                <p>Aktivitas booking terbaru, termasuk mode per jam dan per hari.</p>
+                            </div>
+                            <Link href="/admin/bookings">Lihat semua</Link>
+                        </div>
+                        {recentBookings.length ? recentBookings.map((booking: any) => {
+                            const statusLabels: Record<string, string> = {
+                                PENDING_PAYMENT: 'Menunggu bayar',
+                                CONFIRMED: 'Terkonfirmasi',
+                                FAILED: 'Gagal',
+                                EXPIRED: 'Kedaluwarsa',
+                                CANCELLED: 'Dibatalkan',
+                                COMPLETED: 'Selesai',
+                                REFUNDED: 'Refund',
+                            };
+                            const dateLabel = booking.booking_date
+                                ? new Date(booking.booking_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' })
+                                : 'Tanggal belum tersedia';
+                            return (
+                                <Link href={`/admin/bookings/${booking.id}`} className="admin-recent-booking-row" key={booking.id}>
+                                    <span className="admin-recent-booking-icon"><CalendarDays aria-hidden="true" /></span>
+                                    <span className="admin-recent-booking-main">
+                                        <strong>{booking.customer_name || 'Pelanggan'}</strong>
+                                        <small>{booking.booking_number} · {booking.facility?.name || 'Venue'} · {dateLabel}{booking.booking_mode === 'daily' ? ' · Per hari' : ' · Per jam'}</small>
+                                    </span>
+                                    <span className={`admin-recent-booking-status status-${String(booking.status).toLowerCase()}`}>{statusLabels[booking.status] || booking.status}</span>
+                                    <ArrowUpRight className="admin-recent-booking-arrow" aria-hidden="true" />
+                                </Link>
+                            );
+                        }) : <p className="admin-placeholder">Belum ada booking. Booking baru akan muncul di sini.</p>}
+                    </section>
                     <section className="admin-panel admin-analytics-panel">
                         <div className="panel-head">
                             <div>
