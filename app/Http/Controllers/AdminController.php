@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Settings\PasswordUpdateRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Enums\BookingStatus;
+use App\Enums\PaymentStatus;
+use App\Models\Booking;
+use App\Models\Payment;
+use App\Models\BookingRefund;
 use App\Models\BlogCategory;
 use App\Models\BlogPost;
 use App\Models\BlogTag;
@@ -43,9 +48,30 @@ class AdminController extends Controller
             ->selectRaw('visited_on, count(*) as total')
             ->groupBy('visited_on')
             ->pluck('total', 'visited_on');
+        $monthStart = now()->startOfMonth();
 
         return Inertia::render('admin/dashboard', [
-            'stats' => ['facilities' => Facility::count(), 'sports' => Sport::count(), 'events' => Event::where('published', true)->count(), 'inquiries' => Inquiry::where('status', 'new')->count(), 'posts' => BlogPost::count(), 'reviewsPending' => Testimonial::where('status', 'pending')->count()],
+            'stats' => [
+                'facilities' => Facility::count(),
+                'sports' => Sport::count(),
+                'events' => Event::where('published', true)->count(),
+                'inquiries' => Inquiry::where('status', 'new')->count(),
+                'posts' => BlogPost::count(),
+                'reviewsPending' => Testimonial::where('status', 'pending')->count(),
+                'bookingsTotal' => Booking::count(),
+                'bookingsToday' => Booking::whereDate('created_at', today())->count(),
+                'bookingsPending' => Booking::where('status', BookingStatus::PENDING_PAYMENT->value)->count(),
+                'bookingsConfirmed' => Booking::where('status', BookingStatus::CONFIRMED->value)->count(),
+                'paymentsPending' => Payment::where('payment_status', PaymentStatus::PENDING->value)->count(),
+                'revenueThisMonth' => (int) Payment::where('payment_status', PaymentStatus::PAID->value)
+                    ->whereNotNull('paid_at')->where('paid_at', '>=', $monthStart)->sum('gross_amount'),
+                'refundsPending' => BookingRefund::where('status', 'requested')->count(),
+            ],
+            'recentBookings' => Booking::with(['facility:id,name', 'payment:id,booking_id,payment_status,gross_amount'])
+                ->latest()->take(6)->get([
+                    'id', 'booking_number', 'customer_name', 'facility_id', 'booking_date',
+                    'booking_end_date', 'booking_mode', 'status', 'created_at',
+                ]),
             'recentEvents' => Event::with('sport')->latest()->take(5)->get(),
             'visitors' => [
                 'totalViews' => PageVisit::count(),
@@ -53,7 +79,6 @@ class AdminController extends Controller
                 'todayUnique' => PageVisit::whereDate('visited_on', today())->distinct('visitor_hash')->count('visitor_hash'),
                 'daily' => collect(range(0, 6))->map(function (int $offset) use ($from, $daily) {
                     $date = $from->copy()->addDays($offset);
-
                     return ['date' => $date->toDateString(), 'label' => $date->translatedFormat('D'), 'total' => (int) ($daily[$date->toDateString()] ?? 0)];
                 }),
                 'topPages' => PageVisit::query()->selectRaw('path, count(*) as total')->groupBy('path')->orderByDesc('total')->take(5)->get(),
