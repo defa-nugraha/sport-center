@@ -18,7 +18,7 @@ export default function Dashboard({ user, stats, bookings }: any) {
                 <article><Clock3 /><span>Pemesanan aktif</span><strong>{stats.upcoming}</strong></article>
                 <article><CalendarCheck /><span>Selesai dibayar</span><strong>{stats.confirmed}</strong></article>
             </section>
-            <section className="user-panel user-quick-panel">
+            <section className="user-panel user-quick-panel" data-tour="user-quick-booking">
                 <div className="user-panel-head"><div><span className="eyebrow"><i /> Booking venue</span><h2>Butuh tempat untuk berolahraga?</h2><p>Pilih venue, cek jadwal kosong, lalu lanjutkan pembayaran dengan aman.</p></div><Link href="/booking" className="button">Booking sekarang <ChevronRight /></Link></div>
             </section>
             <section className="user-panel">
