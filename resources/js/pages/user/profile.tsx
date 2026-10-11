@@ -1,7 +1,8 @@
 import { useForm, usePage } from '@inertiajs/react';
 import { StatusDialog } from '@/components/admin-cms';
 import { useEffect, useState } from 'react';
-import { Save, UserRound } from 'lucide-react';
+import { CircleHelp, Save, UserRound } from 'lucide-react';
+import { replayProductTour } from '@/components/product-tour';
 import { UserShell } from '@/components/user-layout';
 
 export default function Profile({ user }: any) {
@@ -14,6 +15,7 @@ export default function Profile({ user }: any) {
     }, [flash?.success, flash?.error]);
     return (
         <UserShell active="profile" title="Profil Saya" description="Perbarui informasi akun yang digunakan untuk booking dan notifikasi.">
+            <div className="user-guide-action"><button type="button" className="button" onClick={() => replayProductTour('ggm-user-product-tour-v2')}><CircleHelp aria-hidden="true" /> Panduan Menggunakan</button></div>
             <section className="user-panel profile-panel">
                 <div className="user-panel-head"><div><span className="eyebrow"><i /> Informasi akun</span><h2>Data pribadi</h2><p>Gunakan email aktif agar informasi booking mudah diterima.</p></div><UserRound /></div>
                 <form onSubmit={(event) => { event.preventDefault(); form.patch('/profile', {
