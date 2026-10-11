@@ -148,7 +148,7 @@ export function AdminSidebar({
                                 <span>Notifikasi WhatsApp</span>
                             </Link>
                         )}
-                        <Link href="/admin/bookings" className={url.startsWith('/admin/bookings') && url !== '/admin/bookings/settings' ? 'active-submenu-link active' : 'active-submenu-link'} onClick={() => setMobileOpen(false)}>
+                        <Link href="/admin/bookings" className={url === '/admin/bookings' || url.startsWith('/admin/bookings/') && url !== '/admin/bookings/settings' && url !== '/admin/bookings/whatsapp-settings' && !url.startsWith('/admin/bookings/whatsapp-settings/') ? 'active-submenu-link active' : 'active-submenu-link'} onClick={() => setMobileOpen(false)}>
                             <CalendarDays aria-hidden="true" />
                             <span>Daftar booking</span>
                         </Link>
