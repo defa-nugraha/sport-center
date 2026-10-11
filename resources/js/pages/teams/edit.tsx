@@ -42,7 +42,7 @@ type Props = {
     availableRoles: RoleOption[];
 };
 
-export default function TeamUbah({
+export default function TeamEdit({
     team,
     members,
     invitations,
@@ -59,14 +59,14 @@ export default function TeamUbah({
     );
     const [cancelInvitationDialogOpen, setCancelInvitationDialogOpen] =
         useState(false);
-    const [invitationToBatal, setInvitationToBatal] =
+    const [invitationToCancel, setInvitationToCancel] =
         useState<TeamInvitation | null>(null);
 
     const pageTitle = useMemo(
         () =>
             permissions.canUpdateTeam
                 ? `Ubah ${team.name}`
-                : `View ${team.name}`,
+                : `Lihat ${team.name}`,
         [permissions.canUpdateTeam, team.name],
     );
 
@@ -84,7 +84,7 @@ export default function TeamUbah({
     };
 
     const confirmCancelInvitation = (invitation: TeamInvitation) => {
-        setInvitationToBatal(invitation);
+        setInvitationToCancel(invitation);
         setCancelInvitationDialogOpen(true);
     };
 
@@ -365,7 +365,7 @@ export default function TeamUbah({
 
             <CancelInvitationModal
                 team={team}
-                invitation={invitationToBatal}
+                invitation={invitationToCancel}
                 open={cancelInvitationDialogOpen}
                 onOpenChange={setCancelInvitationDialogOpen}
             />
