@@ -1,5 +1,5 @@
-import { Link } from '@inertiajs/react';
-import { CalendarDays, ChevronRight } from 'lucide-react';
+import { Link, useForm } from '@inertiajs/react';
+import { CalendarDays, ChevronRight, Star } from 'lucide-react';
 import { UserShell } from '@/components/user-layout';
 import { BookingStatusBadge } from '@/components/booking-status-badge';
 
@@ -14,9 +14,63 @@ const formatBookingDate = (value?: string | null) => {
     }).format(date);
 };
 
+function BookingReviewForm({ booking }: { booking: any }) {
+    const form = useForm({ rating: 5, review: '' });
+
+    return (
+        <form
+            className="booking-review-form"
+            onSubmit={(event) => {
+                event.preventDefault();
+                form.post(`/bookings/${booking.encrypted_id || booking.id}/review`, {
+                    preserveScroll: true,
+                });
+            }}
+        >
+            <div className="booking-review-title">
+                <div>
+                    <strong>Bagaimana pengalamanmu?</strong>
+                    <p>Ulasan hanya tersedia setelah pembayaran lunas dan waktu booking selesai.</p>
+                </div>
+                <div className="booking-review-stars" role="group" aria-label="Pilih rating">
+                    {[1, 2, 3, 4, 5].map((rating) => (
+                        <button
+                            type="button"
+                            key={rating}
+                            aria-label={`${rating} bintang`}
+                            aria-pressed={form.data.rating === rating}
+                            className={rating <= form.data.rating ? 'selected' : ''}
+                            onClick={() => form.setData('rating', rating)}
+                        >
+                            <Star aria-hidden="true" />
+                        </button>
+                    ))}
+                </div>
+            </div>
+            <label htmlFor={`booking-review-${booking.id}`}>Ulasan kamu</label>
+            <textarea
+                id={`booking-review-${booking.id}`}
+                value={form.data.review}
+                onChange={(event) => form.setData('review', event.target.value)}
+                placeholder="Ceritakan pengalaman menggunakan fasilitas ini..."
+                rows={3}
+                maxLength={1000}
+                required
+            />
+            {form.errors.rating && <p className="booking-review-error">{form.errors.rating}</p>}
+            {form.errors.review && <p className="booking-review-error">{form.errors.review}</p>}
+            {form.errors.booking && <p className="booking-review-error">{form.errors.booking}</p>}
+            {form.errors.review && null}
+            <button type="submit" className="button booking-review-submit" disabled={form.processing || form.data.review.trim().length < 5}>
+                {form.processing ? 'Mengirim ulasan...' : 'Kirim ulasan'}
+            </button>
+        </form>
+    );
+}
+
 export default function Bookings({ bookings }: any) {
     return (
-        <UserShell active="bookings" title="Riwayat Pemesanan" description="Lihat seluruh pemesanan venue dan status pembayaran kamu.">
+        <UserShell active="bookings" title="Riwayat Pemesanan" description="Lihat seluruh pemesanan venue, status pembayaran, dan berikan ulasan setelah menggunakan fasilitas.">
             <section className="user-panel">
                 {bookings.data.length ? <div className="user-history-list">{bookings.data.map((booking: any) => {
                     const isDaily = (booking.booking_mode || 'hourly') === 'daily';
@@ -33,8 +87,14 @@ export default function Bookings({ bookings }: any) {
                             <div className="user-history-side">
                                 <BookingStatusBadge status={booking.status} />
                                 <strong>Rp {Number(booking.total).toLocaleString('id-ID')}</strong>
-                                <Link href={'/booking/' + booking.encrypted_id + '/status'} className="text-link">Detail <ChevronRight /></Link>
+                                <Link href={'/booking/' + (booking.encrypted_id || booking.id) + '/status'} className="text-link">Detail <ChevronRight /></Link>
                             </div>
+                            {booking.review ? (
+                                <div className="booking-review-existing">
+                                    <div className="booking-review-existing-stars">{[1, 2, 3, 4, 5].map((n) => <Star key={n} className={n <= Number(booking.review.rating) ? 'selected' : ''} />)}</div>
+                                    <div><strong>Ulasan sudah dikirim</strong><p>{booking.review.review}</p><small>Status: {booking.review.status === 'approved' ? 'Ditampilkan' : booking.review.status === 'rejected' ? 'Ditolak admin' : 'Menunggu moderasi admin'}</small></div>
+                                </div>
+                            ) : booking.can_review ? <BookingReviewForm booking={booking} /> : null}
                         </article>
                     );
                 })}</div> : <div className="user-empty"><CalendarDays /><strong>Belum ada riwayat booking</strong><p>Yuk, pilih venue dan buat booking pertama kamu.</p><Link href="/booking" className="button">Cari venue</Link></div>}
