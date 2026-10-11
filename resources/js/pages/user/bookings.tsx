@@ -16,7 +16,7 @@ const formatBookingDate = (value?: string | null) => {
 
 export default function Bookings({ bookings }: any) {
     return (
-        <UserShell active="bookings" title="Riwayat Booking" description="Lihat seluruh pemesanan venue dan status pembayaran kamu.">
+        <UserShell active="bookings" title="Riwayat Pemesanan" description="Lihat seluruh pemesanan venue dan status pembayaran kamu.">
             <section className="user-panel">
                 {bookings.data.length ? <div className="user-history-list">{bookings.data.map((booking: any) => {
                     const isDaily = (booking.booking_mode || 'hourly') === 'daily';
