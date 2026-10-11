@@ -1,14 +1,13 @@
 <?php
 
-namespace App\\Http\\Controllers;
+namespace App\Http\Controllers;
 
-use App\\Models\\SiteSetting;
-use Illuminate\\Http\\RedirectResponse;
-use Illuminate\\Http\\Request;
-use Illuminate\\Support\\Str;
-use Illuminate\\Validation\\ValidationException;
-use Inertia\\Inertia;
-use Inertia\\Response;
+use App\Models\SiteSetting;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class AdminWhatsAppSettingsController extends Controller
 {
@@ -32,7 +31,7 @@ class AdminWhatsAppSettingsController extends Controller
     {
         $data = $request->validate([
             'enabled' => ['required', 'boolean'],
-            'phone' => ['required', 'string', 'max:30', 'regex:/^\\+?[0-9 ()-]{8,25}$/'],
+            'phone' => ['required', 'string', 'max:30', 'regex:/^\+?[0-9 ()-]{8,25}$/'],
         ], [
             'phone.required' => 'Nomor WhatsApp admin wajib diisi.',
             'phone.regex' => 'Masukkan nomor WhatsApp yang valid, termasuk kode negara. Contoh: 6281234567890.',
