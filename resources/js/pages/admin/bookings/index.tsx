@@ -1,7 +1,8 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
+import { ProductTour, replayProductTour } from '@/components/product-tour';
 import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
-import { CalendarDays, Search, SlidersHorizontal, X } from 'lucide-react';
+import { CalendarDays, CircleHelp, Search, SlidersHorizontal, X } from 'lucide-react';
 import { DateRangePicker } from '@/components/date-range-picker';
 import '../../../../css/admin-booking-filters.css';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -59,6 +60,7 @@ export default function Index({
                 <AdminTopbar
                     title="Daftar Booking"
                     description="Lihat, filter, dan kelola seluruh pemesanan venue pelanggan."
+                    action={<button type="button" className="button secondary small" onClick={() => replayProductTour('ggm-admin-bookings-tour-v1')}><CircleHelp aria-hidden="true" /> Panduan</button>}
                 />
 
                 <section className="admin-panel booking-filter-panel" aria-labelledby="booking-filter-title">
@@ -317,6 +319,11 @@ export default function Index({
                         </div>
                     )}
                 </section>
+            <ProductTour autoStart={false} storageKey="ggm-admin-bookings-tour-v1" steps={[
+                { target: '.booking-filter-panel', title: 'Cari dan filter booking', description: 'Cari berdasarkan pelanggan, rentang tanggal, venue, status booking, mode, dan status pembayaran.' },
+                { target: '.booking-list-panel', title: 'Daftar pemesanan', description: 'Tinjau jadwal, nilai transaksi, dan status setiap pemesanan. Buka Detail untuk tindakan lanjutan.' },
+                { target: '.booking-number', title: 'Detail dan refund', description: 'Buka detail booking untuk memeriksa transaksi dan menggunakan tindakan refund jika memenuhi ketentuan.' },
+            ]} />
             </main>
         </div>
     );
