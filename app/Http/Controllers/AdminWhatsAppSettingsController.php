@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\SiteSetting;
+use App\Services\WhatsAppGateway;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -25,6 +27,44 @@ class AdminWhatsAppSettingsController extends Controller
                     && filled(config('services.whatsapp.sender')),
             ],
         ]);
+    }
+
+    public function testMessage(Request $request, WhatsAppGateway $gateway): RedirectResponse
+    {
+        $data = $request->validate([
+            'phone' => ['required', 'string', 'max:30', 'regex:/^\+?[0-9 ()-]{8,25}$/'],
+        ], [
+            'phone.required' => 'Nomor WhatsApp admin wajib diisi.',
+            'phone.regex' => 'Masukkan nomor WhatsApp yang valid dengan kode negara, misalnya 6281234567890.',
+        ]);
+
+        if (! filled(config('services.whatsapp.url')) || ! filled(config('services.whatsapp.api_key')) || ! filled(config('services.whatsapp.sender'))) {
+            throw ValidationException::withMessages([
+                'test' => 'Konfigurasi gateway WhatsApp belum lengkap. Periksa environment server.',
+            ]);
+        }
+
+        $phone = preg_replace('/[^0-9]/', '', $data['phone']) ?? '';
+        if (str_starts_with($phone, '0')) {
+            throw ValidationException::withMessages([
+                'phone' => 'Gunakan kode negara, misalnya 62, bukan awalan 0.',
+            ]);
+        }
+
+        try {
+            $gateway->sendMessage($phone, 'Pesan uji WhatsApp Sport Center berhasil diterima. Gateway notifikasi pembayaran admin telah terhubung.');
+        } catch (\Throwable $exception) {
+            Log::warning('Admin WhatsApp test message failed.', [
+                'phone' => $phone,
+                'error' => $exception->getMessage(),
+            ]);
+
+            throw ValidationException::withMessages([
+                'test' => 'Pesan uji gagal dikirim. Periksa koneksi gateway dan konfigurasi server, lalu coba lagi.',
+            ]);
+        }
+
+        return back()->with('success', 'Pesan uji berhasil dikirim ke '.$phone.'. Periksa WhatsApp penerima.');
     }
 
     public function update(Request $request): RedirectResponse
