@@ -82,6 +82,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin.a
         Route::middleware('role:administrator')->group(function () {
             Route::get('/bookings/whatsapp-settings', [AdminWhatsAppSettingsController::class, 'edit'])->name('bookings.whatsapp-settings.edit');
             Route::put('/bookings/whatsapp-settings', [AdminWhatsAppSettingsController::class, 'update'])->name('bookings.whatsapp-settings.update');
+            Route::post('/bookings/whatsapp-settings/test-message', [AdminWhatsAppSettingsController::class, 'testMessage'])->middleware('throttle:3,1')->name('bookings.whatsapp-settings.test-message');
         });
         Route::get('/bookings/{booking}', [AdminBookingController::class, 'show'])->name('bookings.show');
         Route::post('/bookings/{booking}/refund', [AdminBookingController::class, 'refund'])->middleware('role:administrator')->name('bookings.refund');
