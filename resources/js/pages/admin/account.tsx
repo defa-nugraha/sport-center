@@ -74,7 +74,7 @@ export default function AdminAccount({
                 <AdminTopbar
                     title="Akun Admin"
                     description="Kelola identitas, kata sandi, dan metode masuk akun Anda."
-                    action={<button type="button" className="button" onClick={() => replayProductTour('ggm-admin-product-tour-v1')}><CircleHelp aria-hidden="true" /> Panduan Menggunakan</button>}
+                    action={<button type="button" className="button" onClick={() => replayProductTour('ggm-admin-product-tour-v2')}><CircleHelp aria-hidden="true" /> Panduan Menggunakan</button>}
                 />
                 <div className="admin-account-grid">
                     <section className="admin-panel account-panel">
