@@ -6,8 +6,9 @@ import { asset } from '@/components/public-site';
 export default function Booking({ facilities }: any) {
     return (
         <UserShell active="booking" title="Pemesanan Venue" description="Pilih fasilitas yang ingin kamu gunakan, lalu cek jadwal yang masih tersedia.">
+            {facilities.length ? (
             <section className="user-facility-grid">
-                {facilities.length ? facilities.map((facility: any) => {
+                {facilities.map((facility: any) => {
                     const isDaily = (facility.booking_mode || 'hourly') === 'daily';
                     return (
                         <article className="user-facility-card" key={facility.id}>
@@ -42,8 +43,18 @@ export default function Booking({ facilities }: any) {
                             </div>
                         </article>
                     );
-                }) : <div className="user-empty"><CalendarCheck /><strong>Belum ada venue yang bisa dipesan</strong><p>Silakan coba lagi setelah venue diaktifkan oleh pengelola.</p></div>}
+                })}
             </section>
+            ) : (
+                <section className="user-panel user-booking-empty-panel">
+                    <div className="user-empty">
+                        <CalendarCheck aria-hidden="true" />
+                        <strong>Belum ada venue yang bisa dipesan</strong>
+                        <p>Silakan coba lagi setelah venue diaktifkan oleh pengelola.</p>
+                        <Link href="/facilities" className="button">Lihat fasilitas</Link>
+                    </div>
+                </section>
+            )}
         </UserShell>
     );
 }
