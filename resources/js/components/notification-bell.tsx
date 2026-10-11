@@ -1,6 +1,6 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import { Bell, CheckCheck } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -22,6 +22,22 @@ export function NotificationBell({ className = '' }: { className?: string }) {
     const latest: NotificationItem[] = notifications?.latest ?? [];
     const unreadCount: number = notifications?.unread_count ?? 0;
     const [open, setOpen] = useState(false);
+    const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const cancelClose = () => {
+        if (closeTimer.current) {
+            clearTimeout(closeTimer.current);
+            closeTimer.current = null;
+        }
+    };
+
+    const scheduleClose = () => {
+        cancelClose();
+        closeTimer.current = setTimeout(() => {
+            setOpen(false);
+            closeTimer.current = null;
+        }, 180);
+    };
 
     const visitNotification = (item: NotificationItem) => {
         if (!item.read_at) {
@@ -32,6 +48,7 @@ export function NotificationBell({ className = '' }: { className?: string }) {
         } else {
             router.visit(item.url || '/dashboard');
         }
+        cancelClose();
         setOpen(false);
     };
 
@@ -44,8 +61,9 @@ export function NotificationBell({ className = '' }: { className?: string }) {
                     size="icon"
                     className={'notification-bell-trigger relative shrink-0 ' + className}
                     aria-label={unreadCount ? `Notifikasi, ${unreadCount} belum dibaca` : 'Notifikasi'}
-                    onMouseEnter={() => setOpen(true)}
-                    onFocus={() => setOpen(true)}
+                    onMouseEnter={() => { cancelClose(); setOpen(true); }}
+                    onMouseLeave={scheduleClose}
+                    onFocus={() => { cancelClose(); setOpen(true); }}
                 >
                     <Bell className="size-5" aria-hidden="true" />
                     {unreadCount > 0 && (
@@ -59,7 +77,8 @@ export function NotificationBell({ className = '' }: { className?: string }) {
                 align="end"
                 sideOffset={8}
                 className="notification-dropdown-content w-[min(360px,calc(100vw-24px))] border border-border p-0 shadow-xl"
-                onMouseLeave={() => setOpen(false)}
+                onMouseEnter={cancelClose}
+                onMouseLeave={scheduleClose}
             >
                 <div className="flex items-center justify-between border-b px-4 py-3">
                     <div>
@@ -97,7 +116,7 @@ export function NotificationBell({ className = '' }: { className?: string }) {
                     ))}
                 </div>
                 <div className="border-t px-4 py-2">
-                    <Link href="/notifications" className="text-xs font-medium text-primary hover:underline" onClick={() => setOpen(false)}>
+                    <Link href="/notifications" className="text-xs font-medium text-primary hover:underline" onClick={() => { cancelClose(); setOpen(false); }}>
                         Lihat semua notifikasi
                     </Link>
                 </div>
