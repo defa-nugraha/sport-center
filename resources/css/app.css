@@ -12115,3 +12115,70 @@ a.admin-overview-card:hover {
 .notification-dropdown-content > div {
     background-color: #ffffff;
 }
+
+
+/* Public empty states use the same visual language as customer booking history. */
+.user-style-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 240px;
+    padding: 36px 22px;
+    border: 1px solid #e5ebf2;
+    border-radius: 16px;
+    background: #fff;
+    text-align: center;
+}
+.user-style-empty .user-style-empty-icon {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    margin-bottom: 2px;
+    border-radius: 14px;
+    background: #f1f5f9;
+    color: #64748b;
+}
+.user-style-empty .user-style-empty-icon svg {
+    width: 26px;
+    height: 26px;
+}
+.user-style-empty h3 {
+    margin: 0;
+    color: #172b45;
+    font-size: 17px;
+    font-weight: 750;
+    line-height: 1.4;
+}
+.user-style-empty p {
+    max-width: 480px;
+    margin: 0;
+    color: #718096;
+    font-size: 13px;
+    line-height: 1.6;
+}
+.user-style-empty .user-style-empty-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 40px;
+    margin-top: 8px;
+    padding: 0 16px;
+    border-radius: 9px;
+    background: #172b45;
+    color: #fff;
+    text-decoration: none;
+}
+.user-style-empty .user-style-empty-action:hover {
+    background: #294667;
+}
+@media (max-width: 640px) {
+    .user-style-empty {
+        min-height: 200px;
+        padding: 28px 16px;
+        border-radius: 12px;
+    }
+}
