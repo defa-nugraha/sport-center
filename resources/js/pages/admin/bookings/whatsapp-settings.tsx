@@ -1,6 +1,7 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
+import { ProductTour, replayProductTour } from '@/components/product-tour';
 import { Head, useForm, usePage } from '@inertiajs/react';
-import { BellRing, CheckCircle2, MessageCircle, ShieldCheck } from 'lucide-react';
+import { BellRing, CheckCircle2, CircleHelp, MessageCircle, ShieldCheck } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 type Props = {
@@ -35,6 +36,7 @@ export default function WhatsAppSettings({ settings, gateway }: Props) {
                 <AdminTopbar
                     title="Notifikasi WhatsApp"
                     description="Atur penerima pesan otomatis ketika pembayaran booking berhasil diverifikasi."
+                    action={<button type="button" className="button secondary small" onClick={() => replayProductTour('ggm-admin-whatsapp-tour-v1')}><CircleHelp aria-hidden="true" /> Panduan</button>}
                 />
 
                 <div className="whatsapp-settings-content">
@@ -150,6 +152,12 @@ export default function WhatsAppSettings({ settings, gateway }: Props) {
                         </form>
                     </section>
                 </div>
+            <ProductTour autoStart={false} storageKey="ggm-admin-whatsapp-tour-v1" steps={[
+                { target: '.whatsapp-gateway-status', title: 'Status koneksi', description: 'Pastikan gateway WhatsApp telah dikonfigurasi sebelum mengaktifkan notifikasi.' },
+                { target: '.whatsapp-settings-form', title: 'Pengaturan notifikasi', description: 'Masukkan nomor admin dengan kode negara dan aktifkan notifikasi sesuai kebutuhan.' },
+                { target: '.whatsapp-test-button', title: 'Uji pesan', description: 'Kirim pesan uji untuk memeriksa konfigurasi sebelum menyimpan pengaturan.' },
+                { target: '.whatsapp-save-button', title: 'Simpan perubahan', description: 'Simpan konfigurasi setelah nomor dan status notifikasi sudah benar.' },
+            ]} />
             </main>
         </div>
     );
