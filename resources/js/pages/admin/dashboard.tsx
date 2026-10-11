@@ -132,7 +132,7 @@ export default function AdminDashboard({ stats, recentEvents, recentBookings = [
                                 ? new Date(booking.booking_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' })
                                 : 'Tanggal belum tersedia';
                             return (
-                                <Link href={`/admin/bookings/${booking.id}`} className="admin-recent-booking-row" key={booking.id}>
+                                <Link href={`/admin/bookings?search=${encodeURIComponent(booking.booking_number || "")}`} className="admin-recent-booking-row" key={booking.id}>
                                     <span className="admin-recent-booking-icon"><CalendarDays aria-hidden="true" /></span>
                                     <span className="admin-recent-booking-main">
                                         <strong>{booking.customer_name || 'Pelanggan'}</strong>
