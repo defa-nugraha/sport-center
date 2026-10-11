@@ -12182,3 +12182,53 @@ a.admin-overview-card:hover {
         border-radius: 12px;
     }
 }
+
+
+/* Empty venue list uses the same bordered panel as the booking-history page. */
+.user-booking-empty-panel {
+    min-height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e1e8ee;
+    border-radius: 12px;
+    background: #fff;
+}
+.user-booking-empty-panel .user-empty {
+    width: 100%;
+    max-width: 560px;
+    padding: 42px 24px;
+}
+.user-booking-empty-panel .user-empty > svg {
+    width: 34px;
+    height: 34px;
+    color: #77909e;
+}
+.user-booking-empty-panel .user-empty strong {
+    font-size: 15px;
+    line-height: 1.5;
+}
+.user-booking-empty-panel .user-empty p {
+    max-width: 420px;
+    margin-bottom: 8px;
+    color: #718096;
+    font-size: 13px;
+    line-height: 1.65;
+}
+.user-booking-empty-panel .user-empty .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    margin-top: 2px;
+    padding: 0 16px;
+    border-radius: 8px;
+    background: #172b45;
+    color: #fff;
+    text-decoration: none;
+}
+@media (max-width: 640px) {
+    .user-booking-empty-panel { min-height: 220px; }
+    .user-booking-empty-panel .user-empty { padding: 30px 16px; }
+    .user-booking-empty-panel .user-empty .button { width: 100%; }
+}
