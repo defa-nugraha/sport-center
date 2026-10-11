@@ -28,9 +28,11 @@ export function replayProductTour(storageKey: string) {
 export function ProductTour({
     storageKey,
     steps,
+    autoStart = true,
 }: {
     storageKey: string;
     steps: TourStep[];
+    autoStart?: boolean;
 }) {
     const [open, setOpen] = useState(false);
     const [index, setIndex] = useState(0);
@@ -91,7 +93,7 @@ export function ProductTour({
             if (customEvent.detail?.storageKey === storageKey) startTour();
         };
         window.addEventListener(TOUR_EVENT, onStart);
-        if (window.localStorage.getItem(storageKey)) {
+        if (!autoStart || window.localStorage.getItem(storageKey)) {
             return () => window.removeEventListener(TOUR_EVENT, onStart);
         }
         const timer = window.setTimeout(startTour, 700);
@@ -99,7 +101,7 @@ export function ProductTour({
             window.clearTimeout(timer);
             window.removeEventListener(TOUR_EVENT, onStart);
         };
-    }, [startTour, storageKey]);
+    }, [autoStart, startTour, storageKey]);
 
     useEffect(() => {
         if (!open || !step) return;
