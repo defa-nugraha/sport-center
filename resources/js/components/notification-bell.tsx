@@ -42,7 +42,7 @@ export function NotificationBell({ className = '' }: { className?: string }) {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className={'relative shrink-0 ' + className}
+                    className={'notification-bell-trigger relative shrink-0 ' + className}
                     aria-label={unreadCount ? `Notifikasi, ${unreadCount} belum dibaca` : 'Notifikasi'}
                     onMouseEnter={() => setOpen(true)}
                     onFocus={() => setOpen(true)}
