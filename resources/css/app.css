@@ -12273,3 +12273,32 @@ a.admin-overview-card:hover {
     min-height: 64px !important;
     pointer-events: none;
 }
+
+
+/* Manual replay action for the customer onboarding guide. */
+.user-guide-action {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 14px;
+}
+.user-guide-action .button {
+    min-height: 42px;
+}
+.product-tour-card {
+    max-height: calc(100dvh - 28px);
+    overflow-y: auto;
+}
+.product-tour-actions button:focus-visible,
+.product-tour-close:focus-visible {
+    outline: 3px solid #0878f9;
+    outline-offset: 3px;
+}
+@media (max-width: 700px) {
+    .user-guide-action {
+        justify-content: stretch;
+    }
+    .user-guide-action .button {
+        width: 100%;
+        justify-content: center;
+    }
+}
