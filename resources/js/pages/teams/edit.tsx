@@ -381,7 +381,7 @@ export default function TeamEdit({
     );
 }
 
-TeamUbah.layout = (props: { team: { name: string; slug: string } }) => ({
+TeamEdit.layout = (props: { team: { name: string; slug: string } }) => ({
     breadcrumbs: [
         {
             title: 'Tim',
