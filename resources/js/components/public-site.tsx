@@ -699,13 +699,15 @@ export function EmptyState({
     action?: string;
 }) {
     return (
-        <div className="empty-state" role="status">
+        <div className="empty-state user-style-empty" role="status">
+            <span className="user-style-empty-icon" aria-hidden="true">
+                <CalendarDays />
+            </span>
             <h3>{title}</h3>
             <p>{copy}</p>
             {href && (
-                <Link className="text-link" href={href}>
-                    {action || 'Hapus penyaring'}{' '}
-                    <ChevronRight size={14} aria-hidden="true" />
+                <Link className="button user-style-empty-action" href={href}>
+                    {action || 'Coba lagi'} <ChevronRight size={16} aria-hidden="true" />
                 </Link>
             )}
         </div>
