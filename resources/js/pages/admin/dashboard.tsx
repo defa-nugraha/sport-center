@@ -179,36 +179,6 @@ export default function AdminDashboard({ stats, recentEvents, recentBookings = [
                             ))}
                         </div>
                     </section>
-                    <section className="admin-panel top-pages-panel">
-                        <div className="panel-head">
-                            <div>
-                                <h2>Halaman populer</h2>
-                                <p>Halaman yang paling sering dikunjungi.</p>
-                            </div>
-                        </div>
-                        {visitors.topPages.length ? (
-                            visitors.topPages.map(
-                                (page: any, index: number) => (
-                                    <div
-                                        className="top-page-row"
-                                        key={page.path}
-                                    >
-                                        <span>{index + 1}</span>
-                                        <strong>{page.path}</strong>
-                                        <small>
-                                            {page.total.toLocaleString('id-ID')}{' '}
-                                            kunjungan
-                                        </small>
-                                    </div>
-                                ),
-                            )
-                        ) : (
-                            <p className="admin-placeholder">
-                                Data kunjungan akan muncul setelah situs
-                                dikunjungi.
-                            </p>
-                        )}
-                    </section>
                     <section className="admin-panel recent-events-panel">
                         <div className="panel-head">
                             <div>
