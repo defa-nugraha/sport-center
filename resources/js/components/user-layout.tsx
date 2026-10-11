@@ -97,6 +97,7 @@ export function UserShell({
                 </div>
             </div>
             <ProductTour
+                autoStart={active === 'dashboard' || active === 'booking'}
                 storageKey="ggm-user-product-tour-v2"
                 steps={[
                     { target: '[data-tour="user-navigation"]', title: 'Menu pelanggan', description: 'Gunakan menu ini untuk membuka dasbor, memesan venue, melihat riwayat, notifikasi, dan profil.' },
