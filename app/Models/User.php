@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Concerns\HasEncryptedRouteKey;
+use App\Notifications\VerifyEmailBranded;
 
 use App\Concerns\HasTeams;
 use Database\Factories\UserFactory;
@@ -70,5 +71,10 @@ class User extends Authenticatable implements PasskeyUser, MustVerifyEmail
     public function bookings()
     {
         return $this->hasMany(Booking::class);
+    }
+
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmailBranded());
     }
 }
