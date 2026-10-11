@@ -1,7 +1,8 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
+import { ProductTour, replayProductTour } from '@/components/product-tour';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { StatusDialog } from '@/components/admin-cms';
-import { Check, Clock3, Settings2 } from 'lucide-react';
+import { Check, CircleHelp, Clock3, Settings2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 function formatRupiah(value: number | string) {
@@ -131,13 +132,18 @@ export default function Settings({ facilities }: { facilities: any[] }) {
             <Head title="Pengaturan venue" />
             <AdminSidebar active="bookings" />
             <main className="admin-main">
-                <AdminTopbar eyebrow="Kelola booking" title="Pengaturan venue" description="Atur mode, harga, durasi, jam operasional, jeda sterilisasi, dan ketersediaan booking setiap venue." />
+                <AdminTopbar eyebrow="Kelola booking" title="Pengaturan venue" description="Atur mode, harga, durasi, jam operasional, jeda sterilisasi, dan ketersediaan booking setiap venue." action={<button type="button" className="button secondary small" onClick={() => replayProductTour('ggm-admin-booking-settings-tour-v1')}><CircleHelp aria-hidden="true" /> Panduan</button>} />
                 <div className="booking-admin-page-actions"><Link href="/admin/bookings" className="text-button">Daftar booking</Link></div>
                 <section className="admin-panel booking-settings-page-panel">
                     <div className="panel-head"><div><span className="booking-settings-kicker">Konfigurasi</span><h2>Venue yang dapat dipesan</h2><p>Setiap venue memiliki pengaturan sendiri agar aturan booking tetap mudah dikelola.</p></div><Clock3 aria-hidden="true" /></div>
                     {facilities.length > 0 ? <div className="booking-settings-list">{facilities.map((facility) => <FacilityBookingSettings key={facility.encrypted_id} facility={facility} onStatus={setStatus} />)}</div> : <div className="booking-empty-state"><Settings2 aria-hidden="true" /><strong>Belum ada fasilitas</strong><p>Tambahkan fasilitas terlebih dahulu agar dapat digunakan untuk booking.</p><Link className="text-link" href="/admin/content?tab=facilities">Kelola fasilitas</Link></div>}
                 </section>
             </main>
+            <ProductTour autoStart={false} storageKey="ggm-admin-booking-settings-tour-v1" steps={[
+                { target: '.booking-settings-page-panel', title: 'Pengaturan venue', description: 'Setiap venue memiliki konfigurasi booking sendiri.' },
+                { target: '.booking-settings-card select', title: 'Pilih mode booking', description: 'Atur booking per jam, per hari, atau keduanya. Jika memilih keduanya, pelanggan akan memilih mode saat memesan.' },
+                { target: '.booking-settings-fields', title: 'Harga dan aturan', description: 'Sesuaikan harga per jam atau hari, durasi minimum, jam operasional, dan jeda antarbooking.' },
+            ]} />
             <StatusDialog open={Boolean(status)} onOpenChange={(open) => !open && setStatus(null)} type={status?.type || 'success'} message={status?.message || ''} />
         </div>
     );
