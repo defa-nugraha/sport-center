@@ -5,7 +5,7 @@ import { asset } from '@/components/public-site';
 
 export default function Booking({ facilities }: any) {
     return (
-        <UserShell active="booking" title="Booking Venue" description="Pilih fasilitas yang ingin kamu gunakan, lalu cek jadwal yang masih tersedia.">
+        <UserShell active="booking" title="Pemesanan Venue" description="Pilih fasilitas yang ingin kamu gunakan, lalu cek jadwal yang masih tersedia.">
             <section className="user-facility-grid">
                 {facilities.length ? facilities.map((facility: any) => {
                     const isDaily = (facility.booking_mode || 'hourly') === 'daily';
