@@ -9,6 +9,7 @@ import {
     LayoutDashboard,
     LogOut,
     Menu,
+    MessageCircle,
     MessageSquareText,
     Settings,
     PanelsTopLeft,
@@ -141,6 +142,12 @@ export function AdminSidebar({
                             <Settings aria-hidden="true" />
                             <span>Pengaturan venue</span>
                         </Link>
+                        {roles.includes('administrator') && (
+                            <Link href="/admin/bookings/whatsapp-settings" className={url === '/admin/bookings/whatsapp-settings' ? 'active-submenu-link active' : 'active-submenu-link'} onClick={() => setMobileOpen(false)}>
+                                <MessageCircle aria-hidden="true" />
+                                <span>Notifikasi WhatsApp</span>
+                            </Link>
+                        )}
                         <Link href="/admin/bookings" className={url.startsWith('/admin/bookings') && url !== '/admin/bookings/settings' ? 'active-submenu-link active' : 'active-submenu-link'} onClick={() => setMobileOpen(false)}>
                             <CalendarDays aria-hidden="true" />
                             <span>Daftar booking</span>

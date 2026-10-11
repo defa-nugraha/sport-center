@@ -9,6 +9,7 @@ use App\Models\BookingRefund;
 use App\Models\Facility;
 use App\Models\Payment;
 use App\Jobs\DispatchBookingNotifications;
+use App\Jobs\NotifyAdminOfPaidBooking;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use RuntimeException;
@@ -388,6 +389,10 @@ class BookingService
         }
         if ($booking?->invoice && $booking->status === BookingStatus::CONFIRMED) {
             DispatchBookingNotifications::dispatch($booking->id);
+        }
+        if ($booking?->status === BookingStatus::CONFIRMED
+            && $booking->payment?->payment_status === PaymentStatus::PAID) {
+            NotifyAdminOfPaidBooking::dispatch($booking->id);
         }
     }
 
