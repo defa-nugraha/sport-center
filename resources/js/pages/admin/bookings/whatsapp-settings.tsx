@@ -133,7 +133,8 @@ export default function WhatsAppSettings({ settings, gateway }: Props) {
                                         className="button whatsapp-test-button"
                                         onClick={() => {
                                             testForm.setData('phone', form.data.phone);
-                                            testForm.transform(({ phone }) => ({ phone })).post('/admin/bookings/whatsapp-settings/test-message', {
+                                            testForm.transform(({ phone }) => ({ phone }));
+                                            testForm.post('/admin/bookings/whatsapp-settings/test-message', {
                                                 preserveScroll: true,
                                                 onSuccess: () => setNotice('Pesan uji berhasil dikirim. Periksa WhatsApp penerima.'),
                                             });
