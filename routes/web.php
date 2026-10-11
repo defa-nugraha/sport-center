@@ -9,6 +9,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\AdminBookingController;
+use App\Http\Controllers\AdminWhatsAppSettingsController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminTeamMemberController;
 use App\Http\Controllers\PublicController;
