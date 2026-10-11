@@ -326,6 +326,7 @@ export function Shell({
                 Lewati ke konten utama
             </a>
             <SiteHeader active={active} />
+            <div className="site-header-spacer" aria-hidden="true" />
             <main id="main-content" data-tour="public-content">{children}</main>
             {showBookingPrompt && (
                 <section className="public-booking-prompt" aria-labelledby="public-booking-prompt-title">
