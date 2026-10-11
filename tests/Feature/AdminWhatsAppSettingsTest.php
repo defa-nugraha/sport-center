@@ -52,6 +52,10 @@ test('administrator can update WhatsApp recipient and notification toggle', func
 });
 
 test('WhatsApp settings reject local numbers without a country code', function () {
+    config()->set('services.whatsapp.url', 'https://wa.digitalpelajar.id');
+    config()->set('services.whatsapp.api_key', 'test-api-key');
+    config()->set('services.whatsapp.sender', '6281111111111');
+
     $admin = User::factory()->create();
     grantWhatsAppSettingsAdmin($admin);
 
