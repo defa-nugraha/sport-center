@@ -12098,3 +12098,20 @@ a.admin-overview-card:hover {
 .notification-bell-trigger > svg {
     opacity: 1 !important;
 }
+
+
+/* Notification popover must cover page content with a solid surface. */
+[data-slot="dropdown-menu-content"].notification-dropdown-content,
+[data-radix-popper-content-wrapper] [data-slot="dropdown-menu-content"].notification-dropdown-content {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    opacity: 1 !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    isolation: isolate;
+    color: #14243f !important;
+    box-shadow: 0 16px 40px rgb(20 36 63 / 18%) !important;
+}
+.notification-dropdown-content > div {
+    background-color: #ffffff;
+}
