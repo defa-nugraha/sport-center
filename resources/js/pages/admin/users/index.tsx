@@ -1,9 +1,10 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
+import { ProductTour, replayProductTour } from '@/components/product-tour';
 import { ConfirmDialog, StatusDialog } from '@/components/admin-cms';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
-import { CheckCircle2, CircleSlash, LockKeyhole, Pencil, Plus, Search, ShieldCheck, Trash2, UserRound, Users, X } from 'lucide-react';
+import { CheckCircle2, CircleHelp, CircleSlash, LockKeyhole, Pencil, Plus, Search, ShieldCheck, Trash2, UserRound, Users, X } from 'lucide-react';
 import '../../../../css/admin-users.css';
 
 type ManagedUser = {
@@ -109,6 +110,7 @@ export default function AdminUsers({
                 <AdminTopbar
                     title="Kelola Pengguna"
                     description="Kelola akun pelanggan, akses masuk, dan status penangguhan."
+                    action={<button type="button" className="button secondary small" onClick={() => replayProductTour('ggm-admin-users-tour-v1')}><CircleHelp aria-hidden="true" /> Panduan</button>}
                 />
 
                 <div className="admin-page-heading admin-users-heading">
@@ -250,6 +252,11 @@ export default function AdminUsers({
                     type={statusDialog?.type || 'success'}
                     message={statusDialog?.message || ''}
                 />
+            <ProductTour autoStart={false} storageKey="ggm-admin-users-tour-v1" steps={[
+                { target: '.admin-users-summary', title: 'Ringkasan akun', description: 'Pantau jumlah akun dan status aktif atau suspend sebelum melakukan pengelolaan.' },
+                { target: '.admin-users-filter-panel', title: 'Cari pengguna', description: 'Temukan akun berdasarkan nama, email, dan status.' },
+                { target: '.admin-users-list-panel', title: 'Kelola akun', description: 'Gunakan Edit untuk memperbarui data, Suspend untuk memblokir akses, atau aktifkan kembali akun.' },
+            ]} />
             </main>
         </div>
     );
