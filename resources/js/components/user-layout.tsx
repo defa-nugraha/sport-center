@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { asset } from '@/components/public-site';
 import { NotificationBell } from '@/components/notification-bell';
+import { ProductTour } from '@/components/product-tour';
 
 const menuItems = [
     { key: 'dashboard', label: 'Dasbor', href: '/dashboard', icon: LayoutDashboard },
@@ -60,7 +61,7 @@ export function UserShell({
                         <img src={asset('/assets/ilustrasi/logo-ggm.png')} alt="GGM Majalengka" />
                     </Link>
                     <p className="user-label">Menu utama</p>
-                    <nav className="user-navigation" aria-label="Navigasi pelanggan">
+                    <nav className="user-navigation" aria-label="Navigasi pelanggan" data-tour="user-navigation">
                         {menuItems.map((item) => {
                             const Icon = item.icon;
                             return (
@@ -72,7 +73,7 @@ export function UserShell({
                         })}
                     </nav>
                     <div className="user-side-account">
-                        <div className="user-side-profile">
+                        <div className="user-side-profile" data-tour="user-account">
                             <span className="user-side-avatar"><UserRound aria-hidden="true" /></span>
                             <span><strong>{user?.name || 'Pengguna'}</strong><small>Akun pelanggan</small></span>
                         </div>
@@ -83,7 +84,7 @@ export function UserShell({
                     </div>
                 </aside>
                 <div className="user-workspace">
-                    <header className="user-topbar">
+                    <header className="user-topbar" data-tour="user-topbar">
                         <div><span>Area pelanggan</span><strong>{title || 'GGM Majalengka'}</strong></div>
                         <div className="user-topbar-account"><NotificationBell /><span>{user?.name || 'Pengguna'}</span><UserRound aria-hidden="true" /></div>
                     </header>
@@ -95,6 +96,17 @@ export function UserShell({
                     </main>
                 </div>
             </div>
+            <ProductTour
+                storageKey="ggm-user-product-tour-v2"
+                steps={[
+                    { target: '[data-tour="user-navigation"]', title: 'Menu pelanggan', description: 'Gunakan menu ini untuk membuka dasbor, memesan venue, melihat riwayat, notifikasi, dan profil.' },
+                    { target: '[data-tour="user-topbar"]', title: 'Informasi akun', description: 'Nama halaman dan notifikasi akun tampil di bagian atas area pelanggan.' },
+                    { target: '.user-quick-panel', title: 'Mulai booking', description: 'Dari dasbor, gunakan tombol Booking sekarang untuk mencari venue dan melihat jadwal.' },
+                    { target: '.user-facility-grid', title: 'Pilih venue', description: 'Bandingkan fasilitas, mode booking, dan harga sebelum memilih venue.' },
+                    { target: '.user-history-list, .user-history-card', title: 'Riwayat pemesanan', description: 'Periksa status pembayaran dan buka detail booking dari halaman Riwayat.' },
+                    { target: '[data-tour="user-account"]', title: 'Akun Anda', description: 'Nama akun ditampilkan di navigasi. Buka Profil untuk memperbarui data yang digunakan saat booking.' },
+                ]}
+            />
         </>
     );
 }
