@@ -1,6 +1,6 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import { Bell, CheckCheck } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -23,6 +23,33 @@ export function NotificationBell({ className = '' }: { className?: string }) {
     const unreadCount: number = notifications?.unread_count ?? 0;
     const [open, setOpen] = useState(false);
     const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        if (!open) return;
+
+        const handleOutsideInteraction = (event: PointerEvent) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            if (
+                target.closest('.notification-bell-trigger') ||
+                target.closest('.notification-dropdown-content')
+            ) {
+                return;
+            }
+
+            if (closeTimer.current) {
+                clearTimeout(closeTimer.current);
+                closeTimer.current = null;
+            }
+            setOpen(false);
+        };
+
+        document.addEventListener('pointerdown', handleOutsideInteraction, true);
+        return () => {
+            document.removeEventListener('pointerdown', handleOutsideInteraction, true);
+        };
+    }, [open]);
 
     const cancelClose = () => {
         if (closeTimer.current) {
