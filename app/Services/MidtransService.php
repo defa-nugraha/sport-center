@@ -29,7 +29,7 @@ class MidtransService
             ->post($this->snapBase.'/v1/transactions', $payload);
 
         if ($response->failed()) {
-            throw new RuntimeException('Midtrans transaction creation failed: '.$response->body());
+            throw new RuntimeException('Payment provider transaction creation failed.');
         }
 
         return $response->json();
@@ -47,7 +47,7 @@ class MidtransService
         }
 
         if ($response->failed()) {
-            throw new RuntimeException('Midtrans status verification failed: '.$response->body());
+            throw new RuntimeException('Payment provider status verification failed.');
         }
 
         return $response->json();
@@ -82,7 +82,7 @@ class MidtransService
 
         if ($response->failed()) {
             throw new MidtransRefundRejectedException(
-                (string) ($response->json('status_message') ?: 'Midtrans menolak permintaan refund.'),
+                'Midtrans menolak permintaan refund.',
             );
         }
 
@@ -91,13 +91,13 @@ class MidtransService
 
         if ($gatewayCode >= 500) {
             throw new MidtransRefundUncertainException(
-                (string) ($payload['status_message'] ?? 'Status refund belum dapat dipastikan.'),
+                'Status refund belum dapat dipastikan.',
             );
         }
 
         if ($gatewayCode !== 200) {
             throw new MidtransRefundRejectedException(
-                (string) ($payload['status_message'] ?? 'Midtrans menolak permintaan refund.'),
+                'Midtrans menolak permintaan refund.',
             );
         }
 
