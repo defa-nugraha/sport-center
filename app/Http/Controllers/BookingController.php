@@ -178,7 +178,14 @@ class BookingController extends Controller
                 ->with('success', 'Booking berhasil dibuat. Silakan lakukan pembayaran sebelum batas waktu berakhir.');
         } catch (\Throwable $e) {
             if ($booking) $booking->update(['status' => 'FAILED', 'failure_reason' => 'Gagal membuat transaksi pembayaran.']);
-            return back()->withErrors(['booking' => $e->getMessage()])->withInput();
+            \\Illuminate\\Support\\Facades\\Log::warning('Booking payment initialization failed.', [
+                'booking_id' => $booking?->id,
+                'exception' => $e::class,
+            ]);
+
+            return back()
+                ->withErrors(['booking' => 'Pembayaran belum dapat dibuat. Silakan coba kembali atau hubungi administrator.'])
+                ->withInput();
         }
     }
 
