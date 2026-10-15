@@ -10,8 +10,8 @@ use App\Services\MidtransService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use RuntimeException;
 use Illuminate\Support\Str;
+use RuntimeException;
 use Inertia\Inertia;
 
 class BookingController extends Controller
@@ -100,7 +100,7 @@ class BookingController extends Controller
             $slots = $service->hourlySlots($facility, $data['booking_date'], (int) $data['duration_minutes']);
         } catch (RuntimeException $e) {
             return response()->json(['message' => $e->getMessage()], 422);
-        } catch (\\Throwable $e) {
+        } catch (\Throwable $e) {
             Log::warning('Booking availability calculation failed.', [
                 'facility_id' => $facility->id,
                 'exception' => $e::class,
