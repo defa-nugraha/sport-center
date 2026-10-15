@@ -31,11 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Trust only explicitly configured reverse proxies. For a local
         // Cloudflare Tunnel, loopback is the default; deployments using Docker
         // or another proxy network must set TRUSTED_PROXIES to those proxy IPs.
-        $trustedProxies = array_values(array_filter(array_map(
-            'trim',
-            explode(',', (string) env('TRUSTED_PROXIES', '127.0.0.1,::1')),
-        )));
-        $middleware->trustProxies(at: $trustedProxies);
+        $middleware->trustProxies(at: config('trustedproxy.proxies'));
 
         $middleware->alias([
             'permission' => PermissionMiddleware::class,
