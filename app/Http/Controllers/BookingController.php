@@ -9,6 +9,8 @@ use App\Services\BookingService;
 use App\Services\MidtransService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use RuntimeException;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -96,8 +98,15 @@ class BookingController extends Controller
 
         try {
             $slots = $service->hourlySlots($facility, $data['booking_date'], (int) $data['duration_minutes']);
-        } catch (\Throwable $e) {
+        } catch (RuntimeException $e) {
             return response()->json(['message' => $e->getMessage()], 422);
+        } catch (\\Throwable $e) {
+            Log::warning('Booking availability calculation failed.', [
+                'facility_id' => $facility->id,
+                'exception' => $e::class,
+            ]);
+
+            return response()->json(['message' => 'Ketersediaan belum dapat diperiksa. Silakan coba kembali.'], 500);
         }
 
         if (! empty($data['start_time'])) {
@@ -178,7 +187,7 @@ class BookingController extends Controller
                 ->with('success', 'Booking berhasil dibuat. Silakan lakukan pembayaran sebelum batas waktu berakhir.');
         } catch (\Throwable $e) {
             if ($booking) $booking->update(['status' => 'FAILED', 'failure_reason' => 'Gagal membuat transaksi pembayaran.']);
-            \\Illuminate\\Support\\Facades\\Log::warning('Booking payment initialization failed.', [
+            Log::warning('Booking payment initialization failed.', [
                 'booking_id' => $booking?->id,
                 'exception' => $e::class,
             ]);
