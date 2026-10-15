@@ -329,6 +329,23 @@ class BookingService
         DB::transaction(function () use ($payment, $status, $midtrans) {
             $payment = Payment::lockForUpdate()->findOrFail($payment->id);
             $booking = Booking::lockForUpdate()->findOrFail($payment->booking_id);
+
+            // Re-check after acquiring row locks. The earlier checks use a
+            // snapshot loaded before this transaction and can become stale if a
+            // refund or another callback is processed concurrently.
+            if (in_array($payment->payment_status, [
+                PaymentStatus::REFUND_PENDING,
+                PaymentStatus::PARTIALLY_REFUNDED,
+                PaymentStatus::REFUNDED,
+            ], true) || $booking->status === BookingStatus::REFUNDED) {
+                return;
+            }
+
+            if ($payment->payment_status === PaymentStatus::PAID
+                && $booking->status === BookingStatus::CONFIRMED) {
+                return;
+            }
+
             $payment->fill([
                 'transaction_id' => $status['transaction_id'] ?? $payment->transaction_id,
                 'payment_type' => $status['payment_type'] ?? $payment->payment_type,
