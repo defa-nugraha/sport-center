@@ -305,7 +305,7 @@ class AdminBookingController extends Controller
             return false;
         }
 
-        if (! in_array($booking->status, [BookingStatus::CONFIRMED, BookingStatus::COMPLETED], true)) {
+        if (! in_array($booking->status, [BookingStatus::CONFIRMED, BookingStatus::COMPLETED, BookingStatus::EXPIRED], true)) {
             return false;
         }
 
