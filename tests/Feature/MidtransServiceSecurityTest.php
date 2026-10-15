@@ -1,7 +1,7 @@
 <?php
 
-use App\\Services\\MidtransService;
-use Illuminate\\Support\\Facades\\Http;
+use App\Services\MidtransService;
+use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
     config([
