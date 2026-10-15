@@ -11,6 +11,7 @@ use App\Models\Payment;
 use App\Jobs\DispatchBookingNotifications;
 use App\Jobs\NotifyAdminOfPaidBooking;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use RuntimeException;
 
@@ -350,8 +351,18 @@ class BookingService
                         'status' => BookingStatus::EXPIRED,
                         'failure_reason' => 'Pembayaran diterima setelah hold booking berakhir.',
                     ]);
-                    $payment->payment_status = PaymentStatus::EXPIRED;
+                    // The gateway has confirmed that money was captured even though
+                    // the booking hold has expired. Preserve the financial truth so
+                    // administrators can reconcile or refund the late payment.
+                    $payment->payment_status = PaymentStatus::PAID;
+                    $payment->paid_at ??= now();
                     $payment->save();
+
+                    Log::warning('Successful payment received after booking expiry.', [
+                        'booking_id' => $booking->id,
+                        'payment_id' => $payment->id,
+                        'order_id' => $payment->order_id,
+                    ]);
 
                     return;
                 }
