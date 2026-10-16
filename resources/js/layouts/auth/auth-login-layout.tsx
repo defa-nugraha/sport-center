@@ -26,11 +26,16 @@ export default function AuthLoginLayout({
 
             <section className="login-content">
                 <div className="login-panel">
-                    <div className="login-partner-logos">
+                    <div className="login-partner-logos" aria-label="Mitra GGM Majalengka">
                         <img
                             className="login-pemda-logo"
                             src="/assets/ilustrasi/logo-pemda.jpeg"
                             alt="Pemerintah Kabupaten Majalengka"
+                        />
+                        <img
+                            className="login-unma-logo"
+                            src="/assets/ilustrasi/logo-unma.svg"
+                            alt="Universitas Majalengka (UNMA)"
                         />
                         <img
                             className="login-pertamina-logo"
@@ -38,9 +43,9 @@ export default function AuthLoginLayout({
                             alt="Pertamina"
                         />
                         <img
-                            className="login-unma-logo"
-                            src="/assets/ilustrasi/logo-unma.svg"
-                            alt="Universitas Majalengka (UNMA)"
+                            className="login-dispora-logo"
+                            src="/assets/ilustrasi/logo-dispora.svg"
+                            alt="Dispora Kabupaten Majalengka"
                         />
                     </div>
 
