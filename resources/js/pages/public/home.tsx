@@ -145,7 +145,20 @@ export default function Home({
             alt: 'GGM Majalengka',
         },
     ];
-    const logos = partnerLogos.length ? partnerLogos.map((logo: any) => ({ src: asset(logo.image), alt: logo.alt_text || logo.name, url: logo.url })) : fallbackLogos;
+    const managedLogos = partnerLogos
+        .filter((logo: any) => !/\b(unma|universitas majalengka)\b/i.test(`${logo.name || ''} ${logo.alt_text || ''} ${logo.image || ''}`))
+        .map((logo: any) => ({
+            src: asset(logo.image),
+            alt: logo.alt_text || logo.name,
+            url: logo.url,
+        }));
+    const logos = [
+        {
+            src: '/assets/ilustrasi/logo-unma.svg',
+            alt: 'Universitas Majalengka (UNMA)',
+        },
+        ...(managedLogos.length ? managedLogos : fallbackLogos),
+    ];
     const iconMap: Record<string, any> = { activity: Activity, building: Building2, calendar: CalendarDays, clock: Clock, dumbbell: Dumbbell, 'map-pin': MapPin, trophy: Trophy, users: Users };
     const section = (key: string, fallback: any) => ({ ...fallback, ...(sections[key] || {}) });
     const hero = section('hero', { eyebrow: 'Pusat Aktivitas Olahraga Majalengka', title: 'Temukan Olahragamu.', title_accent: 'Temukan Tempatmu.', description: 'Yuk, jelajahi fasilitas, acara, dan tempat olahraga seru di Majalengka.', button_label: 'Jelajahi fasilitas' });
