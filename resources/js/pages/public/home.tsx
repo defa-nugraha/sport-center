@@ -154,7 +154,7 @@ export default function Home({
         }));
     const logos = [
         {
-            src: '/assets/ilustrasi/logo-unma.svg',
+            src: '/assets/ilustrasi/logo-unma.png',
             alt: 'Universitas Majalengka (UNMA)',
         },
         ...(managedLogos.length ? managedLogos : fallbackLogos),

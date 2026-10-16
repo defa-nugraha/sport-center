@@ -34,7 +34,7 @@ export default function AuthLoginLayout({
                         />
                         <img
                             className="login-unma-logo"
-                            src="/assets/ilustrasi/logo-unma.svg"
+                            src="/assets/ilustrasi/logo-unma.png"
                             alt="Universitas Majalengka (UNMA)"
                         />
                         <img
