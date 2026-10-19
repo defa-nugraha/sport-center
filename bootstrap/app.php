@@ -37,6 +37,10 @@ return Application::configure(basePath: dirname(__DIR__))
         )));
         $middleware->trustProxies(at: $trustedProxies ?: ['127.0.0.1', '::1']);
 
+        // Midtrans calls this endpoint server-to-server and cannot send a browser CSRF token.
+        // Keep CSRF protection enabled for every other web route.
+        $middleware->validateCsrfTokens(except: ['payments/midtrans/notification']);
+
         $middleware->alias([
             'permission' => PermissionMiddleware::class,
             'role' => RoleMiddleware::class,
