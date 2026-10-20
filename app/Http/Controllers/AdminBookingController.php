@@ -46,7 +46,7 @@ class AdminBookingController extends Controller
         }
 
         $query = Booking::query()
-            ->with(['facility', 'payment', 'invoice'])
+            ->with(['facility', 'payment', 'invoice', 'refunds'])
             ->latest();
 
         if ($search !== '') {
@@ -150,6 +150,8 @@ class AdminBookingController extends Controller
             'booking' => $booking,
             'refunds' => $refunds,
             'canRefund' => $request->user()?->hasRole('administrator') && $this->isRefundable($booking),
+            'refundRemaining' => max(0, (int) ($booking->payment?->gross_amount ?? 0) - (int) $booking->refunds()->where('status', 'confirmed')->sum('amount')),
+            'canPartialRefund' => ! in_array(strtolower((string) $booking->payment?->payment_type), ['shopeepay', 'ovo'], true),
         ]);
     }
 
@@ -159,6 +161,7 @@ class AdminBookingController extends Controller
 
         $data = $request->validate([
             'reason' => ['required', 'string', 'min:5', 'max:255'],
+            'amount' => ['required', 'integer', 'min:1'],
         ]);
 
         $refund = DB::transaction(function () use ($booking, $request, $data) {
@@ -170,13 +173,13 @@ class AdminBookingController extends Controller
 
             if (! $payment || ! $this->isRefundable($lockedBooking->loadMissing('payment'))) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
-                    'refund' => 'Booking tidak memenuhi syarat refund penuh. Pembayaran harus lunas dan transaksi harus berstatus settlement atau capture.',
+                    'refund' => 'Booking tidak memenuhi syarat refund. Pembayaran harus berstatus lunas atau refund sebagian, dan transaksi harus memenuhi ketentuan Midtrans.',
                 ]);
             }
 
             $alreadyRefunded = BookingRefund::query()
                 ->where('booking_id', $lockedBooking->id)
-                ->whereIn('status', ['requested', 'confirmed'])
+                ->where('status', 'requested')
                 ->exists();
 
             if ($alreadyRefunded) {
@@ -185,12 +188,31 @@ class AdminBookingController extends Controller
                 ]);
             }
 
+            $confirmedAmount = (int) BookingRefund::query()
+                ->where('payment_id', $payment->id)
+                ->where('status', 'confirmed')
+                ->sum('amount');
+            $remainingAmount = max(0, $payment->gross_amount - $confirmedAmount);
+
+            if ((int) $data['amount'] > $remainingAmount) {
+                throw ValidationException::withMessages([
+                    'amount' => 'Nominal refund melebihi sisa transaksi yang belum dikembalikan.',
+                ]);
+            }
+
+            if (in_array(strtolower((string) $payment->payment_type), ['shopeepay', 'ovo'], true)
+                && (int) $data['amount'] !== $remainingAmount) {
+                throw ValidationException::withMessages([
+                    'amount' => 'Metode pembayaran ini tidak mendukung refund sebagian melalui Midtrans. Masukkan seluruh sisa nominal.',
+                ]);
+            }
+
             $refund = BookingRefund::create([
                 'booking_id' => $lockedBooking->id,
                 'payment_id' => $payment->id,
                 'admin_user_id' => $request->user()->id,
                 'refund_key' => 'GGM-REFUND-'.$lockedBooking->id.'-'.Str::upper(Str::random(10)),
-                'amount' => $payment->gross_amount,
+                'amount' => (int) $data['amount'],
                 'reason' => $data['reason'],
                 'status' => 'requested',
                 'requested_at' => now(),
@@ -210,7 +232,7 @@ class AdminBookingController extends Controller
 
             if (
                 ($gatewayStatus['order_id'] ?? null) !== $payment->order_id
-                || ! in_array(strtolower((string) ($gatewayStatus['transaction_status'] ?? '')), ['settlement', 'capture'], true)
+                || ! in_array(strtolower((string) ($gatewayStatus['transaction_status'] ?? '')), ['settlement', 'partial_refund'], true)
                 || strtoupper((string) ($gatewayStatus['currency'] ?? 'IDR')) !== 'IDR'
                 || (int) round((float) ($gatewayStatus['gross_amount'] ?? -1)) !== $payment->gross_amount
             ) {
@@ -309,7 +331,10 @@ class AdminBookingController extends Controller
             return false;
         }
 
-        return ! $booking->refunds()->whereIn('status', ['requested', 'confirmed'])->exists();
+        $confirmedTotal = (int) $booking->refunds()->where('status', 'confirmed')->sum('amount');
+
+        return $confirmedTotal < (int) $payment->gross_amount
+            && ! $booking->refunds()->where('status', 'requested')->exists();
     }
 
     private function markRefundFailed(BookingRefund $refund, string $message): void
@@ -329,7 +354,13 @@ class AdminBookingController extends Controller
             $payment = Payment::query()->lockForUpdate()->findOrFail($lockedRefund->payment_id);
 
             if ($payment->payment_status === PaymentStatus::REFUND_PENDING) {
-                $payment->payment_status = PaymentStatus::PAID;
+                $confirmedTotal = (int) BookingRefund::query()
+                    ->where('payment_id', $payment->id)
+                    ->where('status', 'confirmed')
+                    ->sum('amount');
+                $payment->payment_status = $confirmedTotal > 0
+                    ? PaymentStatus::PARTIALLY_REFUNDED
+                    : PaymentStatus::PAID;
                 $payment->save();
             }
         });
