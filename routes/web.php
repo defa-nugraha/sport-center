@@ -1,27 +1,28 @@
 <?php
 
-use App\\Http\\Controllers\\AdminBlogController;
-use App\\Http\\Controllers\\Auth\\GoogleAuthController;
-use App\\Http\\Controllers\\AdminController;
-use App\\Http\\Controllers\\AdminTestimonialController;
-use App\\Http\\Controllers\\BlogController;
-use App\\Http\\Controllers\\BookingController;
-use App\\Http\\Controllers\\InvoiceController;
-use App\\Http\\Controllers\\AdminBookingController;
-use App\\Http\\Controllers\\AdminWhatsAppSettingsController;
-use App\\Http\\Controllers\\AdminUserController;
-use App\\Http\\Controllers\\AdminTeamMemberController;
-use App\\Http\\Controllers\\PublicController;
-use App\\Http\\Controllers\\UserController;
-use App\\Http\\Controllers\\NotificationController;
-use App\\Http\\Controllers\\Teams\\TeamInvitationController;
-use Illuminate\\Support\\Facades\\Route;
+use App\Http\Controllers\AdminBlogController;
+use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminTestimonialController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\AdminBookingController;
+use App\Http\Controllers\AdminWhatsAppSettingsController;
+use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\AdminTeamMemberController;
+use App\Http\Controllers\PublicController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Teams\TeamInvitationController;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware('track.public.visit')->group(function () {
     Route::get('/', [PublicController::class, 'home'])->name('home');
     Route::get('/facilities', [PublicController::class, 'facilities'])->name('facilities.index');
     Route::get('/facilities/{facility:slug}', [PublicController::class, 'facility'])->name('facilities.show');
     Route::get('/sports', [PublicController::class, 'sports'])->name('sports.index');
+    Route::get('/sports/{sport:slug}', [PublicController::class, 'sport'])->name('sports.index');
     Route::get('/sports/{sport:slug}', [PublicController::class, 'sport'])->name('sports.show');
     Route::get('/events', [PublicController::class, 'events'])->name('events.index');
     Route::get('/events/{event:slug}/calendar.ics', [PublicController::class, 'eventCalendar'])->name('events.calendar');
@@ -110,20 +111,30 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin.a
         Route::post('/events', [AdminController::class, 'storeEvent'])->name('events.store');
         Route::put('/events/{event}', [AdminController::class, 'updateEvent'])->name('events.update');
         Route::delete('/events/{event}', [AdminController::class, 'destroyEvent'])->name('events.destroy');
-        Route::middleware('permission:kelola halaman')->group(function () {
-            Route::post('/page-sections', [AdminController::class, 'storePageSection'])->name('page-sections.store');
-            Route::put('/page-sections/{pageSection}', [AdminController::class, 'updatePageSection'])->name('page-sections.update');
-            Route::delete('/page-sections/{pageSection}', [AdminController::class, 'destroyPageSection'])->name('page-sections.destroy');
-            Route::post('/page-banners', [AdminController::class, 'storePageBanner'])->name('page-banners.store');
-            Route::put('/page-banners/{pageBanner}', [AdminController::class, 'updatePageBanner'])->name('page-banners.update');
-            Route::delete('/page-banners/{pageBanner}', [AdminController::class, 'destroyPageBanner'])->name('page-banners.destroy');
-            Route::post('/homepage-highlights', [AdminController::class, 'storeHomepageHighlight'])->name('homepage-highlights.store');
-            Route::put('/homepage-highlights/{homepageHighlight}', [AdminController::class, 'updateHomepageHighlight'])->name('homepage-highlights.update');
-            Route::delete('/homepage-highlights/{homepageHighlight}', [AdminController::class, 'destroyHomepageHighlight'])->name('homepage-highlights.destroy');
-            Route::post('/partner-logos', [AdminController::class, 'storePartnerLogo'])->name('partner-logos.store');
-            Route::put('/partner-logos/{partnerLogo}', [AdminController::class, 'updatePartnerLogo'])->name('partner-logos.update');
-            Route::delete('/partner-logos/{partnerLogo}', [AdminController::class, 'destroyPartnerLogo'])->name('partner-logos.destroy');
-        });
+    });
+    Route::middleware('permission:kelola ulasan')->group(function () {
+        Route::get('/reviews', [AdminTestimonialController::class, 'index'])->name('reviews.index');
+        Route::get('/reviews/create', [AdminTestimonialController::class, 'create'])->name('reviews.create');
+        Route::get('/reviews/{testimonial}/edit', [AdminTestimonialController::class, 'edit'])->name('reviews.edit');
+        Route::post('/reviews', [AdminTestimonialController::class, 'store'])->name('reviews.store');
+        Route::put('/reviews/{testimonial}', [AdminTestimonialController::class, 'update'])->name('reviews.update');
+        Route::patch('/reviews/{testimonial}/status', [AdminTestimonialController::class, 'moderate'])->name('reviews.moderate');
+        Route::delete('/reviews/{testimonial}', [AdminTestimonialController::class, 'destroy'])->name('reviews.destroy');
+    });
+    Route::post('/settings', [AdminController::class, 'settings'])->middleware('permission:kelola pengaturan|kelola halaman')->name('settings.update');
+    Route::middleware('permission:kelola halaman')->group(function () {
+        Route::post('/page-sections', [AdminController::class, 'storePageSection'])->name('page-sections.store');
+        Route::put('/page-sections/{pageSection}', [AdminController::class, 'updatePageSection'])->name('page-sections.update');
+        Route::delete('/page-sections/{pageSection}', [AdminController::class, 'destroyPageSection'])->name('page-sections.destroy');
+        Route::post('/page-banners', [AdminController::class, 'storePageBanner'])->name('page-banners.store');
+        Route::put('/page-banners/{pageBanner}', [AdminController::class, 'updatePageBanner'])->name('page-banners.update');
+        Route::delete('/page-banners/{pageBanner}', [AdminController::class, 'destroyPageBanner'])->name('page-banners.destroy');
+        Route::post('/homepage-highlights', [AdminController::class, 'storeHomepageHighlight'])->name('homepage-highlights.store');
+        Route::put('/homepage-highlights/{homepageHighlight}', [AdminController::class, 'updateHomepageHighlight'])->name('homepage-highlights.update');
+        Route::delete('/homepage-highlights/{homepageHighlight}', [AdminController::class, 'destroyHomepageHighlight'])->name('homepage-highlights.destroy');
+        Route::post('/partner-logos', [AdminController::class, 'storePartnerLogo'])->name('partner-logos.store');
+        Route::put('/partner-logos/{partnerLogo}', [AdminController::class, 'updatePartnerLogo'])->name('partner-logos.update');
+        Route::delete('/partner-logos/{partnerLogo}', [AdminController::class, 'destroyPartnerLogo'])->name('partner-logos.destroy');
     });
     Route::middleware('permission:kelola artikel')->group(function () {
         Route::get('/blog/posts/create', [AdminBlogController::class, 'create'])->name('blog.posts.create');
@@ -138,10 +149,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin.a
         Route::put('/blog/categories/{blogCategory}', [AdminBlogController::class, 'updateCategory'])->name('blog.categories.update');
         Route::delete('/blog/categories/{blogCategory}', [AdminBlogController::class, 'destroyCategory'])->name('blog.categories.destroy');
         Route::post('/blog/tags', [AdminBlogController::class, 'storeTag'])->name('blog.tags.store');
-        Route::put('/blog/tags/{blogTag}', [AdminController::class, 'updateBlogTag'])->name('blog.tags.update');
-        Route::delete('/blog/tags/{blogTag}', [AdminController::class, 'destroyBlogTag'])->name('blog.tags.destroy');
+        Route::put('/blog/tags/{blogTag}', [AdminBlogController::class, 'updateTag'])->name('blog.tags.update');
+        Route::delete('/blog/tags/{blogTag}', [AdminBlogController::class, 'destroyTag'])->name('blog.tags.destroy');
     });
-    Route::post('/settings', [AdminController::class, 'settings'])->middleware('permission:kelola pengaturan|kelola halaman')->name('settings.update');
 });
 
 Route::middleware(['auth'])->group(function () {
