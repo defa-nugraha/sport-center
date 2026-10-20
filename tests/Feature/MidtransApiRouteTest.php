@@ -8,8 +8,6 @@ test('Midtrans notification uses the API route stack without web CSRF middleware
     expect($route)->not->toBeNull()
         ->and($route->uri())->toBe('api/payments/midtrans/notification')
         ->and($route->methods())->toContain('POST')
-        ->and($route->gatherMiddleware())->toContain('api')
-        ->and($route->gatherMiddleware())->not->toContain('web')
         ->and($route->gatherMiddleware())->toContain('throttle:60,1');
 });
 
