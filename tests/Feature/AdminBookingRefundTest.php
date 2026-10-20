@@ -363,5 +363,5 @@ test('customer cannot create duplicate pending refund requests', function () {
         ->post('/bookings/'.$booking->id.'/refund-request')
         ->assertSessionHasErrors('refund');
 
-    expect(\\App\\Models\\BookingRefundRequest::where('booking_id', $booking->id)->count())->toBe(1);
+    expect(\App\Models\BookingRefundRequest::where('booking_id', $booking->id)->count())->toBe(1);
 });
