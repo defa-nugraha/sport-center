@@ -77,7 +77,7 @@
                 <div class="muted">Nomor: <strong>{{ $invoice->invoice_number }}</strong><br>
                     Diterbitkan: {{ optional($invoice->issued_at)->format('d F Y, H:i') }} WIB</div>
             </div>
-            <span class="status {{ $invoice->payment?->payment_status === \\App\\Enums\\PaymentStatus::REFUNDED ? 'is-refunded' : ($invoice->payment?->payment_status === \\App\\Enums\\PaymentStatus::PARTIALLY_REFUNDED ? 'is-partial' : ($invoice->payment?->payment_status === \\App\\Enums\\PaymentStatus::REFUND_PENDING ? 'is-pending' : '')) }}">{{ $paymentStatusLabel }}</span>
+            <span class="status {{ $invoice->payment?->payment_status === \App\Enums\PaymentStatus::REFUNDED ? 'is-refunded' : ($invoice->payment?->payment_status === \App\Enums\PaymentStatus::PARTIALLY_REFUNDED ? 'is-partial' : ($invoice->payment?->payment_status === \App\Enums\PaymentStatus::REFUND_PENDING ? 'is-pending' : '')) }}">{{ $paymentStatusLabel }}</span>
         </section>
 
         <section class="detail-grid">
@@ -145,11 +145,11 @@
             <strong>✓</strong>
             <div>
                 <strong>{{ $paymentStatusLabel }}</strong><br>
-                @if ($invoice->payment?->payment_status === \\App\\Enums\\PaymentStatus::REFUNDED)
+                @if ($invoice->payment?->payment_status === \App\Enums\PaymentStatus::REFUNDED)
                     Seluruh pembayaran telah dikembalikan dan dikonfirmasi oleh Midtrans.
-                @elseif ($invoice->payment?->payment_status === \\App\\Enums\\PaymentStatus::PARTIALLY_REFUNDED)
+                @elseif ($invoice->payment?->payment_status === \App\Enums\PaymentStatus::PARTIALLY_REFUNDED)
                     Sebagian pembayaran telah dikembalikan. Nominal di atas mencerminkan refund yang sudah dikonfirmasi oleh Midtrans.
-                @elseif ($invoice->payment?->payment_status === \\App\\Enums\\PaymentStatus::REFUND_PENDING)
+                @elseif ($invoice->payment?->payment_status === \App\Enums\PaymentStatus::REFUND_PENDING)
                     Permintaan refund sedang diproses. Nilai refund masih dapat berubah sampai Midtrans memberikan konfirmasi.
                 @else
                     Invoice ini diterbitkan setelah pembayaran berhasil diverifikasi oleh sistem. Simpan invoice ini sebagai bukti transaksi Anda.
