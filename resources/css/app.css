@@ -12317,3 +12317,150 @@ a.admin-overview-card:hover {
         justify-content: center;
     }
 }
+
+
+/* Refund policy management and public information */
+.refund-policy-editor-panel {
+    display: grid;
+    gap: 18px;
+}
+.refund-policy-editor-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px 15px;
+    border: 1px solid #dce5ef;
+    border-radius: 8px;
+    background: #f5f8fc;
+    color: #526176;
+    font-size: 13px;
+    line-height: 1.6;
+}
+.refund-policy-editor-note svg {
+    flex: 0 0 auto;
+    width: 18px;
+    color: #2f74bd;
+}
+.refund-policy-editor .rich-editor .ck-editor__editable {
+    min-height: 320px;
+}
+.refund-policy-editor .form-error {
+    margin: 0;
+}
+.refund-policy-booking-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 18px 0;
+    padding: 16px;
+    border: 1px solid #d8e5f2;
+    border-radius: 10px;
+    background: #f5f9fe;
+    color: #14243f;
+}
+.refund-policy-booking-hint > svg {
+    flex: 0 0 auto;
+    width: 20px;
+    margin-top: 2px;
+    color: #2f74bd;
+}
+.refund-policy-booking-hint > div {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+.refund-policy-booking-hint strong {
+    font-size: 14px;
+}
+.refund-policy-booking-hint p {
+    margin: 0;
+    color: #526176;
+    font-size: 13px;
+    line-height: 1.6;
+}
+.refund-policy-hint-link {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    padding: 8px 12px;
+    border: 1px solid #2f74bd;
+    border-radius: 6px;
+    color: #245f9c;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+.refund-policy-hint-link:hover {
+    background: #eaf4ff;
+}
+.refund-policy-page {
+    max-width: 1040px;
+    margin-inline: auto;
+}
+.refund-policy-card {
+    padding: clamp(20px, 4vw, 40px);
+    border: 1px solid #dce5ef;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 10px 35px rgb(20 36 63 / 6%);
+}
+.refund-policy-card h1 {
+    margin: 12px 0 8px;
+    color: #14243f;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+.refund-policy-intro {
+    max-width: 720px;
+    margin: 0 0 24px;
+    color: #66758a;
+    line-height: 1.7;
+}
+.refund-policy-rich-text {
+    color: #344256;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+.refund-policy-rich-text h2,
+.refund-policy-rich-text h3 {
+    margin: 24px 0 10px;
+    color: #14243f;
+    line-height: 1.35;
+}
+.refund-policy-rich-text h2:first-child,
+.refund-policy-rich-text h3:first-child {
+    margin-top: 0;
+}
+.refund-policy-rich-text p,
+.refund-policy-rich-text ul,
+.refund-policy-rich-text ol {
+    margin-block: 12px;
+}
+.refund-policy-rich-text ul,
+.refund-policy-rich-text ol {
+    padding-left: 24px;
+}
+.refund-policy-rich-text a {
+    color: #2f74bd;
+    text-decoration: underline;
+    overflow-wrap: anywhere;
+}
+.refund-policy-actions {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+@media (max-width: 640px) {
+    .refund-policy-booking-hint {
+        padding: 13px;
+    }
+    .refund-policy-card {
+        padding: 20px 16px;
+        border-radius: 10px;
+    }
+}
