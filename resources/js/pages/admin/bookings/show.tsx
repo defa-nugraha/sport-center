@@ -5,6 +5,7 @@ import { ConfirmDialog, StatusDialog } from '@/components/admin-cms';
 import { ArrowLeft, CalendarDays, CreditCard, FileText, UserRound, RotateCcw } from 'lucide-react';
 import type { FormEvent } from 'react';
 import '../../../../css/admin-booking-refunds.css';
+import { formatBookingDate } from '@/lib/booking-date';
 
 const statusLabels: Record<string, string> = {
     PENDING_PAYMENT: 'Menunggu pembayaran',
@@ -111,18 +112,9 @@ export default function Show({ booking, refunds = [], canRefund = false }: { boo
                             <div>
                                 <span>{booking.booking_mode === 'daily' ? 'Rentang tanggal' : 'Tanggal'}</span>
                                 <strong>
-                                    {new Date(`${booking.booking_date}T00:00:00`).toLocaleDateString('id-ID', {
-                                        weekday: 'long',
-                                        day: '2-digit',
-                                        month: 'long',
-                                        year: 'numeric',
-                                    })}
+                                    {formatBookingDate(booking.booking_date, { weekday: 'long' })}
                                     {booking.booking_mode === 'daily' && booking.booking_end_date && (
-                                        <> – {new Date(`${booking.booking_end_date}T00:00:00`).toLocaleDateString('id-ID', {
-                                            day: '2-digit',
-                                            month: 'long',
-                                            year: 'numeric',
-                                        })}</>
+                                        <> – {formatBookingDate(booking.booking_end_date)}</>
                                     )}
                                 </strong>
                             </div>
