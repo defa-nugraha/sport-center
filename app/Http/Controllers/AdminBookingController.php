@@ -239,6 +239,23 @@ class AdminBookingController extends Controller
                 throw new MidtransRefundRejectedException('Status transaksi Midtrans tidak lagi memenuhi syarat refund.');
             }
 
+            $localConfirmedRefunds = (int) BookingRefund::query()
+                ->where('payment_id', $payment->id)
+                ->where('status', 'confirmed')
+                ->sum('amount');
+            $gatewayConfirmedRefunds = (int) round((float) ($gatewayStatus['refund_amount'] ?? 0));
+            $confirmedRefunds = max($localConfirmedRefunds, $gatewayConfirmedRefunds);
+            $gatewayRemainingAmount = max(0, $payment->gross_amount - $confirmedRefunds);
+
+            if ((int) $refund->amount > $gatewayRemainingAmount) {
+                throw new MidtransRefundRejectedException('REFUND_AMOUNT_EXCEEDS_REMAINING');
+            }
+
+            if (in_array(strtolower((string) $payment->payment_type), ['shopeepay', 'ovo'], true)
+                && (int) $refund->amount !== $gatewayRemainingAmount) {
+                throw new MidtransRefundRejectedException('REFUND_PARTIAL_NOT_SUPPORTED');
+            }
+
             $gatewayRequestStarted = true;
             $response = $midtrans->refund(
                 $payment->order_id,
@@ -258,6 +275,26 @@ class AdminBookingController extends Controller
             );
         } catch (MidtransRefundRejectedException $exception) {
             $this->markRefundFailed($refund, $exception->getMessage());
+
+            if (isset($gatewayStatus) && in_array(
+                strtolower((string) ($gatewayStatus['transaction_status'] ?? '')),
+                ['refund', 'partial_refund'],
+                true,
+            )) {
+                $bookingService->syncRefundStatus($payment, $gatewayStatus);
+            }
+
+            if ($exception->getMessage() === 'REFUND_AMOUNT_EXCEEDS_REMAINING') {
+                return back()->withErrors([
+                    'amount' => 'Nominal refund melebihi sisa transaksi yang dilaporkan Midtrans.',
+                ]);
+            }
+
+            if ($exception->getMessage() === 'REFUND_PARTIAL_NOT_SUPPORTED') {
+                return back()->withErrors([
+                    'amount' => 'Metode pembayaran ini tidak mendukung refund sebagian. Masukkan seluruh sisa transaksi.',
+                ]);
+            }
 
             Log::warning('Midtrans refund rejected', [
                 'booking_id' => $booking->id,
