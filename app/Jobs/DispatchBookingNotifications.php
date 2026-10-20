@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Enums\BookingStatus;
+use App\Enums\PaymentStatus;
 use App\Models\Booking;
 use App\Services\WhatsAppGateway;
 use Illuminate\Bus\Queueable;
@@ -29,7 +31,10 @@ class DispatchBookingNotifications implements ShouldQueue, ShouldBeUnique
     {
         $booking = Booking::with(['facility', 'payment', 'invoice'])->find($this->bookingId);
 
-        if (! $booking || ! $booking->invoice) {
+        if (! $booking
+            || ! $booking->invoice
+            || $booking->status !== BookingStatus::CONFIRMED
+            || $booking->payment?->payment_status !== PaymentStatus::PAID) {
             return;
         }
 
