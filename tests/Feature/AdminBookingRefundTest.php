@@ -201,6 +201,51 @@ test('refund amount cannot exceed the remaining transaction amount', function ()
     expect($payment->fresh()->payment_status)->toBe(PaymentStatus::PAID);
 });
 
+
+test('refund amount is limited by Midtrans cumulative refund amount', function () {
+    $admin = refundFeatureAdministrator();
+    [$booking, $payment] = refundFeatureBooking($admin);
+
+    config([
+        'services.midtrans.api_url' => 'https://midtrans.test',
+        'services.midtrans.server_key' => 'test-server-key',
+    ]);
+
+    Http::fake([
+        '*midtrans.test/v2/*/status' => Http::response([
+            'order_id' => $payment->order_id,
+            'transaction_id' => $payment->transaction_id,
+            'transaction_status' => 'partial_refund',
+            'refund_amount' => '150000.00',
+            'gross_amount' => '200000.00',
+            'currency' => 'IDR',
+            'refunds' => [[
+                'refund_key' => 'EXTERNAL-REFUND-1',
+                'refund_amount' => '150000.00',
+                'bank_confirmed_at' => now()->toIso8601String(),
+            ]],
+        ], 200),
+    ]);
+
+    $this->actingAs($admin)
+        ->from('/admin/bookings/'.$booking->id)
+        ->post('/admin/bookings/'.$booking->id.'/refund', [
+            'reason' => 'Refund melebihi sisa saldo',
+            'amount' => 75000,
+        ])
+        ->assertSessionHasErrors('amount');
+
+    Http::assertNotSent(fn ($request) => str_ends_with($request->url(), '/refund'));
+
+    $this->assertDatabaseHas('booking_refunds', [
+        'payment_id' => $payment->id,
+        'refund_key' => 'EXTERNAL-REFUND-1',
+        'amount' => 150000,
+        'status' => 'confirmed',
+    ]);
+    expect($payment->fresh()->payment_status)->toBe(PaymentStatus::PARTIALLY_REFUNDED);
+});
+
 test('shopeepay cannot request a partial refund through Midtrans', function () {
     $admin = refundFeatureAdministrator();
     [$booking, $payment] = refundFeatureBooking($admin);
