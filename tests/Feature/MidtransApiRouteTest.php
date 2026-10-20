@@ -1,0 +1,23 @@
+<?php
+
+use Illuminate\\Support\\Facades\\Route;
+
+test('Midtrans notification uses the API route stack without web CSRF middleware', function () {
+    $route = Route::getRoutes()->getByName('payments.midtrans.notification');
+
+    expect($route)->not->toBeNull()
+        ->and($route->uri())->toBe('api/payments/midtrans/notification')
+        ->and($route->methods())->toContain('POST')
+        ->and($route->gatherMiddleware())->toContain('api')
+        ->and($route->gatherMiddleware())->not->toContain('web')
+        ->and($route->gatherMiddleware())->toContain('throttle:60,1');
+});
+
+test('the old web callback URL is no longer registered', function () {
+    $routes = Route::getRoutes();
+
+    expect($routes->match(Illuminate\\Http\\Request::create(
+        '/payments/midtrans/notification',
+        'POST',
+    )))->toBeNull();
+});
