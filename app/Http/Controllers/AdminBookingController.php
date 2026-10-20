@@ -254,7 +254,7 @@ class AdminBookingController extends Controller
                 'success',
                 $refund->fresh()->status === 'confirmed'
                     ? 'Refund berhasil dikonfirmasi oleh Midtrans.'
-                    : 'Permintaan refund penuh diteruskan ke Midtrans. Jadwal tetap diblokir sampai gateway mengonfirmasi refund.',
+                    : 'Permintaan refund diteruskan ke Midtrans. Status invoice dan pembayaran akan diperbarui setelah konfirmasi gateway.',
             );
         } catch (MidtransRefundRejectedException $exception) {
             $this->markRefundFailed($refund, $exception->getMessage());
@@ -265,7 +265,7 @@ class AdminBookingController extends Controller
                 'message' => $exception->getMessage(),
             ]);
 
-            return back()->withErrors(['refund' => 'Midtrans menolak refund. Pembayaran tetap tercatat lunas.']);
+            return back()->withErrors(['refund' => 'Midtrans menolak refund. Status pembayaran dikembalikan sesuai jumlah refund yang telah dikonfirmasi.']);
         } catch (MidtransRefundUncertainException $exception) {
             $refund->update(['error_message' => 'Respons gateway belum dapat dipastikan; menunggu rekonsiliasi.']);
 
@@ -321,8 +321,9 @@ class AdminBookingController extends Controller
         if (
             ! $payment
             || $payment->provider !== 'midtrans'
-            || $payment->payment_status !== PaymentStatus::PAID
-            || ! in_array(strtolower((string) $payment->transaction_status), ['settlement', 'capture'], true)
+            || ! in_array($payment->payment_status, [PaymentStatus::PAID, PaymentStatus::PARTIALLY_REFUNDED], true)
+            || ! in_array(strtolower((string) $payment->transaction_status), ['settlement', 'partial_refund'], true)
+            || ! in_array(strtolower((string) $payment->payment_type), ['credit_card', 'gopay', 'shopeepay', 'dana', 'ovo', 'qris', 'kredivo', 'akulaku'], true)
         ) {
             return false;
         }
