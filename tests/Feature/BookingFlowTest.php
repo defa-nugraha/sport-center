@@ -5,8 +5,11 @@ use App\Models\Booking;
 use App\Models\Facility;
 use App\Models\Payment;
 use App\Models\User;
+use App\Jobs\DispatchBookingNotifications;
+use App\Jobs\NotifyAdminOfPaidBooking;
 use App\Services\BookingService;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 
 function bookingFacility(): Facility {
     return Facility::create([
@@ -64,7 +67,8 @@ test('booking creates temporary hold and calculated end time', function () {
     expect($result['booking']->status)->toBe(BookingStatus::PENDING_PAYMENT)->and($result['booking']->end_time)->toBe('12:00:00')->and($result['booking']->expires_at)->not->toBeNull()->and($result['booking']->total)->toBe(200000);
 });
 
-test('midtrans webhook is verified and idempotently confirms booking and creates one invoice', function () {
+test('midtrans webhook is verified and idempotently confirms booking and dispatches WhatsApp notifications', function () {
+    Queue::fake();
     config()->set('services.midtrans.server_key','test-server-key');
     $user=User::factory()->create();
     $facility=bookingFacility();
@@ -76,6 +80,8 @@ test('midtrans webhook is verified and idempotently confirms booking and creates
     expect($booking->fresh()->status)->toBe(BookingStatus::CONFIRMED)->and($payment->fresh()->payment_status)->toBe(PaymentStatus::PAID);
     $this->postJson('/api/payments/midtrans/notification',$status)->assertOk();
     expect($booking->fresh()->invoice()->count())->toBe(1);
+    Queue::assertPushed(DispatchBookingNotifications::class, fn ($job) => $job->bookingId === $booking->id);
+    Queue::assertPushed(NotifyAdminOfPaidBooking::class, fn ($job) => $job->bookingId === $booking->id);
 });
 
 
