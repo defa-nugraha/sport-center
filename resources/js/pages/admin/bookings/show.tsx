@@ -1,6 +1,6 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ConfirmDialog, StatusDialog } from '@/components/admin-cms';
 import { ArrowLeft, CalendarDays, CreditCard, FileText, UserRound, RotateCcw } from 'lucide-react';
 import type { FormEvent } from 'react';
@@ -30,10 +30,14 @@ function formatCurrency(value: number | string) {
     return `Rp ${Number(value || 0).toLocaleString('id-ID')}`;
 }
 
-export default function Show({ booking, refunds = [], canRefund = false }: { booking: any; refunds?: any[]; canRefund?: boolean }) {
+export default function Show({ booking, refunds = [], customerRefundRequests = [], canRefund = false, refundRemaining = 0, canPartialRefund = true }: { booking: any; refunds?: any[]; customerRefundRequests?: any[]; canRefund?: boolean; refundRemaining?: number; canPartialRefund?: boolean }) {
     const status = booking.status;
     const paymentStatus = booking.payment?.payment_status;
-    const refundForm = useForm({ reason: '' });
+    const refundForm = useForm({ amount: String(refundRemaining), reason: '' });
+
+    useEffect(() => {
+        refundForm.setData('amount', String(refundRemaining));
+    }, [refundRemaining]);
     const [confirmRefund, setConfirmRefund] = useState(false);
     const [statusDialog, setStatusDialog] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const refundErrors = refundForm.errors as Record<string, string | undefined>;
@@ -48,7 +52,7 @@ export default function Show({ booking, refunds = [], canRefund = false }: { boo
         refundForm.post(`/admin/bookings/${booking.encrypted_id}/refund`, {
             preserveScroll: true,
             onSuccess: () => {
-                refundForm.reset();
+                refundForm.reset('reason');
                 setStatusDialog({ type: 'success', message: 'Permintaan refund dikirim. Status akan diperbarui setelah ada konfirmasi dari Midtrans.' });
             },
             onError: (errors) => setStatusDialog({ type: 'error', message: Object.values(errors)[0] || 'Permintaan refund belum berhasil dikirim.' }),
@@ -205,6 +209,33 @@ export default function Show({ booking, refunds = [], canRefund = false }: { boo
                         </div>
                     </section>
 
+                    {customerRefundRequests.length > 0 && (
+                        <section className="admin-panel booking-refund-history">
+                            <div className="panel-head">
+                                <div>
+                                    <h2>Pengajuan refund pelanggan</h2>
+                                    <p>Permintaan dari pelanggan tanpa nominal; tentukan nominal setelah meninjau kebijakan refund.</p>
+                                </div>
+                                <RotateCcw aria-hidden="true" />
+                            </div>
+                            <div className="booking-refund-list">
+                                {customerRefundRequests.map((request: any) => (
+                                    <article className="booking-refund-record" key={request.id}>
+                                        <div>
+                                            <strong>{request.user_name || 'Pelanggan'}</strong>
+                                            <span>{request.reason || 'Pelanggan meminta pengembalian dana.'}</span>
+                                            <small>Diajukan: {request.created_at ? new Date(request.created_at).toLocaleString('id-ID') : '-'}</small>
+                                            {request.admin_note && <small>Catatan admin: {request.admin_note}</small>}
+                                        </div>
+                                        <div className={`booking-refund-state is-${request.status === 'pending' ? 'requested' : request.status}`}>
+                                            {request.status === 'pending' ? 'Menunggu ditinjau' : request.status === 'reviewed' ? 'Sudah ditinjau' : request.status}
+                                        </div>
+                                    </article>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
                     {refunds.length > 0 && (
                         <section className="admin-panel booking-refund-history">
                             <div className="panel-head">
@@ -233,19 +264,54 @@ export default function Show({ booking, refunds = [], canRefund = false }: { boo
                     )}
 
                     {canRefund && (
-                        <section className="admin-panel booking-refund-action">
+                        <section className="admin-panel booking-refund-action" id="refund">
                             <div className="panel-head">
                                 <div>
                                     <h2>Refund booking</h2>
-                                    <p>Refund penuh hanya tersedia untuk pembayaran Midtrans yang settlement/capture.</p>
+                                    <p>Atur nominal refund sesuai sisa transaksi dan ketentuan metode pembayaran Midtrans.</p>
                                 </div>
                                 <RotateCcw aria-hidden="true" />
                             </div>
                             <div className="booking-refund-warning">
                                 <strong>Perhatian</strong>
-                                <p>Jadwal tetap diblokir sampai Midtrans mengonfirmasi refund penuh. Jika respons gateway tidak pasti, permintaan tidak akan otomatis dikirim ulang.</p>
+                                <p>Nominal maksimal yang dapat dikembalikan: <strong>{formatCurrency(refundRemaining)}</strong>. Jadwal baru dilepas jika seluruh pembayaran telah dikembalikan dan dikonfirmasi Midtrans. Jika respons gateway tidak pasti, permintaan tidak akan otomatis dikirim ulang.</p>
                             </div>
                             <form onSubmit={submitRefund}>
+                                <div className="booking-refund-suggestions" aria-label="Saran nominal refund">
+                                    <span>Saran nominal dari sisa transaksi</span>
+                                    <div>
+                                        {[10, 25, 50, 75, 100].map((percentage) => {
+                                            const suggestedAmount = Math.round(Number(refundRemaining) * percentage / 100);
+                                            return (
+                                                <button
+                                                    key={percentage}
+                                                    type="button"
+                                                    className="booking-refund-suggestion"
+                                                    disabled={(!canPartialRefund && percentage !== 100) || suggestedAmount < 1}
+                                                    onClick={() => refundForm.setData('amount', String(suggestedAmount))}
+                                                >
+                                                    {percentage}% · {formatCurrency(suggestedAmount)}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                                <label>
+                                    Nominal refund (Rp)
+                                    <input
+                                        type="number"
+                                        name="amount"
+                                        min={1}
+                                        max={refundRemaining}
+                                        step={1}
+                                        value={refundForm.data.amount}
+                                        onChange={(event) => refundForm.setData('amount', event.target.value)}
+                                        readOnly={!canPartialRefund}
+                                        required
+                                    />
+                                </label>
+                                {refundForm.errors.amount && <small className="field-error">{refundForm.errors.amount}</small>}
+                                {!canPartialRefund && <small className="booking-refund-note">Metode pembayaran ini tidak mendukung refund sebagian melalui Midtrans. Nominal diatur ke seluruh sisa transaksi.</small>}
                                 <label>
                                     Alasan refund
                                     <textarea
@@ -262,7 +328,7 @@ export default function Show({ booking, refunds = [], canRefund = false }: { boo
                                 {refundErrors.refund && <p className="booking-refund-error">{refundErrors.refund}</p>}
                                 <button className="button danger" type="submit" disabled={refundForm.processing}>
                                     <RotateCcw size={16} aria-hidden="true" />
-                                    {refundForm.processing ? 'Mengirim permintaan…' : `Ajukan refund penuh · ${formatCurrency(booking.payment?.gross_amount || booking.total)}`}
+                                    {refundForm.processing ? 'Mengirim permintaan…' : `Ajukan refund · ${formatCurrency(Number(refundForm.data.amount || 0))}`}
                                 </button>
                             </form>
                         </section>
@@ -272,8 +338,8 @@ export default function Show({ booking, refunds = [], canRefund = false }: { boo
             <ConfirmDialog
                 open={confirmRefund}
                 onOpenChange={setConfirmRefund}
-                title="Ajukan refund penuh?"
-                description="Permintaan akan dikirim ke Midtrans. Jika diterima gateway, permintaan tidak dapat dibatalkan dari aplikasi."
+                title="Ajukan refund?"
+                description={`Nominal ${formatCurrency(Number(refundForm.data.amount || 0))} akan diajukan ke Midtrans. Jika diterima gateway, permintaan tidak dapat dibatalkan dari aplikasi.`}
                 confirmLabel="Ya, ajukan refund"
                 onConfirm={confirmRefundRequest}
                 processing={refundForm.processing}

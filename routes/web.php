@@ -47,10 +47,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
     Route::get('/bookings', [UserController::class, 'history'])->name('user.bookings');
     Route::post('/bookings/{booking}/review', [UserController::class, 'storeReview'])->middleware('throttle:5,1')->name('user.bookings.review');
+    Route::post('/bookings/{booking}/refund-request', [UserController::class, 'requestRefund'])->middleware('throttle:3,1')->name('user.bookings.refund-request');
     Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
     Route::patch('/profile', [UserController::class, 'updateProfile'])->name('user.profile.update');
 });
 Route::get('/invoices/{invoice:uuid}/pdf', [InvoiceController::class, 'show'])->middleware('signed')->name('invoices.public');
+Route::get('/invoices/{invoice:uuid}/print', [InvoiceController::class, 'print'])->middleware('signed')->name('invoices.print');
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin.access'])->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');

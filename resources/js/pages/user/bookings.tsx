@@ -1,6 +1,8 @@
 import { Link, useForm } from '@inertiajs/react';
-import { CalendarDays, ChevronRight, Star } from 'lucide-react';
+import { CalendarDays, ChevronRight, Printer, RotateCcw, Star } from 'lucide-react';
 import { UserShell } from '@/components/user-layout';
+import type { FormEvent } from 'react';
+import '../../../css/admin-booking-refunds.css';
 import { BookingStatusBadge } from '@/components/booking-status-badge';
 
 const formatBookingDate = (value?: string | null) => {
@@ -66,6 +68,40 @@ function BookingReviewForm({ booking }: { booking: any }) {
     );
 }
 
+function BookingRefundRequestAction({ booking }: { booking: any }) {
+    const form = useForm({ reason: '' });
+    const refundErrors = form.errors as Record<string, string | undefined>;
+
+    const submit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        form.post(`/bookings/${booking.encrypted_id || booking.id}/refund-request`, {
+            preserveScroll: true,
+        });
+    };
+
+    if (booking.refund_request_status === 'pending') {
+        return <p className="booking-refund-request-pending">Pengajuan refund sedang menunggu peninjauan admin.</p>;
+    }
+
+    if (!booking.can_request_refund) return null;
+
+    return (
+        <div className="booking-refund-request-action">
+            <form onSubmit={submit}>
+                <button type="submit" className="button booking-refund-request-button" disabled={form.processing}>
+                    <RotateCcw aria-hidden="true" size={16} />
+                    {form.processing ? 'Mengirim pengajuan…' : 'Ajukan refund'}
+                </button>
+                {refundErrors.refund && <p className="booking-refund-request-error">{refundErrors.refund}</p>}
+            </form>
+            <p className="booking-refund-request-hint">
+                Pengajuan ini belum menentukan nominal. Admin akan meninjau dan menentukan nominal sesuai kebijakan yang berlaku.{' '}
+                <Link href="/refund-policy">Baca kebijakan refund</Link>.
+            </p>
+        </div>
+    );
+}
+
 export default function Bookings({ bookings }: any) {
     return (
         <UserShell active="bookings" title="Riwayat Pemesanan" description="Lihat seluruh pemesanan venue, status pembayaran, dan berikan ulasan setelah menggunakan fasilitas.">
@@ -86,6 +122,17 @@ export default function Bookings({ bookings }: any) {
                                 <BookingStatusBadge status={booking.status} />
                                 <strong>Rp {Number(booking.total).toLocaleString('id-ID')}</strong>
                                 <Link href={'/booking/' + (booking.encrypted_id || booking.id) + '/status'} className="text-link">Detail <ChevronRight /></Link>
+                                <BookingRefundRequestAction booking={booking} />
+                                {booking.invoice && booking.invoice_print_url && ['PAID', 'REFUND_PENDING', 'PARTIALLY_REFUNDED', 'REFUNDED'].includes(String(booking.payment?.payment_status || '')) && (
+                                    <a
+                                        href={booking.invoice_print_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="button booking-invoice-print"
+                                    >
+                                        <Printer aria-hidden="true" size={16} /> Cetak invoice
+                                    </a>
+                                )}
                             </div>
                             {booking.review ? (
                                 <div className="booking-review-existing">

@@ -34,4 +34,5 @@ class Booking extends Model
     public function payment() { return $this->hasOne(Payment::class); }
     public function invoice() { return $this->hasOne(Invoice::class); }
     public function refunds() { return $this->hasMany(BookingRefund::class); }
+    public function refundRequests() { return $this->hasMany(BookingRefundRequest::class); }
 }

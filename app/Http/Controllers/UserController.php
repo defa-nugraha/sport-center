@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\BookingRefund;
+use App\Models\BookingRefundRequest;
 use App\Models\Testimonial;
 use App\Enums\PaymentStatus;
 use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -49,6 +52,22 @@ class UserController extends Controller
         $bookings->getCollection()->transform(function (Booking $booking) {
             $booking->setAttribute('review', Testimonial::where('booking_id', $booking->id)->first());
             $booking->setAttribute('can_review', $this->canReviewBooking($booking));
+            $refundRequest = BookingRefundRequest::query()
+                ->where('booking_id', $booking->id)
+                ->latest('id')
+                ->first();
+            $booking->setAttribute('refund_request_status', $refundRequest?->status);
+            $booking->setAttribute('can_request_refund', $this->canRequestRefund($booking) && $refundRequest?->status !== 'pending');
+            $booking->setAttribute(
+                'invoice_print_url',
+                $booking->invoice
+                    ? URL::temporarySignedRoute(
+                        'invoices.print',
+                        now()->addDays(30),
+                        ['invoice' => $booking->invoice->uuid],
+                    )
+                    : null,
+            );
 
             return $booking;
         });
@@ -56,6 +75,69 @@ class UserController extends Controller
         return Inertia::render('user/bookings', [
             'bookings' => $bookings,
         ]);
+    }
+
+
+    public function requestRefund(Request $request, Booking $booking)
+    {
+        abort_unless((int) $booking->user_id === (int) $request->user()->id, 404);
+
+        $data = $request->validate([
+            'reason' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($booking, $request, $data) {
+            $lockedBooking = Booking::query()->lockForUpdate()->findOrFail($booking->id);
+            abort_unless((int) $lockedBooking->user_id === (int) $request->user()->id, 404);
+            $lockedBooking->load('payment');
+
+            if (! $this->canRequestRefund($lockedBooking)) {
+                throw ValidationException::withMessages([
+                    'refund' => 'Pengajuan refund hanya tersedia untuk pembayaran berhasil yang masih memenuhi ketentuan refund.',
+                ]);
+            }
+
+            $pendingRequest = BookingRefundRequest::query()
+                ->where('booking_id', $lockedBooking->id)
+                ->where('status', 'pending')
+                ->exists();
+            $gatewayRefundPending = BookingRefund::query()
+                ->where('booking_id', $lockedBooking->id)
+                ->where('status', 'requested')
+                ->exists();
+
+            if ($pendingRequest || $gatewayRefundPending) {
+                throw ValidationException::withMessages([
+                    'refund' => 'Sudah ada pengajuan atau proses refund yang masih berjalan untuk booking ini.',
+                ]);
+            }
+
+            BookingRefundRequest::create([
+                'booking_id' => $lockedBooking->id,
+                'user_id' => $request->user()->id,
+                'status' => 'pending',
+                'reason' => $data['reason'] ?? null,
+            ]);
+        });
+
+        return back()->with('success', 'Pengajuan refund berhasil dikirim ke admin untuk ditinjau. Nominal akan ditentukan admin sesuai kebijakan refund.');
+    }
+
+    private function canRequestRefund(Booking $booking): bool
+    {
+        $booking->loadMissing('payment');
+        $payment = $booking->payment;
+        $paymentStatus = $payment?->payment_status;
+        if ($paymentStatus instanceof PaymentStatus) {
+            $paymentStatus = $paymentStatus->value;
+        }
+
+        return $payment
+            && $payment->provider === 'midtrans'
+            && in_array($paymentStatus, [PaymentStatus::PAID->value, PaymentStatus::PARTIALLY_REFUNDED->value], true)
+            && in_array(strtolower((string) $payment->transaction_status), ['settlement', 'partial_refund'], true)
+            && ! in_array(($booking->status?->value ?? $booking->status), ['REFUNDED', 'CANCELLED', 'FAILED', 'EXPIRED'], true)
+            && (int) BookingRefund::query()->where('payment_id', $payment->id)->where('status', 'confirmed')->sum('amount') < (int) $payment->gross_amount;
     }
 
     public function storeReview(Request $request, Booking $booking)

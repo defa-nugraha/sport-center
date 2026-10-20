@@ -7,6 +7,7 @@ use App\Enums\PaymentStatus;
 use App\Models\Booking;
 use App\Models\BookingRefund;
 use App\Models\Facility;
+use App\Models\Invoice;
 use App\Models\Payment;
 use App\Jobs\DispatchBookingNotifications;
 use App\Jobs\NotifyAdminOfPaidBooking;
@@ -438,6 +439,10 @@ class BookingService
     {
         $transactionStatus = strtolower((string) ($status['transaction_status'] ?? ''));
         if (! in_array($transactionStatus, ['refund', 'partial_refund'], true)) {
+            if ($payment->fresh()?->payment_status === PaymentStatus::REFUND_PENDING) {
+                $this->refreshInvoiceAfterRefund($payment->id);
+            }
+
             return;
         }
 
@@ -473,6 +478,8 @@ class BookingService
                     $pendingRefund->save();
                 }
             });
+
+            $this->refreshInvoiceAfterRefund($payment->id);
 
             return;
         }
@@ -548,5 +555,31 @@ class BookingService
 
             $lockedPayment->save();
         });
+
+        $this->refreshInvoiceAfterRefund($payment->id);
+    }
+
+    public function refreshInvoiceAfterRefund(int $paymentId): void
+    {
+        try {
+            $invoice = Invoice::query()->where('payment_id', $paymentId)->first();
+
+            if (! $invoice) {
+                return;
+            }
+
+            $pdfPath = app(InvoicePdfService::class)->generate(
+                $invoice->fresh(['booking.facility', 'booking.refunds', 'payment']),
+            );
+
+            if ($invoice->pdf_path !== $pdfPath) {
+                $invoice->update(['pdf_path' => $pdfPath]);
+            }
+        } catch (\Throwable $exception) {
+            Log::warning('Could not refresh invoice PDF after refund status update', [
+                'payment_id' => $paymentId,
+                'exception' => $exception::class,
+            ]);
+        }
     }
 }

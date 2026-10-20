@@ -20,3 +20,25 @@
     .booking-refund-record { flex-direction: column; }
     .booking-refund-action .button.danger { width: 100%; }
 }
+
+.booking-refund-action input[type="number"] { width: 100%; min-height: 42px; padding: 10px 12px; border: 1px solid #d7e0e8; border-radius: 8px; background: #fff; color: #25374d; font: inherit; font-size: 13px; }
+.booking-refund-note { color: #697a90; font-size: 11px; line-height: 1.5; }
+.booking-row-actions { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.booking-action-icon { display: inline-flex; align-items: center; justify-content: center; width: 34px; min-width: 34px; height: 34px; padding: 0; }
+.booking-action-icon svg { flex-shrink: 0; }
+.booking-action-refund { color: #a12235; }
+.booking-action-refund:hover { background: #fff0f1; color: #8d1d2c; }
+
+.booking-refund-suggestions { display: grid; gap: 8px; }
+.booking-refund-suggestions > span { color: #344a62; font-size: 12px; font-weight: 750; }
+.booking-refund-suggestions > div { display: flex; flex-wrap: wrap; gap: 7px; }
+.booking-refund-suggestion { min-height: 34px; padding: 7px 10px; border: 1px solid #d7e0e8; border-radius: 7px; background: #f8fafc; color: #344a62; font-size: 11px; font-weight: 750; cursor: pointer; }
+.booking-refund-suggestion:hover:not(:disabled) { border-color: #c92f40; background: #fff3f4; color: #a12235; }
+.booking-refund-suggestion:disabled { cursor: not-allowed; opacity: .45; }
+.booking-refund-request-action { display: grid; gap: 7px; margin-top: 8px; max-width: 310px; }
+.booking-refund-request-action form { display: grid; gap: 6px; }
+.booking-refund-request-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 36px; padding: 8px 12px; }
+.booking-refund-request-hint, .booking-refund-request-pending { margin: 0; color: #697a90; font-size: 11px; line-height: 1.5; }
+.booking-refund-request-hint a { color: #1b6f9f; font-weight: 750; text-decoration: underline; }
+.booking-refund-request-pending { margin-top: 8px; color: #8b5a13; font-weight: 700; }
+.booking-refund-request-error { margin: 0; color: #a12235; font-size: 11px; }
