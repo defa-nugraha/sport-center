@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [UserController::class, 'updateProfile'])->name('user.profile.update');
 });
 Route::get('/invoices/{invoice:uuid}/pdf', [InvoiceController::class, 'show'])->middleware('signed')->name('invoices.public');
+Route::get('/invoices/{invoice:uuid}/print', [InvoiceController::class, 'print'])->middleware('signed')->name('invoices.print');
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin.access'])->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
@@ -86,7 +87,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin.a
         Route::middleware('role:administrator')->group(function () {
             Route::get('/bookings/whatsapp-settings', [AdminWhatsAppSettingsController::class, 'edit'])->name('bookings.whatsapp-settings.edit');
             Route::put('/bookings/whatsapp-settings', [AdminWhatsAppSettingsController::class, 'update'])->name('bookings.whatsapp-settings.update');
-            Route::post('/bookings/whatsapp-settings/test-message', [AdminWhatsAppSettingsController::class, 'testMessage'])->middleware('throttle:3,1')->name('bookings.whatsapp-settings.test-message');
+            Route::post('/bookings/whatsapp-settings/test-message', [AdminWhatsAppSettingsController::class, 'testMessage'])->middleware('throttle:3,1')->name('admin.bookings.whatsapp-settings.test-message');
         });
         Route::get('/bookings/{booking}', [AdminBookingController::class, 'show'])->name('bookings.show');
         Route::post('/bookings/{booking}/refund', [AdminBookingController::class, 'refund'])->middleware('role:administrator')->name('bookings.refund');
@@ -119,7 +120,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin.a
         Route::post('/reviews', [AdminTestimonialController::class, 'store'])->name('reviews.store');
         Route::put('/reviews/{testimonial}', [AdminTestimonialController::class, 'update'])->name('reviews.update');
         Route::patch('/reviews/{testimonial}/status', [AdminTestimonialController::class, 'moderate'])->name('reviews.moderate');
-        Route::delete('/reviews/{testimonial}', [AdminTestimonialController::class, 'destroy'])->name('reviews.destroy');
+        Route::delete('/reviews/{testimonial}', [AdminController::class, 'destroyTestimonial'])->name('reviews.destroy');
     });
     Route::post('/settings', [AdminController::class, 'settings'])->middleware('permission:kelola pengaturan|kelola halaman')->name('settings.update');
     Route::middleware('permission:kelola halaman')->group(function () {
@@ -139,7 +140,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin.a
     Route::middleware('permission:kelola artikel')->group(function () {
         Route::get('/blog/posts/create', [AdminBlogController::class, 'create'])->name('blog.posts.create');
         Route::get('/blog/posts/{blogPost}/edit', [AdminBlogController::class, 'edit'])->name('blog.posts.edit');
-        Route::post('/blog/posts', [AdminBlogController::class, 'storePost'])->name('blog.posts.store');
+        Route::post('/blog/posts', [AdminBlogController::class, 'storePost'])->name('blog.posts.update');
         Route::put('/blog/posts/{blogPost}', [AdminBlogController::class, 'updatePost'])->name('blog.posts.update');
         Route::delete('/blog/posts/{blogPost}', [AdminBlogController::class, 'destroyPost'])->name('blog.posts.destroy');
         Route::delete('/blog/posts/{blogPost}/images/{image}', [AdminBlogController::class, 'destroyPostImage'])->name('blog.posts.images.destroy');
