@@ -24,6 +24,7 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
@@ -37,9 +38,8 @@ return Application::configure(basePath: dirname(__DIR__))
         )));
         $middleware->trustProxies(at: $trustedProxies ?: ['127.0.0.1', '::1']);
 
-        // Midtrans calls this endpoint server-to-server and cannot send a browser CSRF token.
-        // Keep CSRF protection enabled for every other web route.
-        $middleware->validateCsrfTokens(except: ['payments/midtrans/notification']);
+        // Server-to-server callbacks use the API middleware stack; browser
+        // routes retain normal CSRF protection without endpoint exemptions.
 
         $middleware->alias([
             'permission' => PermissionMiddleware::class,

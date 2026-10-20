@@ -6,7 +6,6 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminTestimonialController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BookingController;
-use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\AdminBookingController;
 use App\Http\Controllers\AdminWhatsAppSettingsController;
@@ -51,7 +50,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
     Route::patch('/profile', [UserController::class, 'updateProfile'])->name('user.profile.update');
 });
-Route::post('/payments/midtrans/notification', [PaymentController::class, 'notification'])->name('payments.midtrans.notification');
 Route::get('/invoices/{invoice:uuid}/pdf', [InvoiceController::class, 'show'])->middleware('signed')->name('invoices.public');
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin.access'])->group(function () {
