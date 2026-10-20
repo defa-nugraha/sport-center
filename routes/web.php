@@ -110,6 +110,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin.a
         Route::post('/events', [AdminController::class, 'storeEvent'])->name('events.store');
         Route::put('/events/{event}', [AdminController::class, 'updateEvent'])->name('events.update');
         Route::delete('/events/{event}', [AdminController::class, 'destroyEvent'])->name('events.destroy');
+        Route::delete('/events/{event}/images/{gallery}', [AdminController::class, 'destroyEventImage'])->name('events.images.destroy');
     });
     Route::middleware('permission:kelola ulasan')->group(function () {
         Route::get('/reviews', [AdminTestimonialController::class, 'index'])->name('reviews.index');
