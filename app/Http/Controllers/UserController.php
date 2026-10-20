@@ -49,6 +49,16 @@ class UserController extends Controller
         $bookings->getCollection()->transform(function (Booking $booking) {
             $booking->setAttribute('review', Testimonial::where('booking_id', $booking->id)->first());
             $booking->setAttribute('can_review', $this->canReviewBooking($booking));
+            $booking->setAttribute(
+                'invoice_print_url',
+                $booking->invoice
+                    ? URL::temporarySignedRoute(
+                        'invoices.print',
+                        now()->addDays(30),
+                        ['invoice' => $booking->invoice->uuid],
+                    )
+                    : null,
+            );
 
             return $booking;
         });
