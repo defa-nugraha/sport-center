@@ -18,6 +18,24 @@ const parseDate = (value: string) => {
     return new Date(year, month - 1, day);
 };
 
+const getWibDateTime = (date: Date) => {
+    const parts = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Jakarta',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hourCycle: 'h23',
+    }).formatToParts(date);
+    const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+
+    return {
+        dateKey: `${values.year}-${values.month}-${values.day}`,
+        time: `${values.hour}:${values.minute}`,
+    };
+};
+
 type HourlySlot = {
     start_time: string;
     end_time: string;
@@ -35,6 +53,7 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
     const [checking, setChecking] = useState(false);
     const [availabilityMessage, setAvailabilityMessage] = useState('');
     const [hourlySlots, setHourlySlots] = useState<HourlySlot[]>([]);
+    const [clock, setClock] = useState(() => getWibDateTime(new Date()));
     const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const form = useForm({
         customer_phone: '',
@@ -50,6 +69,25 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
         for (let minutes = minimumHours * 60; minutes <= 720; minutes += 30) options.push(minutes);
         return options;
     }, [minimumHours]);
+
+    useEffect(() => {
+        const interval = window.setInterval(() => setClock(getWibDateTime(new Date())), 30_000);
+        return () => window.clearInterval(interval);
+    }, []);
+
+    const visibleHourlySlots = hourlySlots.filter((slot) =>
+        form.data.booking_date !== clock.dateKey || slot.start_time > clock.time
+    );
+
+    useEffect(() => {
+        if (form.data.booking_date === clock.dateKey
+            && form.data.start_time
+            && form.data.start_time <= clock.time) {
+            form.setData('start_time', '');
+            setAvailable(null);
+            setAvailabilityMessage('Waktu yang dipilih sudah lewat. Silakan pilih waktu berikutnya.');
+        }
+    }, [clock, form.data.booking_date, form.data.start_time]);
 
     const loadHourlySlots = async () => {
         if (!hourly || !form.data.booking_date) return;
@@ -196,13 +234,17 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
                             <div className="booking-slot-picker-head">
                                 <div>
                                     <strong id="booking-slot-title">Pilih waktu yang tersedia</strong>
-                                    <small>{checking ? 'Memuat pilihan waktu...' : availabilityMessage}</small>
+                                    <small>{checking ? 'Memuat pilihan waktu...' : (
+                                        form.data.booking_date === clock.dateKey && hourlySlots.length > 0 && visibleHourlySlots.length === 0
+                                            ? 'Tidak ada pilihan waktu yang tersisa hari ini.'
+                                            : availabilityMessage
+                                    )}</small>
                                 </div>
                                 <Clock3 aria-hidden="true" />
                             </div>
-                            {!checking && hourlySlots.length > 0 && (
+                            {!checking && visibleHourlySlots.length > 0 && (
                                 <div className="booking-slot-options">
-                                    {hourlySlots.map((slot) => (
+                                    {visibleHourlySlots.map((slot) => (
                                         <button key={slot.start_time} type="button" className={form.data.start_time === slot.start_time ? 'selected' : ''} onClick={() => selectHourlySlot(slot)}>
                                             <strong>{slot.label}</strong>
                                             <small>Rp {Number(slot.total || 0).toLocaleString('id-ID')}</small>
