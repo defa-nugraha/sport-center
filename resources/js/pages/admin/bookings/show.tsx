@@ -30,7 +30,7 @@ function formatCurrency(value: number | string) {
     return `Rp ${Number(value || 0).toLocaleString('id-ID')}`;
 }
 
-export default function Show({ booking, refunds = [], canRefund = false, refundRemaining = 0, canPartialRefund = true }: { booking: any; refunds?: any[]; canRefund?: boolean; refundRemaining?: number; canPartialRefund?: boolean }) {
+export default function Show({ booking, refunds = [], customerRefundRequests = [], canRefund = false, refundRemaining = 0, canPartialRefund = true }: { booking: any; refunds?: any[]; customerRefundRequests?: any[]; canRefund?: boolean; refundRemaining?: number; canPartialRefund?: boolean }) {
     const status = booking.status;
     const paymentStatus = booking.payment?.payment_status;
     const refundForm = useForm({ amount: String(refundRemaining), reason: '' });
@@ -209,6 +209,33 @@ export default function Show({ booking, refunds = [], canRefund = false, refundR
                         </div>
                     </section>
 
+                    {customerRefundRequests.length > 0 && (
+                        <section className="admin-panel booking-refund-history">
+                            <div className="panel-head">
+                                <div>
+                                    <h2>Pengajuan refund pelanggan</h2>
+                                    <p>Permintaan dari pelanggan tanpa nominal; tentukan nominal setelah meninjau kebijakan refund.</p>
+                                </div>
+                                <RotateCcw aria-hidden="true" />
+                            </div>
+                            <div className="booking-refund-list">
+                                {customerRefundRequests.map((request: any) => (
+                                    <article className="booking-refund-record" key={request.id}>
+                                        <div>
+                                            <strong>{request.user_name || 'Pelanggan'}</strong>
+                                            <span>{request.reason || 'Pelanggan meminta pengembalian dana.'}</span>
+                                            <small>Diajukan: {request.created_at ? new Date(request.created_at).toLocaleString('id-ID') : '-'}</small>
+                                            {request.admin_note && <small>Catatan admin: {request.admin_note}</small>}
+                                        </div>
+                                        <div className={`booking-refund-state is-${request.status === 'pending' ? 'requested' : request.status}`}>
+                                            {request.status === 'pending' ? 'Menunggu ditinjau' : request.status === 'reviewed' ? 'Sudah ditinjau' : request.status}
+                                        </div>
+                                    </article>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
                     {refunds.length > 0 && (
                         <section className="admin-panel booking-refund-history">
                             <div className="panel-head">
@@ -250,6 +277,25 @@ export default function Show({ booking, refunds = [], canRefund = false, refundR
                                 <p>Nominal maksimal yang dapat dikembalikan: <strong>{formatCurrency(refundRemaining)}</strong>. Jadwal baru dilepas jika seluruh pembayaran telah dikembalikan dan dikonfirmasi Midtrans. Jika respons gateway tidak pasti, permintaan tidak akan otomatis dikirim ulang.</p>
                             </div>
                             <form onSubmit={submitRefund}>
+                                <div className="booking-refund-suggestions" aria-label="Saran nominal refund">
+                                    <span>Saran nominal dari sisa transaksi</span>
+                                    <div>
+                                        {[10, 25, 50, 75, 100].map((percentage) => {
+                                            const suggestedAmount = Math.round(Number(refundRemaining) * percentage / 100);
+                                            return (
+                                                <button
+                                                    key={percentage}
+                                                    type="button"
+                                                    className="booking-refund-suggestion"
+                                                    disabled={(!canPartialRefund && percentage !== 100) || suggestedAmount < 1}
+                                                    onClick={() => refundForm.setData('amount', String(suggestedAmount))}
+                                                >
+                                                    {percentage}% · {formatCurrency(suggestedAmount)}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
                                 <label>
                                     Nominal refund (Rp)
                                     <input
