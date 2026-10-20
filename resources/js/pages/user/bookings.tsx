@@ -86,7 +86,7 @@ export default function Bookings({ bookings }: any) {
                                 <BookingStatusBadge status={booking.status} />
                                 <strong>Rp {Number(booking.total).toLocaleString('id-ID')}</strong>
                                 <Link href={'/booking/' + (booking.encrypted_id || booking.id) + '/status'} className="text-link">Detail <ChevronRight /></Link>
-                                {booking.invoice && booking.invoice_print_url && booking.payment?.payment_status === 'PAID' && (
+                                {booking.invoice && booking.invoice_print_url && ['PAID', 'REFUND_PENDING', 'PARTIALLY_REFUNDED', 'REFUNDED'].includes(String(booking.payment?.payment_status || '')) && (
                                     <a
                                         href={booking.invoice_print_url}
                                         target="_blank"
