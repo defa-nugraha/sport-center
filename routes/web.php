@@ -22,7 +22,6 @@ Route::middleware('track.public.visit')->group(function () {
     Route::get('/facilities', [PublicController::class, 'facilities'])->name('facilities.index');
     Route::get('/facilities/{facility:slug}', [PublicController::class, 'facility'])->name('facilities.show');
     Route::get('/sports', [PublicController::class, 'sports'])->name('sports.index');
-    Route::get('/sports/{sport:slug}', [PublicController::class, 'sport'])->name('sports.index');
     Route::get('/sports/{sport:slug}', [PublicController::class, 'sport'])->name('sports.show');
     Route::get('/events', [PublicController::class, 'events'])->name('events.index');
     Route::get('/events/{event:slug}/calendar.ics', [PublicController::class, 'eventCalendar'])->name('events.calendar');
