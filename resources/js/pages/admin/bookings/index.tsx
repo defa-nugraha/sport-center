@@ -2,7 +2,7 @@ import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
 import { ProductTour, replayProductTour } from '@/components/product-tour';
 import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
-import { CalendarDays, CircleHelp, Eye, RotateCcw, Search, SlidersHorizontal, X } from 'lucide-react';
+import { BellRing, CalendarDays, CircleHelp, Eye, RotateCcw, Search, SlidersHorizontal, X } from 'lucide-react';
 import { DateRangePicker } from '@/components/date-range-picker';
 import '../../../../css/admin-booking-filters.css';
 import '../../../../css/admin-booking-refunds.css';
@@ -267,6 +267,16 @@ export default function Index({
                                                         >
                                                             <Eye size={16} aria-hidden="true" />
                                                         </Link>
+                                                        {booking.refund_requests?.some((request: any) => request.status === 'pending') && (
+                                                            <Link
+                                                                className="button secondary small booking-action-icon booking-action-refund"
+                                                                href={`/admin/bookings/${booking.encrypted_id}`}
+                                                                aria-label={`Pengajuan refund pelanggan booking ${booking.booking_number}`}
+                                                                title="Pengajuan refund pelanggan menunggu ditinjau"
+                                                            >
+                                                                <BellRing size={16} aria-hidden="true" />
+                                                            </Link>
+                                                        )}
                                                         {['PAID', 'PARTIALLY_REFUNDED'].includes(String(booking.payment?.payment_status || ''))
                                                             && ['CONFIRMED', 'COMPLETED', 'EXPIRED'].includes(String(booking.status || ''))
                                                             && booking.payment?.provider === 'midtrans'
