@@ -20,3 +20,11 @@
     .booking-refund-record { flex-direction: column; }
     .booking-refund-action .button.danger { width: 100%; }
 }
+
+.booking-refund-action input[type="number"] { width: 100%; min-height: 42px; padding: 10px 12px; border: 1px solid #d7e0e8; border-radius: 8px; background: #fff; color: #25374d; font: inherit; font-size: 13px; }
+.booking-refund-note { color: #697a90; font-size: 11px; line-height: 1.5; }
+.booking-row-actions { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.booking-action-icon { display: inline-flex; align-items: center; justify-content: center; width: 34px; min-width: 34px; height: 34px; padding: 0; }
+.booking-action-icon svg { flex-shrink: 0; }
+.booking-action-refund { color: #a12235; }
+.booking-action-refund:hover { background: #fff0f1; color: #8d1d2c; }
