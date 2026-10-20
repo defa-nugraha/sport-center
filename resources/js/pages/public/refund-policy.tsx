@@ -3,7 +3,7 @@ import { ChevronLeft } from 'lucide-react';
 import { Shell } from '@/components/public-site';
 import { RichText } from '@/components/rich-text-editor';
 
-export default function RefundPolicy({ refundPolicy = '' }: { refundPolicy: string }) {
+export default function RefundPolicy({ refundPolicy }: { refundPolicy: string }) {
     return (
         <Shell active="Refund" showBookingPrompt={false}>
             <Head title="Ketentuan Refund" />

@@ -4,7 +4,7 @@ import { Head, useForm, usePage } from '@inertiajs/react';
 import { Info, Save } from 'lucide-react';
 import { FormEvent, useEffect, useState } from 'react';
 
-export default function AdminRefundPolicy({ refundPolicy = '' }: { refundPolicy: string }) {
+export default function AdminRefundPolicy({ refundPolicy }: { refundPolicy: string }) {
     const { flash } = usePage().props as any;
     const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const form = useForm({ refund_policy_html: refundPolicy });
