@@ -3,6 +3,7 @@
 use App\Enums\BookingStatus;
 use App\Enums\PaymentStatus;
 use App\Models\Booking;
+use App\Models\BookingRefund;
 use App\Models\Facility;
 use App\Models\Invoice;
 use App\Models\Payment;
@@ -83,4 +84,36 @@ test('invoice print page refuses invoices whose payment is not paid', function (
     );
 
     $this->get($url)->assertNotFound();
+});
+
+test('invoice print page reflects confirmed partial refund totals', function () {
+    $invoice = brandedInvoiceFixture(PaymentStatus::PARTIALLY_REFUNDED);
+    $invoice->payment->update([
+        'transaction_status' => 'partial_refund',
+        'payment_status' => PaymentStatus::PARTIALLY_REFUNDED,
+    ]);
+
+    BookingRefund::create([
+        'booking_id' => $invoice->booking_id,
+        'payment_id' => $invoice->payment_id,
+        'refund_key' => 'INVOICE-PARTIAL-TEST',
+        'amount' => 25000,
+        'reason' => 'Pengembalian sebagian',
+        'status' => 'confirmed',
+        'requested_at' => now(),
+        'confirmed_at' => now(),
+    ]);
+
+    $url = URL::temporarySignedRoute(
+        'invoices.print',
+        now()->addMinutes(5),
+        ['invoice' => $invoice->uuid],
+    );
+
+    $this->get($url)
+        ->assertOk()
+        ->assertSee('REFUND SEBAGIAN')
+        ->assertSee('Refund terkonfirmasi')
+        ->assertSee('Rp 25.000')
+        ->assertSee('Rp 75.000');
 });
