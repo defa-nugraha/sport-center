@@ -1,24 +1,24 @@
 <?php
 
-use App\\Http\\Middleware\\EnsureAccountIsActive;
-use App\\Http\\Middleware\\EnsureAdminAccess;
-use App\\Http\\Middleware\\HandleAppearance;
-use App\\Http\\Middleware\\HandleInertiaRequests;
-use App\\Http\\Middleware\\SetTeamUrlDefaults;
-use App\\Http\\Middleware\\TrackPublicVisit;
-use Illuminate\\Foundation\\Application;
-use Illuminate\\Foundation\\Configuration\\Exceptions;
-use Illuminate\\Foundation\\Configuration\\Middleware;
-use Illuminate\\Http\\Middleware\\AddLinkHeadersForPreloadedAssets;
-use Illuminate\\Http\\Request;
-use Illuminate\\Auth\\AuthenticationException;
-use Illuminate\\Auth\\Access\\AuthorizationException;
-use Illuminate\\Database\\Eloquent\\ModelNotFoundException;
-use Illuminate\\Validation\\ValidationException;
-use Inertia\\Inertia;
-use Spatie\\Permission\\Middleware\\PermissionMiddleware;
-use Spatie\\Permission\\Middleware\\RoleMiddleware;
-use Symfony\\Component\\HttpKernel\\Exception\\HttpExceptionInterface;
+use App\Http\Middleware\EnsureAccountIsActive;
+use App\Http\Middleware\EnsureAdminAccess;
+use App\Http\Middleware\HandleAppearance;
+use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\SetTeamUrlDefaults;
+use App\Http\Middleware\TrackPublicVisit;
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+use Illuminate\Http\Request;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 //use Throwable;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -63,7 +63,7 @@ return Application::configure(basePath: dirname(__DIR__))
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
 
-        $exceptions->render(function (\\Throwable $exception, Request $request) {
+        $exceptions->render(function (\Throwable $exception, Request $request) {
             // Keep API responses and Laravel's normal validation flow unchanged.
             if ($request->is('api/*') || $request->expectsJson() || $exception instanceof ValidationException || $exception instanceof AuthenticationException) {
                 return null;
