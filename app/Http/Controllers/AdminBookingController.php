@@ -268,6 +268,7 @@ class AdminBookingController extends Controller
             return back()->withErrors(['refund' => 'Midtrans menolak refund. Status pembayaran dikembalikan sesuai jumlah refund yang telah dikonfirmasi.']);
         } catch (MidtransRefundUncertainException $exception) {
             $refund->update(['error_message' => 'Respons gateway belum dapat dipastikan; menunggu rekonsiliasi.']);
+            $bookingService->refreshInvoiceAfterRefund($refund->payment_id);
 
             Log::warning('Midtrans refund outcome is uncertain', [
                 'booking_id' => $booking->id,
@@ -294,6 +295,7 @@ class AdminBookingController extends Controller
         } catch (\Throwable $exception) {
             if ($gatewayRequestStarted) {
                 $refund->update(['error_message' => 'Respons gateway belum dapat dipastikan; menunggu rekonsiliasi.']);
+                $bookingService->refreshInvoiceAfterRefund($refund->payment_id);
             } else {
                 $this->markRefundFailed($refund, $exception->getMessage());
             }
