@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { ChevronLeft } from 'lucide-react';
-import { RichText, Shell } from '@/components/public-site';
+import { Shell } from '@/components/public-site';
+import { RichText } from '@/components/rich-text-editor';
 
 export default function RefundPolicy({ refundPolicy = '' }: { refundPolicy: string }) {
     return (
