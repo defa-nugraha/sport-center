@@ -1,5 +1,5 @@
 import { Link, useForm } from '@inertiajs/react';
-import { CalendarDays, ChevronRight, Star } from 'lucide-react';
+import { CalendarDays, ChevronRight, Printer, Star } from 'lucide-react';
 import { UserShell } from '@/components/user-layout';
 import { BookingStatusBadge } from '@/components/booking-status-badge';
 
@@ -86,6 +86,16 @@ export default function Bookings({ bookings }: any) {
                                 <BookingStatusBadge status={booking.status} />
                                 <strong>Rp {Number(booking.total).toLocaleString('id-ID')}</strong>
                                 <Link href={'/booking/' + (booking.encrypted_id || booking.id) + '/status'} className="text-link">Detail <ChevronRight /></Link>
+                                {booking.invoice && booking.invoice_print_url && booking.payment?.payment_status === 'PAID' && (
+                                    <a
+                                        href={booking.invoice_print_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="button booking-invoice-print"
+                                    >
+                                        <Printer aria-hidden="true" size={16} /> Cetak invoice
+                                    </a>
+                                )}
                             </div>
                             {booking.review ? (
                                 <div className="booking-review-existing">
