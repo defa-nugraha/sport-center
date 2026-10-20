@@ -320,7 +320,8 @@ export default function Index({
                                             <div><span>Total</span><strong>{formatCurrency(booking.total)}</strong></div>
                                             <div className="booking-row-actions">
                                                 <Link className="button secondary small booking-action-icon" href={`/admin/bookings/${booking.encrypted_id}`} aria-label={`Detail booking ${booking.booking_number}`} title="Detail booking"><Eye size={16} aria-hidden="true" /></Link>
-                                                {booking.payment?.payment_status === 'PAID'
+                                                {booking.refund_requests?.some((request: any) => request.status === 'pending') && <Link className="button secondary small booking-action-icon booking-action-refund" href={`/admin/bookings/${booking.encrypted_id}`} aria-label={`Pengajuan refund pelanggan booking ${booking.booking_number}`} title="Pengajuan refund pelanggan menunggu ditinjau"><BellRing size={16} aria-hidden="true" /></Link>}
+                                                {['PAID', 'PARTIALLY_REFUNDED'].includes(String(booking.payment?.payment_status || ''))
                                                     && booking.payment?.provider === 'midtrans'
                                                     && ['settlement', 'partial_refund'].includes(String(booking.payment?.transaction_status || '').toLowerCase())
                                                     && ['credit_card', 'gopay', 'shopeepay', 'dana', 'ovo', 'qris', 'kredivo', 'akulaku'].includes(String(booking.payment?.payment_type || '').toLowerCase())
