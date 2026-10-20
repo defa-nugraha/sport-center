@@ -132,6 +132,21 @@ class AdminBookingController extends Controller
     {
         $booking->load(['facility', 'payment', 'invoice', 'user']);
 
+        $customerRefundRequests = \App\Models\BookingRefundRequest::query()
+            ->where('booking_id', $booking->id)
+            ->with('user')
+            ->latest('id')
+            ->get()
+            ->map(fn ($refundRequest) => [
+                'id' => $refundRequest->id,
+                'status' => $refundRequest->status,
+                'reason' => $refundRequest->reason,
+                'admin_note' => $refundRequest->admin_note,
+                'created_at' => $refundRequest->created_at,
+                'reviewed_at' => $refundRequest->reviewed_at,
+                'user_name' => $refundRequest->user?->name,
+            ]);
+
         $refunds = $booking->refunds()->with('admin')->latest('id')->get()->map(
             fn (BookingRefund $refund) => [
                 'id' => $refund->id,
@@ -149,6 +164,7 @@ class AdminBookingController extends Controller
         return Inertia::render('admin/bookings/show', [
             'booking' => $booking,
             'refunds' => $refunds,
+            'customerRefundRequests' => $customerRefundRequests,
             'canRefund' => $request->user()?->hasRole('administrator') && $this->isRefundable($booking),
             'refundRemaining' => max(0, (int) ($booking->payment?->gross_amount ?? 0) - (int) $booking->refunds()->where('status', 'confirmed')->sum('amount')),
             'canPartialRefund' => ! in_array(strtolower((string) $booking->payment?->payment_type), ['shopeepay', 'ovo'], true),
