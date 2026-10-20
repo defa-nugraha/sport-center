@@ -48,6 +48,17 @@ test('hourly availability applies the configured turnaround buffer', function ()
         ->and($slots[0]['end_time'])->toBe('10:45');
 });
 
+test('hourly availability hides past start times using WIB for today', function () {
+    $this->travelTo(\Carbon\Carbon::parse('2026-11-07 09:00:00', 'Asia/Jakarta'));
+
+    $facility = bookingFacility();
+    $slots = app(BookingService::class)->hourlySlots($facility, '2026-11-07', 60);
+
+    expect($slots)->not->toBeEmpty()
+        ->and($slots[0]['start_time'])->toBe('09:15')
+        ->and(collect($slots)->every(fn ($slot) => $slot['start_time'] > '09:00'))->toBeTrue();
+});
+
 test('hourly booking must finish within operating hours', function () {
     $facility=bookingFacility();
     $user=User::factory()->create();
