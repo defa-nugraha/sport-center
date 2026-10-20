@@ -268,6 +268,7 @@ export default function Index({
                                                             <Eye size={16} aria-hidden="true" />
                                                         </Link>
                                                         {['PAID', 'PARTIALLY_REFUNDED'].includes(String(booking.payment?.payment_status || ''))
+                                                            && ['CONFIRMED', 'COMPLETED', 'EXPIRED'].includes(String(booking.status || ''))
                                                             && booking.payment?.provider === 'midtrans'
                                                             && ['settlement', 'partial_refund'].includes(String(booking.payment?.transaction_status || '').toLowerCase())
                                                             && ['credit_card', 'gopay', 'shopeepay', 'dana', 'ovo', 'qris', 'kredivo', 'akulaku'].includes(String(booking.payment?.payment_type || '').toLowerCase())
