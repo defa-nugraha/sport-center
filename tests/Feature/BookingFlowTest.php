@@ -85,6 +85,57 @@ test('midtrans webhook is verified and idempotently confirms booking and dispatc
 });
 
 
+test('replayed successful webhook dispatches notifications when payment was already marked paid', function () {
+    Queue::fake();
+    config()->set('services.midtrans.server_key', 'test-server-key');
+
+    $user = User::factory()->create();
+    $facility = bookingFacility();
+    $booking = Booking::create([
+        'user_id' => $user->id,
+        'facility_id' => $facility->id,
+        'customer_name' => 'Already Paid User',
+        'customer_email' => 'paid-user@test.test',
+        'customer_phone' => '6281600000000',
+        'booking_date' => now()->addDay()->format('Y-m-d'),
+        'start_time' => '10:00:00',
+        'end_time' => '11:00:00',
+        'duration_minutes' => 60,
+        'price_per_hour' => 100000,
+        'subtotal' => 100000,
+        'total' => 100000,
+        'status' => BookingStatus::CONFIRMED,
+        'paid_at' => now(),
+    ]);
+    Payment::create([
+        'booking_id' => $booking->id,
+        'order_id' => 'BOOKING-ALREADY-PAID',
+        'gross_amount' => 100000,
+        'payment_status' => PaymentStatus::PAID,
+        'paid_at' => now(),
+    ]);
+
+    $status = [
+        'status_code' => '200',
+        'gross_amount' => '100000.00',
+        'order_id' => 'BOOKING-ALREADY-PAID',
+        'transaction_id' => 'trx-already-paid',
+        'transaction_status' => 'settlement',
+        'fraud_status' => 'accept',
+        'payment_type' => 'bank_transfer',
+        'signature_key' => hash('sha512', 'BOOKING-ALREADY-PAID'.'200'.'100000.00'.'test-server-key'),
+    ];
+    Http::fake([
+        'https://api.sandbox.midtrans.com/*' => Http::response($status, 200),
+    ]);
+
+    $this->postJson('/api/payments/midtrans/notification', $status)->assertOk();
+
+    expect($booking->fresh()->invoice()->count())->toBe(1);
+    Queue::assertPushed(DispatchBookingNotifications::class, fn ($job) => $job->bookingId === $booking->id);
+    Queue::assertPushed(NotifyAdminOfPaidBooking::class, fn ($job) => $job->bookingId === $booking->id);
+});
+
 test('booking status cannot be viewed by another user', function () {
     $owner=User::factory()->create();
     $other=User::factory()->create();
