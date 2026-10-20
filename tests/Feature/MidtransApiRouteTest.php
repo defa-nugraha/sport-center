@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\\Support\\Facades\\Route;
+use Illuminate\Support\Facades\Route;
 
 test('Midtrans notification uses the API route stack without web CSRF middleware', function () {
     $route = Route::getRoutes()->getByName('payments.midtrans.notification');
@@ -14,10 +14,9 @@ test('Midtrans notification uses the API route stack without web CSRF middleware
 });
 
 test('the old web callback URL is no longer registered', function () {
-    $routes = Route::getRoutes();
+    $legacyWebRouteExists = collect(Route::getRoutes()->getRoutes())
+        ->contains(fn ($route) => $route->uri() === 'payments/midtrans/notification'
+            && in_array('POST', $route->methods(), true));
 
-    expect($routes->match(Illuminate\\Http\\Request::create(
-        '/payments/midtrans/notification',
-        'POST',
-    )))->toBeNull();
+    expect($legacyWebRouteExists)->toBeFalse();
 });
