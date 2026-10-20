@@ -21,7 +21,15 @@
         .eyebrow { color: #0f766e; text-transform: uppercase; letter-spacing: .15em; font-size: 11px; font-weight: 800; }
         h1 { margin: 8px 0; font-size: 32px; letter-spacing: -.04em; }
         .muted { color: #64748b; font-size: 13px; line-height: 1.6; }
-        .status { display: inline-block; border-radius: 999px; background: #dcfce7; color: #166534; padding: 8px 12px; font-size: 12px; font-weight: 800; white-space: nowrap; }
+         .status { display: inline-block; border-radius: 999px; background: #dcfce7; color: #166534; padding: 8px 12px; font-size: 12px; font-weight: 800; white-space: nowrap; }
+        .status.is-pending { background: #fff7e8; color: #8b5a13; }
+        .status.is-partial { background: #e0f2fe; color: #075985; }
+        .status.is-refunded { background: #fff0f1; color: #a12235; }
+        .refund-summary { margin-top: 16px; padding: 16px; border: 1px solid #e5eaf0; border-radius: 12px; }
+        .refund-summary h2 { margin: 0 0 10px; font-size: 14px; }
+        .refund-summary-row { display: flex; justify-content: space-between; gap: 20px; padding: 7px 0; color: #475569; font-size: 12px; }
+        .refund-summary-row strong { text-align: right; color: #172033; }
+        .refund-summary-row.balance { border-top: 1px solid #e5eaf0; margin-top: 6px; padding-top: 12px; font-size: 14px; font-weight: 800; }
         .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 8px 0 28px; }
         .detail { border: 1px solid #e5eaf0; border-radius: 12px; padding: 16px; min-width: 0; }
         .detail label { display: block; margin-bottom: 8px; color: #64748b; text-transform: uppercase; font-size: 10px; font-weight: 800; letter-spacing: .12em; }
@@ -69,7 +77,7 @@
                 <div class="muted">Nomor: <strong>{{ $invoice->invoice_number }}</strong><br>
                     Diterbitkan: {{ optional($invoice->issued_at)->format('d F Y, H:i') }} WIB</div>
             </div>
-            <span class="status">PEMBAYARAN LUNAS</span>
+            <span class="status {{ $invoice->payment?->payment_status === \\App\\Enums\\PaymentStatus::REFUNDED ? 'is-refunded' : ($invoice->payment?->payment_status === \\App\\Enums\\PaymentStatus::PARTIALLY_REFUNDED ? 'is-partial' : ($invoice->payment?->payment_status === \\App\\Enums\\PaymentStatus::REFUND_PENDING ? 'is-pending' : '')) }}">{{ $paymentStatusLabel }}</span>
         </section>
 
         <section class="detail-grid">
@@ -108,12 +116,51 @@
 
         <div class="total-row">
             <div class="total-box">
-                <span>Total dibayarkan</span>
-                <strong>Rp {{ number_format((float) $booking->total, 0, ',', '.') }}</strong>
+                <span>Total transaksi awal</span>
+                <strong>Rp {{ number_format((float) $invoice->payment->gross_amount, 0, ',', '.') }}</strong>
             </div>
         </div>
 
+        @if ($confirmedRefundAmount > 0 || $pendingRefundAmount > 0)
+            <section class="refund-summary">
+                <h2>Ringkasan pengembalian dana</h2>
+                <div class="refund-summary-row">
+                    <span>Refund terkonfirmasi</span>
+                    <strong>− Rp {{ number_format($confirmedRefundAmount, 0, ',', '.') }}</strong>
+                </div>
+                @if ($pendingRefundAmount > 0)
+                    <div class="refund-summary-row">
+                        <span>Refund menunggu konfirmasi</span>
+                        <strong>Rp {{ number_format($pendingRefundAmount, 0, ',', '.') }}</strong>
+                    </div>
+                @endif
+                <div class="refund-summary-row balance">
+                    <span>Sisa setelah refund terkonfirmasi</span>
+                    <strong>Rp {{ number_format($remainingAmount, 0, ',', '.') }}</strong>
+                </div>
+            </section>
+        @endif
+
         <div class="payment-note">
+            <strong>✓</strong>
+            <div>
+                <strong>{{ $paymentStatusLabel }}</strong><br>
+                @if ($invoice->payment?->payment_status === \\App\\Enums\\PaymentStatus::REFUNDED)
+                    Seluruh pembayaran telah dikembalikan dan dikonfirmasi oleh Midtrans.
+                @elseif ($invoice->payment?->payment_status === \\App\\Enums\\PaymentStatus::PARTIALLY_REFUNDED)
+                    Sebagian pembayaran telah dikembalikan. Nominal di atas mencerminkan refund yang sudah dikonfirmasi oleh Midtrans.
+                @elseif ($invoice->payment?->payment_status === \\App\\Enums\\PaymentStatus::REFUND_PENDING)
+                    Permintaan refund sedang diproses. Nilai refund masih dapat berubah sampai Midtrans memberikan konfirmasi.
+                @else
+                    Invoice ini diterbitkan setelah pembayaran berhasil diverifikasi oleh sistem. Simpan invoice ini sebagai bukti transaksi Anda.
+                @endif
+                @if ($booking->payment?->paid_at)
+                    <br>Waktu pembayaran: {{ $booking->payment->paid_at->format('d F Y, H:i') }} WIB.
+                @elseif ($booking->paid_at)
+                    <br>Waktu pembayaran: {{ $booking->paid_at->format('d F Y, H:i') }} WIB.
+                @endif
+            </div>
+        </div>
             <strong>✓</strong>
             <div><strong>Pembayaran telah diterima.</strong><br>
                 Invoice ini diterbitkan otomatis setelah pembayaran berhasil diverifikasi oleh sistem. Simpan invoice ini sebagai bukti transaksi Anda.
