@@ -92,7 +92,7 @@ function BookingRefundRequestAction({ booking }: { booking: any }) {
                     <RotateCcw aria-hidden="true" size={16} />
                     {form.processing ? 'Mengirim pengajuan…' : 'Ajukan refund'}
                 </button>
-                {refundErrors.refund && <p className="booking-refund-request-error">{form.errors.refund}</p>}
+                {refundErrors.refund && <p className="booking-refund-request-error">{refundErrors.refund}</p>}
             </form>
             <p className="booking-refund-request-hint">
                 Pengajuan ini belum menentukan nominal. Admin akan meninjau dan menentukan nominal sesuai kebijakan yang berlaku.{' '}
