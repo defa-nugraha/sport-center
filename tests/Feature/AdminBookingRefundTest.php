@@ -319,3 +319,49 @@ test('refund callback only releases venue after bank confirmation and refreshes 
         ->toContain('Confirmed refund: Rp 200.000')
         ->toContain('Remaining after confirmed refund: Rp 0');
 });
+
+
+test('customer can request a refund without submitting a refund amount', function () {
+    $customer = User::factory()->create();
+    [$booking, $payment] = refundFeatureBooking($customer);
+
+    $this->actingAs($customer)
+        ->post('/bookings/'.$booking->id.'/refund-request')
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('booking_refund_requests', [
+        'booking_id' => $booking->id,
+        'user_id' => $customer->id,
+        'status' => 'pending',
+    ]);
+    $this->assertDatabaseMissing('booking_refunds', ['booking_id' => $booking->id]);
+    expect($payment->fresh()->payment_status)->toBe(PaymentStatus::PAID);
+});
+
+test('customer cannot request refund for another users booking', function () {
+    $owner = User::factory()->create();
+    $otherUser = User::factory()->create();
+    [$booking] = refundFeatureBooking($owner);
+
+    $this->actingAs($otherUser)
+        ->post('/bookings/'.$booking->id.'/refund-request')
+        ->assertNotFound();
+
+    $this->assertDatabaseMissing('booking_refund_requests', ['booking_id' => $booking->id]);
+});
+
+test('customer cannot create duplicate pending refund requests', function () {
+    $customer = User::factory()->create();
+    [$booking] = refundFeatureBooking($customer);
+
+    $this->actingAs($customer)
+        ->post('/bookings/'.$booking->id.'/refund-request')
+        ->assertRedirect();
+
+    $this->actingAs($customer)
+        ->from('/bookings')
+        ->post('/bookings/'.$booking->id.'/refund-request')
+        ->assertSessionHasErrors('refund');
+
+    expect(\\App\\Models\\BookingRefundRequest::where('booking_id', $booking->id)->count())->toBe(1);
+});
