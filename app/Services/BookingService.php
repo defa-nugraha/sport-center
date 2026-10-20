@@ -568,9 +568,13 @@ class BookingService
                 return;
             }
 
-            app(InvoicePdfService::class)->generate(
+            $pdfPath = app(InvoicePdfService::class)->generate(
                 $invoice->fresh(['booking.facility', 'booking.refunds', 'payment']),
             );
+
+            if ($invoice->pdf_path !== $pdfPath) {
+                $invoice->update(['pdf_path' => $pdfPath]);
+            }
         } catch (\Throwable $exception) {
             Log::warning('Could not refresh invoice PDF after refund status update', [
                 'payment_id' => $paymentId,
