@@ -1,6 +1,8 @@
 import { Link, useForm } from '@inertiajs/react';
 import { CalendarDays, ChevronRight, Printer, RotateCcw, Star } from 'lucide-react';
 import { UserShell } from '@/components/user-layout';
+import type { FormEvent } from 'react';
+import '../../../css/admin-booking-refunds.css';
 import { BookingStatusBadge } from '@/components/booking-status-badge';
 
 const formatBookingDate = (value?: string | null) => {
@@ -69,7 +71,7 @@ function BookingReviewForm({ booking }: { booking: any }) {
 function BookingRefundRequestAction({ booking }: { booking: any }) {
     const form = useForm({ reason: '' });
 
-    const submit = (event: React.FormEvent<HTMLFormElement>) => {
+    const submit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         form.post(`/bookings/${booking.encrypted_id || booking.id}/refund-request`, {
             preserveScroll: true,
