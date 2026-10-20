@@ -46,7 +46,7 @@ class AdminBookingController extends Controller
         }
 
         $query = Booking::query()
-            ->with(['facility', 'payment', 'invoice', 'refunds'])
+            ->with(['facility', 'payment', 'invoice', 'refunds', 'refundRequests'])
             ->latest();
 
         if ($search !== '') {
