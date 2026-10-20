@@ -70,6 +70,7 @@ function BookingReviewForm({ booking }: { booking: any }) {
 
 function BookingRefundRequestAction({ booking }: { booking: any }) {
     const form = useForm({ reason: '' });
+    const refundErrors = form.errors as Record<string, string | undefined>;
 
     const submit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -91,7 +92,7 @@ function BookingRefundRequestAction({ booking }: { booking: any }) {
                     <RotateCcw aria-hidden="true" size={16} />
                     {form.processing ? 'Mengirim pengajuan…' : 'Ajukan refund'}
                 </button>
-                {form.errors.refund && <p className="booking-refund-request-error">{form.errors.refund}</p>}
+                {refundErrors.refund && <p className="booking-refund-request-error">{form.errors.refund}</p>}
             </form>
             <p className="booking-refund-request-hint">
                 Pengajuan ini belum menentukan nominal. Admin akan meninjau dan menentukan nominal sesuai kebijakan yang berlaku.{' '}
