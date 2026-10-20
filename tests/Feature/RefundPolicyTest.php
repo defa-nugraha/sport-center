@@ -1,7 +1,7 @@
 <?php
 
-use App\\Models\\SiteSetting;
-use Inertia\\Testing\\AssertableInertia as Assert;
+use App\Models\SiteSetting;
+use Inertia\Testing\AssertableInertia as Assert;
 
 test('refund policy page displays the configured policy', function () {
     $policy = '<h2>Ketentuan pengembalian</h2><p>Aturan contoh.</p>';
