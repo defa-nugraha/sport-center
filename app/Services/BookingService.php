@@ -7,6 +7,7 @@ use App\Enums\PaymentStatus;
 use App\Models\Booking;
 use App\Models\BookingRefund;
 use App\Models\Facility;
+use App\Models\Invoice;
 use App\Models\Payment;
 use App\Jobs\DispatchBookingNotifications;
 use App\Jobs\NotifyAdminOfPaidBooking;
@@ -474,6 +475,8 @@ class BookingService
                 }
             });
 
+            $this->refreshInvoiceAfterRefund($payment->id);
+
             return;
         }
 
@@ -548,5 +551,27 @@ class BookingService
 
             $lockedPayment->save();
         });
+
+        $this->refreshInvoiceAfterRefund($payment->id);
+    }
+
+    private function refreshInvoiceAfterRefund(int $paymentId): void
+    {
+        try {
+            $invoice = Invoice::query()->where('payment_id', $paymentId)->first();
+
+            if (! $invoice) {
+                return;
+            }
+
+            app(InvoicePdfService::class)->generate(
+                $invoice->fresh(['booking.facility', 'booking.refunds', 'payment']),
+            );
+        } catch (\\Throwable $exception) {
+            Log::warning('Could not refresh invoice PDF after refund status update', [
+                'payment_id' => $paymentId,
+                'exception' => $exception::class,
+            ]);
+        }
     }
 }
