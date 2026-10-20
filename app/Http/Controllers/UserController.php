@@ -86,7 +86,7 @@ class UserController extends Controller
             'reason' => ['nullable', 'string', 'max:500'],
         ]);
 
-        \\Illuminate\\Support\\Facades\\DB::transaction(function () use ($booking, $request, $data) {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($booking, $request, $data) {
             $lockedBooking = Booking::query()->lockForUpdate()->findOrFail($booking->id);
             abort_unless((int) $lockedBooking->user_id === (int) $request->user()->id, 404);
             $lockedBooking->load('payment');
