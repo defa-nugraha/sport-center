@@ -412,10 +412,17 @@ class BookingService
 
         $booking = Booking::with(['facility', 'payment', 'invoice'])->find($payment->booking_id);
 
-        if ($booking?->status === BookingStatus::CONFIRMED && ! $booking->invoice) {
+        if ($booking?->status === BookingStatus::CONFIRMED
+            && $booking->payment?->payment_status === PaymentStatus::PAID
+            && ! $booking->invoice) {
             app(InvoiceService::class)->create($booking);
+            // The invoice relation was eager-loaded before it was created.
+            // Refresh it so the customer notification is dispatched immediately.
+            $booking->load('invoice');
         }
-        if ($booking?->invoice && $booking->status === BookingStatus::CONFIRMED) {
+        if ($booking?->invoice
+            && $booking->status === BookingStatus::CONFIRMED
+            && $booking->payment?->payment_status === PaymentStatus::PAID) {
             DispatchBookingNotifications::dispatch($booking->id);
         }
         if ($booking?->status === BookingStatus::CONFIRMED
