@@ -439,6 +439,10 @@ class BookingService
     {
         $transactionStatus = strtolower((string) ($status['transaction_status'] ?? ''));
         if (! in_array($transactionStatus, ['refund', 'partial_refund'], true)) {
+            if ($payment->fresh()?->payment_status === PaymentStatus::REFUND_PENDING) {
+                $this->refreshInvoiceAfterRefund($payment->id);
+            }
+
             return;
         }
 
@@ -555,7 +559,7 @@ class BookingService
         $this->refreshInvoiceAfterRefund($payment->id);
     }
 
-    private function refreshInvoiceAfterRefund(int $paymentId): void
+    public function refreshInvoiceAfterRefund(int $paymentId): void
     {
         try {
             $invoice = Invoice::query()->where('payment_id', $paymentId)->first();
