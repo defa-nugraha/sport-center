@@ -234,15 +234,6 @@ class AdminBookingController extends Controller
                 'requested_at' => now(),
             ]);
 
-            \\App\\Models\\BookingRefundRequest::query()
-                ->where('booking_id', $lockedBooking->id)
-                ->where('status', 'pending')
-                ->update([
-                    'status' => 'reviewed',
-                    'admin_note' => 'Nominal refund ditentukan admin dan diteruskan ke Midtrans.',
-                    'reviewed_at' => now(),
-                ]);
-
             $payment->payment_status = PaymentStatus::REFUND_PENDING;
             $payment->save();
 
@@ -280,6 +271,15 @@ class AdminBookingController extends Controller
                 && (int) $refund->amount !== $gatewayRemainingAmount) {
                 throw new MidtransRefundRejectedException('REFUND_PARTIAL_NOT_SUPPORTED');
             }
+
+            \App\Models\BookingRefundRequest::query()
+                ->where('booking_id', $booking->id)
+                ->where('status', 'pending')
+                ->update([
+                    'status' => 'reviewed',
+                    'admin_note' => 'Nominal refund ditentukan admin dan diteruskan ke Midtrans.',
+                    'reviewed_at' => now(),
+                ]);
 
             $gatewayRequestStarted = true;
             $response = $midtrans->refund(
