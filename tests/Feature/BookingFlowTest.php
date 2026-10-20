@@ -72,9 +72,9 @@ test('midtrans webhook is verified and idempotently confirms booking and creates
     $payment=Payment::create(['booking_id'=>$booking->id,'order_id'=>'BOOKING-TEST-1','gross_amount'=>100000,'payment_status'=>PaymentStatus::PENDING]);
     $status=['status_code'=>'200','gross_amount'=>'100000.00','order_id'=>'BOOKING-TEST-1','transaction_id'=>'trx-1','transaction_status'=>'settlement','fraud_status'=>'accept','payment_type'=>'bank_transfer','signature_key'=>hash('sha512','BOOKING-TEST-1'.'200'.'100000.00'.'test-server-key')];
     Http::fake(['https://api.sandbox.midtrans.com/*'=>Http::response($status,200)]);
-    $this->postJson('/payments/midtrans/notification',$status)->assertOk();
+    $this->postJson('/api/payments/midtrans/notification',$status)->assertOk();
     expect($booking->fresh()->status)->toBe(BookingStatus::CONFIRMED)->and($payment->fresh()->payment_status)->toBe(PaymentStatus::PAID);
-    $this->postJson('/payments/midtrans/notification',$status)->assertOk();
+    $this->postJson('/api/payments/midtrans/notification',$status)->assertOk();
     expect($booking->fresh()->invoice()->count())->toBe(1);
 });
 
@@ -96,14 +96,14 @@ test('midtrans status order mismatch cannot confirm booking', function () {
     $payload=['status_code'=>'200','gross_amount'=>'100000.00','order_id'=>'BOOKING-TEST-MISMATCH','transaction_id'=>'trx-mismatch','transaction_status'=>'settlement','fraud_status'=>'accept','signature_key'=>hash('sha512','BOOKING-TEST-MISMATCH'.'200'.'100000.00'.'test-server-key')];
     $status=[...$payload,'order_id'=>'BOOKING-OTHER'];
     Http::fake(['https://api.sandbox.midtrans.com/*'=>Http::response($status,200)]);
-    $this->postJson('/payments/midtrans/notification',$payload)->assertStatus(400);
+    $this->postJson('/api/payments/midtrans/notification',$payload)->assertStatus(400);
     expect($booking->fresh()->status)->toBe(BookingStatus::PENDING_PAYMENT);
 });
 
 test('invalid midtrans signature is rejected', function () {
     config()->set('services.midtrans.server_key','test-server-key');
     $payload=['status_code'=>'200','gross_amount'=>'100000.00','order_id'=>'UNKNOWN','signature_key'=>'invalid'];
-    $this->postJson('/payments/midtrans/notification',$payload)->assertStatus(400);
+    $this->postJson('/api/payments/midtrans/notification',$payload)->assertStatus(400);
 });
 
 test('daily booking calculates inclusive days and rejects overlapping ranges', function () {
