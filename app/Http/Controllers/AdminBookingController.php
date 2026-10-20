@@ -234,6 +234,15 @@ class AdminBookingController extends Controller
                 'requested_at' => now(),
             ]);
 
+            \\App\\Models\\BookingRefundRequest::query()
+                ->where('booking_id', $lockedBooking->id)
+                ->where('status', 'pending')
+                ->update([
+                    'status' => 'reviewed',
+                    'admin_note' => 'Nominal refund ditentukan admin dan diteruskan ke Midtrans.',
+                    'reviewed_at' => now(),
+                ]);
+
             $payment->payment_status = PaymentStatus::REFUND_PENDING;
             $payment->save();
 
