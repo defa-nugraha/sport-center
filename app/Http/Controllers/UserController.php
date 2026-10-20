@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 
 class UserController extends Controller
