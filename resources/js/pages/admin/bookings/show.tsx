@@ -1,6 +1,6 @@
 import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ConfirmDialog, StatusDialog } from '@/components/admin-cms';
 import { ArrowLeft, CalendarDays, CreditCard, FileText, UserRound, RotateCcw } from 'lucide-react';
 import type { FormEvent } from 'react';
@@ -34,6 +34,10 @@ export default function Show({ booking, refunds = [], canRefund = false, refundR
     const status = booking.status;
     const paymentStatus = booking.payment?.payment_status;
     const refundForm = useForm({ amount: String(refundRemaining), reason: '' });
+
+    useEffect(() => {
+        refundForm.setData('amount', String(refundRemaining));
+    }, [refundRemaining]);
     const [confirmRefund, setConfirmRefund] = useState(false);
     const [statusDialog, setStatusDialog] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const refundErrors = refundForm.errors as Record<string, string | undefined>;
@@ -48,7 +52,7 @@ export default function Show({ booking, refunds = [], canRefund = false, refundR
         refundForm.post(`/admin/bookings/${booking.encrypted_id}/refund`, {
             preserveScroll: true,
             onSuccess: () => {
-                refundForm.reset();
+                refundForm.reset('reason');
                 setStatusDialog({ type: 'success', message: 'Permintaan refund dikirim. Status akan diperbarui setelah ada konfirmasi dari Midtrans.' });
             },
             onError: (errors) => setStatusDialog({ type: 'error', message: Object.values(errors)[0] || 'Permintaan refund belum berhasil dikirim.' }),
@@ -288,7 +292,7 @@ export default function Show({ booking, refunds = [], canRefund = false, refundR
             <ConfirmDialog
                 open={confirmRefund}
                 onOpenChange={setConfirmRefund}
-                title="Ajukan refund penuh?"
+                title="Ajukan refund?"
                 description={`Nominal ${formatCurrency(Number(refundForm.data.amount || 0))} akan diajukan ke Midtrans. Jika diterima gateway, permintaan tidak dapat dibatalkan dari aplikasi.`}
                 confirmLabel="Ya, ajukan refund"
                 onConfirm={confirmRefundRequest}
