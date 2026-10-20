@@ -365,6 +365,8 @@ class AdminBookingController extends Controller
                 $payment->save();
             }
         });
+
+        app(BookingService::class)->refreshInvoiceAfterRefund($refund->payment_id);
     }
 
     public function updateFacility(Request $request, Facility $facility)
