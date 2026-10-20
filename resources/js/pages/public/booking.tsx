@@ -5,6 +5,7 @@ import { CalendarCheck, CalendarDays, CheckCircle2, Clock3, Info, MapPin } from 
 import { DateRangePicker } from '@/components/date-range-picker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UserShell } from '@/components/user-layout';
+import { asset } from '@/components/public-site';
 
 const toDateKey = (date: Date) => {
     const year = date.getFullYear();
@@ -189,7 +190,17 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
         <UserShell active="booking" title={'Booking ' + facility.name} description={supportsBothModes && !selectedMode ? "Pilih mode booking terlebih dahulu, lalu tentukan jadwal yang sesuai." : "Pilih jadwal yang sesuai, cek ketersediaan, lalu lanjutkan pembayaran."}>
             <section className="booking-flow">
                 <div className="booking-flow-summary">
-                    <div className="booking-flow-image"><img src={facility.hero_image || facility.thumbnail || '/assets/ggm/Lapang Serba Guna (Basket)2 1.png'} alt={facility.name} /></div>
+                    <div className="booking-flow-image"><img
+                        src={asset(facility.thumbnail || facility.hero_image)}
+                        alt={facility.name}
+                        decoding="async"
+                        onError={(event) => {
+                            const image = event.currentTarget;
+                            if (image.dataset.fallbackApplied === 'true') return;
+                            image.dataset.fallbackApplied = 'true';
+                            image.src = '/assets/ggm/Lapang Serba Guna (Basket)2 1.png';
+                        }}
+                    /></div>
                     <div><span className="eyebrow"><i /> Venue pilihan</span><h2>{facility.name}</h2><p>{facility.subtitle || facility.venue_type}</p><div className="booking-flow-meta"><span><MapPin /> {facility.address || 'GGM Majalengka'}</span><span>{supportsBothModes && !selectedMode ? <><CalendarDays /> Pilih mode booking</> : daily ? <><CalendarDays /> Per hari</> : <><Clock3 /> Minimal {minimumHours} jam</>}</span></div><strong>
     {supportsBothModes && !selectedMode
         ? 'Pilih mode booking'
