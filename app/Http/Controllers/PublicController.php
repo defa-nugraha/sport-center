@@ -32,6 +32,14 @@ class PublicController extends Controller
             ->orderBy('sort_order')->get()->keyBy('section_key')->all();
     }
 
+    public function refundPolicy()
+    {
+        return Inertia::render('public/refund-policy', [
+            ...$this->shared(),
+            'refundPolicy' => SiteSetting::refundPolicyHtml(),
+        ]);
+    }
+
     public function home()
     {
         return Inertia::render('public/home', [...$this->shared(), 'sections' => $this->sections('home'), 'banners' => PageBanner::where('page', 'home')->where('published', true)->orderBy('sort_order')->get(), 'highlights' => HomepageHighlight::where('published', true)->orderBy('sort_order')->get(), 'partnerLogos' => PartnerLogo::where('published', true)->orderBy('sort_order')->get(), 'sports' => Sport::where('published', true)->orderBy('sort_order')->get(), 'facilities' => Facility::with(['region', 'sports'])->where('published', true)->where('featured', true)->orderBy('sort_order')->get(), 'events' => Event::with(['sport', 'facility'])->where('published', true)->where('status', '!=', 'draft')->where('starts_at', '>=', now()->subDay())->orderBy('starts_at')->take(4)->get(), 'regions' => Region::withCount('facilities')->where('published', true)->orderBy('sort_order')->get(), 'testimonials' => Testimonial::where('status', 'approved')->orderByDesc('created_at')->orderByDesc('id')->take(3)->get(), 'teamMembers' => TeamMember::where('published', true)->orderBy('sort_order')->orderBy('id')->get(), 'posts' => BlogPost::with(['category', 'author:id,name'])->published()->latest('published_at')->take(5)->get()]);

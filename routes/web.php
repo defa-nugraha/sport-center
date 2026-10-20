@@ -29,6 +29,7 @@ Route::middleware('track.public.visit')->group(function () {
     Route::get('/events/{event:slug}', [PublicController::class, 'event'])->name('events.show');
     Route::get('/kabar', [BlogController::class, 'index'])->name('blog.index');
     Route::get('/kabar/{blogPost:slug}', [BlogController::class, 'show'])->name('blog.show');
+    Route::get('/refund-policy', [PublicController::class, 'refundPolicy'])->name('refund-policy');
 });
 Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
@@ -77,6 +78,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin.a
     Route::get('/account', [AdminController::class, 'account'])->name('account');
     Route::patch('/account', [AdminController::class, 'updateAccount'])->name('account.update');
     Route::put('/account/password', [AdminController::class, 'updateAccountPassword'])->middleware('throttle:6,1')->name('account.password.update');
+    Route::middleware('role:administrator')->group(function () {
+        Route::get('/refund-policy', [AdminController::class, 'refundPolicy'])->name('refund-policy.edit');
+        Route::put('/refund-policy', [AdminController::class, 'updateRefundPolicy'])->name('refund-policy.update');
+    });
     Route::middleware('permission:kelola booking')->group(function () {
         Route::get('/bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
         Route::get('/bookings/settings', [AdminBookingController::class, 'settings'])->name('bookings.settings');

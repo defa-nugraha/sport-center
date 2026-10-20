@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import { StatusDialog } from '@/components/admin-cms';
 import { CalendarCheck, CalendarDays, CheckCircle2, Clock3, Info, MapPin } from 'lucide-react';
 import { DateRangePicker } from '@/components/date-range-picker';
@@ -220,6 +220,14 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
                         {available === false && availabilityMessage && <span role="alert" className="booking-availability error">{availabilityMessage}</span>}
                     </div>
                     {available === true && <div className="booking-ready" role="status"><Info /><span>{daily ? `Rp ${Number(facility.booking_price_per_day || 0).toLocaleString('id-ID')} × ${Math.max(1, Math.round((parseDate(form.data.booking_end_date).getTime() - parseDate(form.data.booking_date).getTime()) / 86400000) + 1)} hari` : `Jadwal ${form.data.start_time} - ${hourlySlots.find((slot) => slot.start_time === form.data.start_time)?.end_time || ''}`}</span></div>}
+                    <aside className="refund-policy-booking-hint" role="note">
+                        <Info aria-hidden="true" />
+                        <div>
+                            <strong>Perhatikan ketentuan refund sebelum memesan</strong>
+                            <p>Baca aturan pengembalian dana agar Anda memahami ketentuannya sebelum melanjutkan pembayaran.</p>
+                            <Link href="/refund-policy" className="refund-policy-hint-link">Baca ketentuan refund</Link>
+                        </div>
+                    </aside>
                     {bookingError && <p className="form-error">{bookingError}</p>}
                     <button type="submit" disabled={form.processing || available !== true || !selectedMode || (hourly && !form.data.start_time)} className="button booking-submit booking-submit-inline"><CalendarCheck /> {form.processing ? 'Membuat booking...' : 'Buat booking & lanjutkan pembayaran'}</button>
                     <div className="booking-mobile-action-bar">

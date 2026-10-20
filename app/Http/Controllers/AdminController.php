@@ -143,6 +143,33 @@ class AdminController extends Controller
         ));
     }
 
+    public function refundPolicy()
+    {
+        return Inertia::render('admin/refund-policy', [
+            'refundPolicy' => SiteSetting::refundPolicyHtml(),
+        ]);
+    }
+
+    public function updateRefundPolicy(Request $request)
+    {
+        $data = $request->validate([
+            'refund_policy_html' => ['required', 'string', 'max:50000'],
+        ]);
+
+        if (trim(strip_tags($data['refund_policy_html'])) === '') {
+            return back()->withErrors([
+                'refund_policy_html' => 'Ketentuan refund tidak boleh kosong.',
+            ]);
+        }
+
+        SiteSetting::updateOrCreate(
+            ['key' => 'refund_policy_html'],
+            ['value' => $data['refund_policy_html']],
+        );
+
+        return back()->with('success', 'Ketentuan refund berhasil diperbarui.');
+    }
+
     public function pagesIndex()
     {
         return redirect()->route('admin.pages.section', ['section' => 'sections']);

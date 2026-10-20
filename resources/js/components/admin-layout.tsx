@@ -57,7 +57,7 @@ export function AdminSidebar({
 }) {
     const [contentOpen, setContentOpen] = useState(active === 'content');
     const [pagesOpen, setPagesOpen] = useState(active === 'pages');
-    const [bookingOpen, setBookingOpen] = useState(active === 'bookings');
+    const [bookingOpen, setBookingOpen] = useState(active === 'bookings' || active === 'refund-policy');
     const [mobileOpen, setMobileOpen] = useState(false);
     const { auth } = usePage().props as any;
     const { url } = usePage();
@@ -152,6 +152,12 @@ export function AdminSidebar({
                             <CalendarDays aria-hidden="true" />
                             <span>Daftar booking</span>
                         </Link>
+                        {roles.includes('administrator') && (
+                            <Link href="/admin/refund-policy" className={url === '/admin/refund-policy' ? 'active-submenu-link active' : 'active-submenu-link'} onClick={() => setMobileOpen(false)}>
+                                <ShieldCheck aria-hidden="true" />
+                                <span>Kelola Refund</span>
+                            </Link>
+                        )}
                     </div>
                 )}
                 {visibleContentItems.length > 0 && <button
