@@ -2,7 +2,7 @@ import { AdminSidebar, AdminTopbar } from '@/components/admin-layout';
 import { ProductTour, replayProductTour } from '@/components/product-tour';
 import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
-import { CalendarDays, CircleHelp, Search, SlidersHorizontal, X } from 'lucide-react';
+import { CalendarDays, CircleHelp, Eye, RotateCcw, Search, SlidersHorizontal, X } from 'lucide-react';
 import { DateRangePicker } from '@/components/date-range-picker';
 import '../../../../css/admin-booking-filters.css';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -233,6 +233,7 @@ export default function Index({
                                             <th>Jadwal</th>
                                             <th>Status</th>
                                             <th>Total</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -255,6 +256,34 @@ export default function Index({
                                                 </td>
                                                 <td><BookingStatusBadge status={booking.status} /></td>
                                                 <td><strong>{formatCurrency(booking.total)}</strong></td>
+                                                <td>
+                                                    <div className="booking-row-actions">
+                                                        <Link
+                                                            className="button secondary small booking-action-icon"
+                                                            href={`/admin/bookings/${booking.encrypted_id}`}
+                                                            aria-label={`Detail booking ${booking.booking_number}`}
+                                                            title="Detail booking"
+                                                        >
+                                                            <Eye size={16} aria-hidden="true" />
+                                                        </Link>
+                                                        {booking.payment?.payment_status === 'PAID'
+                                                            && booking.payment?.provider === 'midtrans'
+                                                            && ['settlement', 'partial_refund'].includes(String(booking.payment?.transaction_status || '').toLowerCase())
+                                                            && ['credit_card', 'gopay', 'shopeepay', 'dana', 'ovo', 'qris', 'kredivo', 'akulaku'].includes(String(booking.payment?.payment_type || '').toLowerCase())
+                                                            && !booking.refunds?.some((refund: any) => refund.status === 'requested')
+                                                            && Number(booking.payment?.gross_amount || 0) > booking.refunds?.filter((refund: any) => refund.status === 'confirmed').reduce((sum: number, refund: any) => sum + Number(refund.amount || 0), 0)
+                                                            && (
+                                                                <Link
+                                                                    className="button secondary small booking-action-icon booking-action-refund"
+                                                                    href={`/admin/bookings/${booking.encrypted_id}#refund`}
+                                                                    aria-label={`Ajukan refund booking ${booking.booking_number}`}
+                                                                    title="Ajukan refund"
+                                                                >
+                                                                    <RotateCcw size={16} aria-hidden="true" />
+                                                                </Link>
+                                                            )}
+                                                    </div>
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -277,7 +306,16 @@ export default function Index({
                                         </div>
                                         <div className="booking-mobile-card-footer">
                                             <div><span>Total</span><strong>{formatCurrency(booking.total)}</strong></div>
-                                            <Link className="button small" href={`/admin/bookings/${booking.encrypted_id}`}>Detail</Link>
+                                            <div className="booking-row-actions">
+                                                <Link className="button secondary small booking-action-icon" href={`/admin/bookings/${booking.encrypted_id}`} aria-label={`Detail booking ${booking.booking_number}`} title="Detail booking"><Eye size={16} aria-hidden="true" /></Link>
+                                                {booking.payment?.payment_status === 'PAID'
+                                                    && booking.payment?.provider === 'midtrans'
+                                                    && ['settlement', 'partial_refund'].includes(String(booking.payment?.transaction_status || '').toLowerCase())
+                                                    && ['credit_card', 'gopay', 'shopeepay', 'dana', 'ovo', 'qris', 'kredivo', 'akulaku'].includes(String(booking.payment?.payment_type || '').toLowerCase())
+                                                    && !booking.refunds?.some((refund: any) => refund.status === 'requested')
+                                                    && Number(booking.payment?.gross_amount || 0) > booking.refunds?.filter((refund: any) => refund.status === 'confirmed').reduce((sum: number, refund: any) => sum + Number(refund.amount || 0), 0)
+                                                    && <Link className="button secondary small booking-action-icon booking-action-refund" href={`/admin/bookings/${booking.encrypted_id}#refund`} aria-label={`Ajukan refund booking ${booking.booking_number}`} title="Ajukan refund"><RotateCcw size={16} aria-hidden="true" /></Link>}
+                                            </div>
                                         </div>
                                     </article>
                                 ))}
