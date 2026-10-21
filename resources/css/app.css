@@ -12464,3 +12464,23 @@ a.admin-overview-card:hover {
         border-radius: 10px;
     }
 }
+
+
+/* Keep every admin page aligned to the same sidebar/content spacing as the dashboard. */
+@media (min-width: 768px) {
+    .admin-shell > .admin-main {
+        box-sizing: border-box;
+        flex: 1 1 0;
+        width: 0;
+        min-width: 0;
+        max-width: none;
+    }
+}
+@media (max-width: 767px) {
+    .admin-shell > .admin-main {
+        box-sizing: border-box;
+        flex: none;
+        width: 100%;
+        min-width: 0;
+    }
+}
