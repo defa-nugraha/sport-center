@@ -322,10 +322,9 @@ class BookingService
             return;
         }
 
-        if ($payment->payment_status === PaymentStatus::PAID
-            && $payment->booking?->status === BookingStatus::CONFIRMED) {
-            return;
-        }
+        // Even when payment is already marked paid, continue to the post-transaction
+        // notification dispatch below. A previous webhook may have updated the
+        // payment but failed before the invoice or WhatsApp jobs were queued.
 
         DB::transaction(function () use ($payment, $status, $midtrans) {
             $payment = Payment::lockForUpdate()->findOrFail($payment->id);
