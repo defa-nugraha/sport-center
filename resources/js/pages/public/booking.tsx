@@ -5,6 +5,7 @@ import { CalendarCheck, CalendarDays, CheckCircle2, Clock3, Info, MapPin } from 
 import { DateRangePicker } from '@/components/date-range-picker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UserShell } from '@/components/user-layout';
+import { asset } from '@/components/public-site';
 
 const toDateKey = (date: Date) => {
     const year = date.getFullYear();
@@ -16,6 +17,24 @@ const toDateKey = (date: Date) => {
 const parseDate = (value: string) => {
     const [year, month, day] = value.split('-').map(Number);
     return new Date(year, month - 1, day);
+};
+
+const getWibDateTime = (date: Date) => {
+    const parts = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Jakarta',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hourCycle: 'h23',
+    }).formatToParts(date);
+    const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+
+    return {
+        dateKey: `${values.year}-${values.month}-${values.day}`,
+        time: `${values.hour}:${values.minute}`,
+    };
 };
 
 type HourlySlot = {
@@ -35,6 +54,7 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
     const [checking, setChecking] = useState(false);
     const [availabilityMessage, setAvailabilityMessage] = useState('');
     const [hourlySlots, setHourlySlots] = useState<HourlySlot[]>([]);
+    const [clock, setClock] = useState(() => getWibDateTime(new Date()));
     const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const form = useForm({
         customer_phone: '',
@@ -50,6 +70,25 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
         for (let minutes = minimumHours * 60; minutes <= 720; minutes += 30) options.push(minutes);
         return options;
     }, [minimumHours]);
+
+    useEffect(() => {
+        const interval = window.setInterval(() => setClock(getWibDateTime(new Date())), 30_000);
+        return () => window.clearInterval(interval);
+    }, []);
+
+    const visibleHourlySlots = hourlySlots.filter((slot) =>
+        form.data.booking_date !== clock.dateKey || slot.start_time > clock.time
+    );
+
+    useEffect(() => {
+        if (form.data.booking_date === clock.dateKey
+            && form.data.start_time
+            && form.data.start_time <= clock.time) {
+            form.setData('start_time', '');
+            setAvailable(null);
+            setAvailabilityMessage('Waktu yang dipilih sudah lewat. Silakan pilih waktu berikutnya.');
+        }
+    }, [clock, form.data.booking_date, form.data.start_time]);
 
     const loadHourlySlots = async () => {
         if (!hourly || !form.data.booking_date) return;
@@ -151,7 +190,17 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
         <UserShell active="booking" title={'Booking ' + facility.name} description={supportsBothModes && !selectedMode ? "Pilih mode booking terlebih dahulu, lalu tentukan jadwal yang sesuai." : "Pilih jadwal yang sesuai, cek ketersediaan, lalu lanjutkan pembayaran."}>
             <section className="booking-flow">
                 <div className="booking-flow-summary">
-                    <div className="booking-flow-image"><img src={facility.hero_image || facility.thumbnail || '/assets/ggm/Lapang Serba Guna (Basket)2 1.png'} alt={facility.name} /></div>
+                    <div className="booking-flow-image"><img
+                        src={asset(facility.thumbnail || facility.hero_image)}
+                        alt={facility.name}
+                        decoding="async"
+                        onError={(event) => {
+                            const image = event.currentTarget;
+                            if (image.dataset.fallbackApplied === 'true') return;
+                            image.dataset.fallbackApplied = 'true';
+                            image.src = '/assets/ggm/Lapang Serba Guna (Basket)2 1.png';
+                        }}
+                    /></div>
                     <div><span className="eyebrow"><i /> Venue pilihan</span><h2>{facility.name}</h2><p>{facility.subtitle || facility.venue_type}</p><div className="booking-flow-meta"><span><MapPin /> {facility.address || 'GGM Majalengka'}</span><span>{supportsBothModes && !selectedMode ? <><CalendarDays /> Pilih mode booking</> : daily ? <><CalendarDays /> Per hari</> : <><Clock3 /> Minimal {minimumHours} jam</>}</span></div><strong>
     {supportsBothModes && !selectedMode
         ? 'Pilih mode booking'
@@ -196,13 +245,17 @@ export default function Booking({ facility, user }: { facility: any; user: { nam
                             <div className="booking-slot-picker-head">
                                 <div>
                                     <strong id="booking-slot-title">Pilih waktu yang tersedia</strong>
-                                    <small>{checking ? 'Memuat pilihan waktu...' : availabilityMessage}</small>
+                                    <small>{checking ? 'Memuat pilihan waktu...' : (
+                                        form.data.booking_date === clock.dateKey && hourlySlots.length > 0 && visibleHourlySlots.length === 0
+                                            ? 'Tidak ada pilihan waktu yang tersisa hari ini.'
+                                            : availabilityMessage
+                                    )}</small>
                                 </div>
                                 <Clock3 aria-hidden="true" />
                             </div>
-                            {!checking && hourlySlots.length > 0 && (
+                            {!checking && visibleHourlySlots.length > 0 && (
                                 <div className="booking-slot-options">
-                                    {hourlySlots.map((slot) => (
+                                    {visibleHourlySlots.map((slot) => (
                                         <button key={slot.start_time} type="button" className={form.data.start_time === slot.start_time ? 'selected' : ''} onClick={() => selectHourlySlot(slot)}>
                                             <strong>{slot.label}</strong>
                                             <small>Rp {Number(slot.total || 0).toLocaleString('id-ID')}</small>
